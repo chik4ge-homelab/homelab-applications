@@ -1,21 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  creationTimestamp: "2025-01-05T16:25:37Z"
-  generation: 2981
   name: grafana
   namespace: argocd
-  resourceVersion: "4439430"
-  uid: 4e6dac26-060b-42d5-8a14-c23620924692
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
-  destination:
-    namespace: grafana
-    server: https://kubernetes.default.svc
   project: default
   source:
     path: .
     repoURL: https://github.com/chik4ge-homelab/grafana
     targetRevision: main
+  destination:
+    namespace: grafana
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
+    syncOptions:
+    - CreateNamespace=true
