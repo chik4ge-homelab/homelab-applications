@@ -1,21 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: alloy
+  name: longhorn
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: alloy
-    targetRevision: 0.10.1
+  sources:
+  - repoURL: https://charts.longhorn.io/
+    chart: longhorn
+    targetRevision: v1.7.2
+    helm:
+      values: |
+        preUpgradeChecker:
+          jobEnabled: false
   destination:
+    namespace: longhorn-system
     server: https://kubernetes.default.svc
-    namespace: alloy
   syncPolicy:
     automated:
       prune: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
