@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio
+  name: minio-operator
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
@@ -9,18 +9,10 @@ spec:
   project: default
   source:
     repoURL: https://operator.min.io/
-    chart: tenant
+    chart: operator
     targetRevision: 6.0.4
-    helm:
-      parameters:
-        - name: tenant.pools[0].servers
-          value: '3'
-        - name: tenant.pools[0].size
-          value: 5Gi
-        - name: tenant.pools[0].volumesPerServer
-          value: '3'
   destination:
-    namespace: minio
+    namespace: minio-operator
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
