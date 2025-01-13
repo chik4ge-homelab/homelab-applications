@@ -14,11 +14,11 @@ spec:
     helm:
       parameters:
         - name: tenant.pools[0].servers
-          value: '3'
+          value: '4'
         - name: tenant.pools[0].size
           value: 5Gi
         - name: tenant.pools[0].volumesPerServer
-          value: '3'
+          value: '4'
   destination:
     namespace: minio
     server: https://kubernetes.default.svc
