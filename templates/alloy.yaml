@@ -11,13 +11,6 @@ spec:
     repoURL: https://grafana.github.io/helm-charts
     chart: alloy
     targetRevision: 0.10.1
-  helm:
-    parameters:
-      - name: alloy.clustering.enabled
-        value: 'true'
-      - name: alloy.configMap.content
-        value: |
-          prometheus.remote_write "prometheus"
   destination:
     server: https://kubernetes.default.svc
     namespace: alloy
