@@ -7,14 +7,19 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  sources:
-  - repoURL: https://charts.longhorn.io/
+  source:
+    repoURL: https://charts.longhorn.io/
     chart: longhorn
     targetRevision: v1.7.2
     helm:
-      values: |
-        preUpgradeChecker:
-          jobEnabled: false
+      parameters:
+        - name: preUpgradeChecker.jobEnabled
+          value: "false"
+        - name: defaultSettings.defaultReplicaCount
+          value: "2"
+        - name: storageMinimalAvailablePercentage
+          value: "5"
+        
   destination:
     namespace: longhorn-system
     server: https://kubernetes.default.svc
