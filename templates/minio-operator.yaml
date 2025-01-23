@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://operator.min.io/
     chart: operator
-    targetRevision: 6.0.4
+    targetRevision: 7.0.0
   destination:
     namespace: minio-operator
     server: https://kubernetes.default.svc
