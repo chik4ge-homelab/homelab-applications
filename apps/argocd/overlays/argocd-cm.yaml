@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  url: https://argocd.chik4ge.me
+  # できればfalseにしたいがterraformで管理しているのでコメントアウト
+  # admin.enabled: "false"
+
+  dex.config: |
+    connectors:
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: Ov23liO6LEyYow0nlys8
+          clientSecret: $github-secret:token
+          orgs:
+            - name: chik4ge-homelab
+
+  resource.exclusions: |
+    - apiGroups:
+        - cilium.io
+      kinds:
+        - CiliumIdentity
+      clusters:
+        - "*"
