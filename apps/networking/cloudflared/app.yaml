@@ -1,21 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cloudflared-tunnel
+  name: cloudflared
   namespace: argocd
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     path: .
-    repoURL: https://github.com/chik4ge-homelab/cloudflare-tunnel
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications/apps/networking/cloudflared
     targetRevision: main
   destination:
-    namespace: cloudflare-tunnel
+    namespace: cloudflared
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
