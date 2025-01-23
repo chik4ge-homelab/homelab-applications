@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://charts.longhorn.io/
     chart: longhorn
-    targetRevision: v1.7.2
+    targetRevision: 1.8.0
     helm:
       parameters:
         - name: preUpgradeChecker.jobEnabled
