@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://operator.min.io/
     chart: tenant
-    targetRevision: 6.0.4
+    targetRevision: 7.0.0
     helm:
       parameters:
         - name: tenant.pools[0].name
