@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    path: .
-    repoURL: https://github.com/chik4ge-homelab/homelab-applications/apps/networking/cloudflared
+    path: apps/networking/cloudflared
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
   destination:
     namespace: cloudflared
