@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.longhorn.io/
+    chart: longhorn
+    targetRevision: v1.7.2
+    helm:
+      parameters:
+        - name: preUpgradeChecker.jobEnabled
+          value: "false"
+        - name: defaultSettings.defaultReplicaCount
+          value: "2"
+        - name: storageMinimalAvailablePercentage
+          value: "5"
+        
+  destination:
+    namespace: longhorn-system
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
