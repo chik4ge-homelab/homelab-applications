@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - ./apps/networking/cloudflared/app.yaml
+  - ./apps/argocd/app.yaml
