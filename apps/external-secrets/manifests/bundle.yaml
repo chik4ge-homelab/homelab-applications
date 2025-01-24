@@ -1,0 +1,14 @@
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: bitwarden-trust-bundle
+  namespace: external-secrets
+spec:
+  sources:
+    - useDefaultCAs: true
+    - secret:
+        name: "bitwarden-tls-certs"
+        key: "tls.crt"
+  target:
+    configMap:
+      key: "bitwarden-bundle.pem"
