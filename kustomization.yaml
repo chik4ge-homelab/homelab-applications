@@ -8,3 +8,4 @@ resources:
   - ./apps/secrets/cert-manager/app.yaml
   - ./apps/secrets/external-secrets/app.yaml
   - ./apps/secrets/trust-manager/app.yaml
+  - ./apps/storage/openebs/app.yaml

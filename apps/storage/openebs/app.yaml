@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openebs
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://openebs.github.io/openebs
+    targetRevision: 4.1.2
+    chart: openebs
+    helm:
+      valuesObject:
+        mayastor:
+          csi:
+            node:
+              initContainers:
+                enabled: false
+        engines:
+          local:
+            lvm:
+              enabled: false
+            zfs:
+              enabled: false
+  destination:
+    namespace: openebs
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
