@@ -4,7 +4,7 @@ metadata:
   name: minio
   namespace: argocd
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -19,6 +19,8 @@ spec:
           value: 5Gi
         - name: tenant.pools[0].volumesPerServer
           value: "3"
+        - name: tenant.pools[0].volumeClaimTemplate.spec.storageClassName
+          value: "mayastor-single-replica"
   destination:
     namespace: minio
     server: https://kubernetes.default.svc
@@ -26,4 +28,4 @@ spec:
     automated:
       prune: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
