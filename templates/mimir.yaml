@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio-operator
+  name: mimir
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://operator.min.io/
-    chart: operator
-    targetRevision: 6.0.4
+    repoURL: https://grafana.github.io/helm-charts
+    chart: mimir-distributed
+    targetRevision: 5.5.1
   destination:
-    namespace: minio-operator
+    namespace: mimir
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:

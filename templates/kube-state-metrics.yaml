@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argo-cd
+  name: kube-state-metrics
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    path: .
-    repoURL: https://github.com/chik4ge-homelab/self-managed-argocd
+    path: examples/standard
+    repoURL: https://github.com/kubernetes/kube-state-metrics
     targetRevision: main
   destination:
-    namespace: argocd
+    namespace: kube-system
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
