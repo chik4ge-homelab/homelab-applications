@@ -12,7 +12,7 @@ spec:
       targetRevision: main
       path: apps/argocd/secrets
     - repoURL: https://argoproj.github.io/argo-helm
-      targetRevision: 7.7.16
+      targetRevision: 7.7.17
       chart: argo-cd
       helm:
         valuesObject:
