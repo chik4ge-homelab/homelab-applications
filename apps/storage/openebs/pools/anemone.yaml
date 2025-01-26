@@ -5,4 +5,4 @@ metadata:
   namespace: openebs
 spec:
   node: k8s-w-anemone
-  disks: ["aiuring:///dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"]
+  disks: ["uring:///dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"]
