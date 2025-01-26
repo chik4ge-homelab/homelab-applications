@@ -12,4 +12,5 @@ resources:
   - ./apps/secrets/trust-manager/app.yaml
   - ./apps/storage/minio-operator/app.yaml
   - ./apps/storage/minio/app.yaml
+  - ./apps/storage/mysql-operator/app.yaml
   - ./apps/storage/openebs/app.yaml
