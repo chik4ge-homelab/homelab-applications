@@ -7,23 +7,26 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://openebs.github.io/openebs
-    targetRevision: 4.1.2
-    chart: openebs
-    helm:
-      valuesObject:
-        mayastor:
-          csi:
-            node:
-              initContainers:
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/storage/openebs/pools
+    - repoURL: https://openebs.github.io/openebs
+      targetRevision: 4.1.2
+      chart: openebs
+      helm:
+        valuesObject:
+          mayastor:
+            csi:
+              node:
+                initContainers:
+                  enabled: false
+          engines:
+            local:
+              lvm:
                 enabled: false
-        engines:
-          local:
-            lvm:
-              enabled: false
-            zfs:
-              enabled: false
+              zfs:
+                enabled: false
   destination:
     namespace: openebs
     server: https://kubernetes.default.svc
