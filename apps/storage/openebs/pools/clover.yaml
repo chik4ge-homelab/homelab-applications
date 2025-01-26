@@ -1,7 +1,7 @@
 apiVersion: "openebs.io/v1beta2"
 kind: DiskPool
 metadata:
-  name: pool-on-node-1
+  name: pool-on-node-clover
   namespace: openebs
 spec:
   node: k8s-w-clover
