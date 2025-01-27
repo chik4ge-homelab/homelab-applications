@@ -5,4 +5,4 @@ resources:
   - ./pools/anemone.yaml
   - ./pools/blossom.yaml
   - ./pools/clover.yaml
-  - ./storageclass/default.yaml
+  - ./storageclasses/default.yaml
