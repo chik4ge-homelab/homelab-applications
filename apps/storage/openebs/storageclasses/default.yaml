@@ -1,0 +1,9 @@
+kind: StorageClass
+metadata:
+  name: mayastor-1
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+parameters:
+  protocol: nvmf
+  repl: "1"
+provisioner: io.openebs.csi-mayastor
