@@ -7,5 +7,5 @@ metadata:
 parameters:
   protocol: nvmf
   repl: "1"
-  allowVolumeExpansion: "true"
+allowVolumeExpansion: true
 provisioner: io.openebs.csi-mayastor
