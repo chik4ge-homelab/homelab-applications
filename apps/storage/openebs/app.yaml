@@ -10,10 +10,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/storage/openebs/pools
-    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
-      targetRevision: main
-      path: apps/storage/openebs/storageclasses
+      path: apps/storage/openebs/
     - repoURL: https://openebs.github.io/openebs
       targetRevision: 4.1.2
       chart: openebs

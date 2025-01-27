@@ -1,6 +1,6 @@
 kind: StorageClass
 metadata:
-  name: mayastor-1
+  name: default
   annotations:
     storageclass.kubernetes.io/is-default-class: "true"
 parameters:
