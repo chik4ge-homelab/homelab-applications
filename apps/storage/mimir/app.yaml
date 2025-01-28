@@ -4,13 +4,14 @@ metadata:
   name: mimir
   namespace: argocd
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://grafana.github.io/helm-charts
     chart: mimir-distributed
-    targetRevision: 5.5.1
+    targetRevision: 5.6.0
+
   destination:
     namespace: mimir
     server: https://kubernetes.default.svc
@@ -18,4 +19,4 @@ spec:
     automated:
       prune: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
