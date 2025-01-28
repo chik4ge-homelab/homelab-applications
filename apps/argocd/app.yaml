@@ -39,6 +39,20 @@ spec:
             rbac:
               policy.csv: |
                 g, chik4ge-homelab:admin, role:admin
+          redis-ha:
+            enabled: true
+
+          controller:
+            replicas: 1
+
+          server:
+            replicas: 2
+
+          repoServer:
+            replicas: 2
+
+          applicationSet:
+            replicas: 2
   destination:
     namespace: argocd
     server: https://kubernetes.default.svc
