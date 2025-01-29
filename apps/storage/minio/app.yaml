@@ -20,6 +20,8 @@ spec:
             configSecret:
               name: minio-tenant-config
               existingSecret: true
+              accessKey: null
+              secretKey: null
             buckets:
               - name: mimir-blocks
               - name: mimir-alertmanager
