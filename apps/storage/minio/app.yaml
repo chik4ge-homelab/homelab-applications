@@ -7,26 +7,32 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://operator.min.io/
-    chart: tenant
-    targetRevision: 7.0.0
-    helm:
-      valuesObject:
-        tenant:
-          buckets:
-            - name: mimir-blocks
-            - name: mimir-alertmanager
-            - name: mimir-ruler
-      parameters:
-        - name: tenant.pools[0].name
-          value: pool-0
-        - name: tenant.pools[0].size
-          value: 5Gi
-        - name: tenant.pools[0].volumesPerServer
-          value: "3"
-        - name: tenant.pools[0].storageClassName
-          value: "openebs-single-replica"
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/storage/minio/secrets
+    - repoURL: https://operator.min.io/
+      chart: tenant
+      targetRevision: 7.0.0
+      helm:
+        valuesObject:
+          tenant:
+            configSecret:
+              name: minio-tenant-config
+              existingSecret: true
+            buckets:
+              - name: mimir-blocks
+              - name: mimir-alertmanager
+              - name: mimir-ruler
+        parameters:
+          - name: tenant.pools[0].name
+            value: pool-0
+          - name: tenant.pools[0].size
+            value: 5Gi
+          - name: tenant.pools[0].volumesPerServer
+            value: "3"
+          - name: tenant.pools[0].storageClassName
+            value: "openebs-single-replica"
   destination:
     namespace: minio
     server: https://kubernetes.default.svc
