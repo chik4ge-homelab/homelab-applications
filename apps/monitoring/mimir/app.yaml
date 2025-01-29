@@ -18,19 +18,30 @@ spec:
         valuesObject:
           global:
             extraEnvFrom:
-              - secretKeyRef:
+              - secretRef:
                   name: mimir-bucket-secret
+          minio:
+            enabled: false
           mimir:
             structuredConfig:
               common:
                 storage:
                   backend: s3
                   s3:
-                    accessKey: ${AWS_ACCESS_KEY_ID}
-                    secretKey: ${AWS_SECRET_ACCESS_KEY}
-                    endpoint: http://minio.minio.svc.cluster.local:9000
-                    secure: false
-
+                    endpoint: minio.minio.svc.cluster.local
+                    access_key_id: "${AWS_ACCESS_KEY_ID}"
+                    secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
+                    http:
+                      insecure_skip_verify: true
+              blocks_storage:
+                s3:
+                  bucket_name: mimir-blocks
+              alertmanager_storage:
+                s3:
+                  bucket_name: mimir-alertmanager
+              ruler_storage:
+                s3:
+                  bucket_name: mimir-ruler
   destination:
     namespace: mimir
     server: https://kubernetes.default.svc
