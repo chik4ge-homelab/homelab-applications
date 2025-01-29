@@ -8,9 +8,28 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: mimir-distributed
-    targetRevision: 5.6.0
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/monitoring/mimir/secrets
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: mimir-distributed
+      targetRevision: 5.6.0
+      helm:
+        valuesObject:
+          global:
+            extraEnvFrom:
+              - secretKeyRef:
+                  name: mimir-bucket-secret
+          mimir:
+            structuredConfig:
+              common:
+                storage:
+                  backend: s3
+                  s3:
+                    accessKey: ${AWS_ACCESS_KEY_ID}
+                    secretKey: ${AWS_SECRET_ACCESS_KEY}
+                    endpoint: http://minio.minio.svc.cluster.local:9000
+                    secure: false
 
   destination:
     namespace: mimir
