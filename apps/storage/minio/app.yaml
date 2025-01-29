@@ -13,10 +13,11 @@ spec:
     targetRevision: 7.0.0
     helm:
       valuesObject:
-        buckets:
-          - name: mimir-blocks
-          - name: mimir-alertmanager
-          - name: mimir-ruler
+        tenant:
+          buckets:
+            - name: mimir-blocks
+            - name: mimir-alertmanager
+            - name: mimir-ruler
       parameters:
         - name: tenant.pools[0].name
           value: pool-0
