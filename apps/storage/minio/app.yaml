@@ -17,6 +17,8 @@ spec:
       helm:
         valuesObject:
           tenant:
+            configuration:
+              name: minio-tenant-config
             configSecret:
               name: minio-tenant-config
               existingSecret: true
