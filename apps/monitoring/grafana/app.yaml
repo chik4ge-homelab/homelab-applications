@@ -1,0 +1,117 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    chart: grafana
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 8.8.5
+    helm:
+      valuesObject:
+        replicas: 2
+        grafana.ini:
+          server:
+            root_url: https://grafana.chik4ge.me
+            enable_gzip: true
+          database:
+            type: mysql
+            host: mysql:6446
+            user: $__env{GF_DATABASE_USER}
+            password: $__env{GF_DATABASE_PASSWORD}
+            ssl_mode: false
+          auth:
+            disable_login_form: true
+          auth.github:
+            enabled: true
+            allow_sign_up: true
+            client_id: Ov23liEAZPnCVaDnDWdl
+            client_secret: $__env{GF_GITHUB_CLIENT_SECRET}
+            scopes: user:email,read:org
+            auth_url: https://github.com/login/oauth/authorize
+            token_url: https://github.com/login/oauth/access_token
+            api_url: https://api.github.com/user
+            allow_assign_grafana_admin: true
+            role_attribute_path: "contains(groups[*], '@chik4ge-homelab/admin') && 'GrafanaAdmin' || 'Viewer'"
+
+        envValueFrom:
+          GF_DATABASE_USER:
+            secretKeyRef:
+              name: mysql-secret
+              key: rootUser
+          GF_DATABASE_PASSWORD:
+            secretKeyRef:
+              name: mysql-secret
+              key: rootPassword
+          GF_GITHUB_CLIENT_SECRET:
+            secretKeyRef:
+              name: grafana-secret
+              key: github-sso-client-secret
+
+        extraObjects:
+          - apiVersion: mysql.oracle.com/v2
+            kind: InnoDBCluster
+            metadata:
+              labels:
+                app: grafana
+              name: mysql
+            spec:
+              secretName: mysql-secret
+              tlsUseSelfSigned: true
+              tlsCASecretName: mysql-tls-ca
+              tlsSecretName: mysql-tls
+              instances: 3
+              version: 8.4.3
+              router:
+                instances: 1
+
+          - apiVersion: external-secrets.io/v1beta1
+            kind: ExternalSecret
+            metadata:
+              name: mysql-secret
+              labels:
+                app.kubernetes.io/part-of: argocd
+            spec:
+              refreshInterval: 1h
+              secretStoreRef:
+                name: bitwarden-secretsmanager
+                kind: ClusterSecretStore
+              data:
+                - secretKey: rootUser
+                  remoteRef:
+                    key: "f304093f-07a2-4702-971f-b2750104f5b9"
+                - secretKey: rootPassword
+                  remoteRef:
+                    key: "5f685cc0-9229-4a78-8a4e-b2750104d6fd"
+                - secretKey: rootHost
+                  remoteRef:
+                    key: "579fc208-b6b0-4f15-a5ac-b2750114d677"
+
+          - apiVersion: external-secrets.io/v1beta1
+            kind: ExternalSecret
+            metadata:
+              name: grafana-secret
+              labels:
+                app.kubernetes.io/part-of: argocd
+            spec:
+              refreshInterval: 1h
+              secretStoreRef:
+                name: bitwarden-secretsmanager
+                kind: ClusterSecretStore
+              data:
+                - secretKey: github-sso-client-secret
+                  remoteRef:
+                    key: "f7b7d08e-0571-4685-a889-b275010f851f"
+
+  destination:
+    namespace: grafana
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
