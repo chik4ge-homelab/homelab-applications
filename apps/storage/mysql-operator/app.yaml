@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://mysql.github.io/mysql-operator
     chart: mysql-operator
-    targetRevision: 2.2.2
+    targetRevision: 2.2.3
     helm:
       parameters:
         - name: envs.k8sClusterDomain
