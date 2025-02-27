@@ -1,8 +1,0 @@
-apiVersion: "openebs.io/v1beta2"
-kind: DiskPool
-metadata:
-  name: pool-on-node-anemone
-  namespace: openebs
-spec:
-  node: k8s-w-anemone
-  disks: ["uring:///dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1"]

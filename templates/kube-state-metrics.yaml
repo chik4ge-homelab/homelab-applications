@@ -4,13 +4,13 @@ metadata:
   name: kube-state-metrics
   namespace: argocd
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    path: examples/standard
-    repoURL: https://github.com/kubernetes/kube-state-metrics
-    targetRevision: main
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 5.29.0
+    chart: kube-state-metrics
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc

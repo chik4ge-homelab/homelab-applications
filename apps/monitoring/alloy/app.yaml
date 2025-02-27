@@ -1,0 +1,78 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alloy
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: alloy
+    targetRevision: 0.11.0
+    helm:
+      parameters:
+        - name: alloy.clustering.enabled
+          value: "true"
+        - name: alloy.configMap.content
+          value: |
+            discovery.kubernetes "pods" {
+              role = "pod"
+            }
+
+            discovery.kubernetes "nodes" {
+              role = "node"
+            }
+
+            prometheus.scrape "pods" {
+              targets = discovery.relabel.pods.output
+              forward_to = [prometheus.remote_write.default.receiver]
+            }
+
+            discovery.relabel "pods" {
+              targets = discovery.kubernetes.pods.targets
+
+              rule {
+                source_labels = ["__meta_kubernetes_namespace"]
+                action = "replace"
+                target_label = "namespace"
+              }
+
+              rule {
+                source_labels = ["__meta_kubernetes_pod_name"]
+                action = "replace"
+                target_label = "pod"
+              }
+
+              rule {
+                source_labels = ["__meta_kubernetes_pod_container_name"]
+                action = "replace"
+                target_label = "job"
+              }
+
+              rule {
+                source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                action = "replace"
+                target_label = "app"
+              }
+            }
+
+            prometheus.scrape "nodes" {
+              targets = discovery.kubernetes.nodes.targets
+              forward_to = [prometheus.remote_write.default.receiver]
+            }
+
+            prometheus.remote_write "default" {
+              endpoint {
+                url = "http://mimir-nginx.mimir.svc.cluster.local/api/v1/push"
+              }
+            }
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: alloy
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

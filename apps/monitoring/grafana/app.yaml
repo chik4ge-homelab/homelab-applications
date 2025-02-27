@@ -13,17 +13,11 @@ spec:
     targetRevision: 8.9.0
     helm:
       valuesObject:
-        replicas: 2
+        replicas: 1
         grafana.ini:
           server:
             root_url: https://grafana.chik4ge.me
             enable_gzip: true
-          database:
-            type: mysql
-            host: mysql:6446
-            user: $__env{GF_DATABASE_USER}
-            password: $__env{GF_DATABASE_PASSWORD}
-            ssl_mode: false
           auth:
             disable_login_form: true
           auth.github:
@@ -37,60 +31,13 @@ spec:
             api_url: https://api.github.com/user
             allow_assign_grafana_admin: true
             role_attribute_path: "contains(groups[*], '@chik4ge-homelab/admin') && 'GrafanaAdmin' || 'Viewer'"
-
         envValueFrom:
-          GF_DATABASE_USER:
-            secretKeyRef:
-              name: mysql-secret
-              key: rootUser
-          GF_DATABASE_PASSWORD:
-            secretKeyRef:
-              name: mysql-secret
-              key: rootPassword
           GF_GITHUB_CLIENT_SECRET:
             secretKeyRef:
               name: grafana-secret
               key: github-sso-client-secret
 
         extraObjects:
-          - apiVersion: mysql.oracle.com/v2
-            kind: InnoDBCluster
-            metadata:
-              labels:
-                app: grafana
-              name: mysql
-            spec:
-              secretName: mysql-secret
-              tlsUseSelfSigned: true
-              tlsCASecretName: mysql-tls-ca
-              tlsSecretName: mysql-tls
-              instances: 3
-              version: 8.4.3
-              router:
-                instances: 1
-
-          - apiVersion: external-secrets.io/v1beta1
-            kind: ExternalSecret
-            metadata:
-              name: mysql-secret
-              labels:
-                app.kubernetes.io/part-of: argocd
-            spec:
-              refreshInterval: 1h
-              secretStoreRef:
-                name: bitwarden-secretsmanager
-                kind: ClusterSecretStore
-              data:
-                - secretKey: rootUser
-                  remoteRef:
-                    key: "f304093f-07a2-4702-971f-b2750104f5b9"
-                - secretKey: rootPassword
-                  remoteRef:
-                    key: "5f685cc0-9229-4a78-8a4e-b2750104d6fd"
-                - secretKey: rootHost
-                  remoteRef:
-                    key: "579fc208-b6b0-4f15-a5ac-b2750114d677"
-
           - apiVersion: external-secrets.io/v1beta1
             kind: ExternalSecret
             metadata:
