@@ -11,6 +11,7 @@ resources:
   - ./apps/secrets/cert-manager/app.yaml
   - ./apps/secrets/external-secrets/app.yaml
   - ./apps/secrets/trust-manager/app.yaml
+  - ./apps/storage/democratic-csi/app.yaml
   - ./apps/storage/minio-operator/app.yaml
   - ./apps/storage/minio/app.yaml
   - ./apps/storage/mysql-operator/app.yaml
