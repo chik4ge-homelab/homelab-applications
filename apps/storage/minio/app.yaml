@@ -32,6 +32,8 @@ spec:
             value: 5Gi
           - name: tenant.pools[0].volumesPerServer
             value: "3"
+          - name: tenant.pools[0].storageClassName
+            value: ""
   destination:
     namespace: minio
     server: https://kubernetes.default.svc
