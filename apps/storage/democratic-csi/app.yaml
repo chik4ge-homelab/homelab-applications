@@ -12,21 +12,32 @@ spec:
     - repoURL: https://democratic-csi.github.io/charts/
       chart: democratic-csi
       targetRevision: 0.14.7
-      valuesObject:
-        node:
-          hostPID: true
+      helm:
+        valuesObject:
+          storageClasses:
+            - name: truenas-iscsi-csi
+              defaultClass: true
+              reclaimPolicy: Delete
+              volumeBindingMode: Immediate
+              allowVolumeExpansion: true
+              parameters:
+                fsType: ext4
+          node:
+            hostPID: true
+            driver:
+              extraEnv:
+                - name: ISCSIADM_HOST_STRATEGY
+                  value: nsenter
+                - name: ISCSIADM_HOST_PATH
+                  value: /usr/local/sbin/iscsiadm
+              iscsiDirHostPath: /usr/local/etc/iscsi
+              iscsiDirHostPathType: ""
           driver:
-            extraEnv:
-              - name: ISCSIADM_HOST_STRATEGY
-                value: nsenter
-              - name: ISCSIADM_HOST_PATH
-                value: /usr/local/sbin/iscsiadm
-            iscsiDirHostPath: /usr/local/etc/iscsi
-            iscsiDirHostPathType: ""
-        driver:
-          existingConfigSecret: democratic-csi-driver-config
-          config:
-            driver: freenas-api-iscsi
+            existingConfigSecret: democratic-csi-driver-config
+            config:
+              driver: freenas-api-iscsi
+          csiDriver:
+            name: truenas-iscsi
   destination:
     namespace: democratic-csi
     server: https://kubernetes.default.svc
