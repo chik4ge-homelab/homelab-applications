@@ -23,7 +23,10 @@ spec:
                 value: /usr/local/sbin/iscsiadm
             iscsiDirHostPath: /usr/local/etc/iscsi
             iscsiDirHostPathType: ""
-      
+        driver:
+          existingConfigSecret: democratic-csi-driver-config
+          config:
+            driver: freenas-api-iscsi
   destination:
     namespace: democratic-csi
     server: https://kubernetes.default.svc
