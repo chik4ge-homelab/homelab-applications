@@ -25,15 +25,10 @@ spec:
               - name: mimir-blocks
               - name: mimir-alertmanager
               - name: mimir-ruler
-        parameters:
-          - name: tenant.pools[0].name
-            value: pool-0
-          - name: tenant.pools[0].size
-            value: 5Gi
-          - name: tenant.pools[0].volumesPerServer
-            value: "3"
-          - name: tenant.pools[0].storageClassName
-            value: ""
+          pools:
+            - name: pool-0
+              size: 5Gi
+              volumesPerServer: 3
   destination:
     namespace: minio
     server: https://kubernetes.default.svc
