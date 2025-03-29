@@ -32,6 +32,7 @@ spec:
                   value: /usr/local/sbin/iscsiadm
               iscsiDirHostPath: /usr/local/etc/iscsi
               iscsiDirHostPathType: ""
+              localtimeHostPath: null
           driver:
             existingConfigSecret: democratic-csi-driver-config
             config:
