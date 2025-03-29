@@ -40,6 +40,9 @@ spec:
               ruler_storage:
                 s3:
                   bucket_name: mimir-ruler
+          ingester:
+            persistentVolume:
+              size: 25Gi
   destination:
     namespace: mimir
     server: https://kubernetes.default.svc
