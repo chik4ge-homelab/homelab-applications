@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: alloy
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -23,6 +21,25 @@ spec:
 
             discovery.kubernetes "nodes" {
               role = "node"
+            }
+
+            discovery.relabel "cadvisor" {
+              targets = discovery.kubernetes.nodes.targets
+
+              rule {
+                replacement   = "/metrics/cadvisor"
+                target_label  = "__metrics_path__"
+              }
+            }
+
+            prometheus.scrape "cadvisor" {
+              targets = discovery.relabel.cadvisor.output
+              scheme     = "https"
+              bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+              tls_config {
+                insecure_skip_verify = true
+              }
+              forward_to = [prometheus.remote_write.default.receiver]
             }
 
             prometheus.scrape "pods" {
@@ -60,6 +77,11 @@ spec:
 
             prometheus.scrape "nodes" {
               targets = discovery.kubernetes.nodes.targets
+              scheme     = "https"
+              bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+              tls_config {
+                insecure_skip_verify = true
+              }
               forward_to = [prometheus.remote_write.default.receiver]
             }
 
