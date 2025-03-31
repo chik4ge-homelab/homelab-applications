@@ -31,6 +31,8 @@ spec:
                     secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
                     http:
                       insecure_skip_verify: true
+              limits:
+                out_of_order_time_window: 1d
               blocks_storage:
                 s3:
                   bucket_name: mimir-blocks
