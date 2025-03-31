@@ -5,91 +5,98 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: alloy
-    targetRevision: 0.11.0
-    helm:
-      parameters:
-        - name: alloy.clustering.enabled
-          value: "true"
-        - name: alloy.configMap.content
-          value: |
-            discovery.kubernetes "pods" {
-              role = "pod"
-            }
-
-            discovery.kubernetes "nodes" {
-              role = "node"
-            }
-
-            discovery.relabel "cadvisor" {
-              targets = discovery.kubernetes.nodes.targets
-
-              rule {
-                replacement   = "/metrics/cadvisor"
-                target_label  = "__metrics_path__"
-              }
-            }
-
-            prometheus.scrape "cadvisor" {
-              targets = discovery.relabel.cadvisor.output
-              scheme     = "https"
-              bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-              tls_config {
-                insecure_skip_verify = true
-              }
-              forward_to = [prometheus.remote_write.default.receiver]
-            }
-
-            prometheus.scrape "pods" {
-              targets = discovery.relabel.pods.output
-              forward_to = [prometheus.remote_write.default.receiver]
-            }
-
-            discovery.relabel "pods" {
-              targets = discovery.kubernetes.pods.targets
-
-              rule {
-                source_labels = ["__meta_kubernetes_namespace"]
-                action = "replace"
-                target_label = "namespace"
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: alloy
+      targetRevision: 0.11.0
+      helm:
+        parameters:
+          - name: alloy.clustering.enabled
+            value: "true"
+          - name: alloy.configMap.content
+            value: |
+              discovery.kubernetes "pods" {
+                role = "pod"
               }
 
-              rule {
-                source_labels = ["__meta_kubernetes_pod_name"]
-                action = "replace"
-                target_label = "pod"
+              discovery.kubernetes "nodes" {
+                role = "node"
               }
 
-              rule {
-                source_labels = ["__meta_kubernetes_pod_container_name"]
-                action = "replace"
-                target_label = "job"
+              discovery.relabel "cadvisor" {
+                targets = discovery.kubernetes.nodes.targets
+
+                rule {
+                  replacement   = "/metrics/cadvisor"
+                  target_label  = "__metrics_path__"
+                }
               }
 
-              rule {
-                source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-                action = "replace"
-                target_label = "app"
+              prometheus.scrape "cadvisor" {
+                targets = discovery.relabel.cadvisor.output
+                scheme     = "https"
+                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                tls_config {
+                  insecure_skip_verify = true
+                }
+                forward_to = [prometheus.remote_write.default.receiver]
               }
-            }
 
-            prometheus.scrape "nodes" {
-              targets = discovery.kubernetes.nodes.targets
-              scheme     = "https"
-              bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-              tls_config {
-                insecure_skip_verify = true
+              prometheus.scrape "pods" {
+                targets = discovery.relabel.pods.output
+                forward_to = [prometheus.remote_write.default.receiver]
               }
-              forward_to = [prometheus.remote_write.default.receiver]
-            }
 
-            prometheus.remote_write "default" {
-              endpoint {
-                url = "http://mimir-nginx.mimir.svc.cluster.local/api/v1/push"
+              discovery.relabel "pods" {
+                targets = discovery.kubernetes.pods.targets
+
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  action = "replace"
+                  target_label = "namespace"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_name"]
+                  action = "replace"
+                  target_label = "pod"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_container_name"]
+                  action = "replace"
+                  target_label = "job"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+                  action = "replace"
+                  target_label = "app"
+                }
               }
-            }
+
+              prometheus.scrape "nodes" {
+                targets = discovery.kubernetes.nodes.targets
+                scheme     = "https"
+                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                tls_config {
+                  insecure_skip_verify = true
+                }
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              prometheus.operator.servicemonitors "servicemonitors" {
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              prometheus.remote_write "default" {
+                endpoint {
+                  url = "http://mimir-nginx.mimir.svc.cluster.local/api/v1/push"
+                }
+              }
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: prometheus-operator-crds
+      targetRevision: 19.0.0
   destination:
     server: https://kubernetes.default.svc
     namespace: alloy
@@ -98,3 +105,4 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
