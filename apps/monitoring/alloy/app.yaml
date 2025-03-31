@@ -19,36 +19,41 @@ spec:
                 role = "pod"
               }
 
+              discovery.kubernetes "services" {
+                role = "service"
+              }
+
               discovery.kubernetes "nodes" {
                 role = "node"
               }
 
-              discovery.relabel "cadvisor" {
-                targets = discovery.kubernetes.nodes.targets
-
-                rule {
-                  replacement   = "/metrics/cadvisor"
-                  target_label  = "__metrics_path__"
-                }
-              }
-
-              prometheus.scrape "cadvisor" {
-                targets = discovery.relabel.cadvisor.output
-                scheme     = "https"
-                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-                tls_config {
-                  insecure_skip_verify = true
-                }
-                forward_to = [prometheus.remote_write.default.receiver]
-              }
-
-              prometheus.scrape "pods" {
-                targets = discovery.relabel.pods.output
-                forward_to = [prometheus.remote_write.default.receiver]
-              }
-
               discovery.relabel "pods" {
                 targets = discovery.kubernetes.pods.targets
+
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
+                  separator = ";"
+                  regex = "true"
+                  action = "keep"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
+                  separator = ";"
+                  regex = "(.+)"
+                  target_label = "__metrics_path__"
+                  replacement = "$$1"
+                  action = "replace"
+                }
+
+                rule {
+                  source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
+                  separator = ";"
+                  regex = `([^:]+)(?::\\d+)?;(\\d+)`
+                  target_label = "__address__"
+                  replacement = "$$1:$$2"
+                  action = "replace"
+                }
 
                 rule {
                   source_labels = ["__meta_kubernetes_namespace"]
@@ -75,6 +80,45 @@ spec:
                 }
               }
 
+              discovery.relabel "services" {
+                targets = discovery.kubernetes.services.targets
+
+                rule {
+                  source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
+                  separator = ";"
+                  regex = "true"
+                  action = "keep"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_path"]
+                  separator = ";"
+                  regex = "(.+)"
+                  target_label = "__metrics_path__"
+                  replacement = "$$1"
+                  action = "replace"
+                }
+
+                rule {
+                  source_labels = ["__address__", "__meta_kubernetes_service_annotation_prometheus_io_port"]
+                  separator = ";"
+                  regex = `([^:]+)(?::\\d+)?;(\\d+)`
+                  target_label = "__address__"
+                  replacement = "$$1:$$2"
+                  action = "replace"
+                }
+              }
+
+              prometheus.scrape "pods" {
+                targets = discovery.relabel.pods.output
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              prometheus.scrape "services" {
+                targets = discovery.relabel.services.output
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
               prometheus.scrape "nodes" {
                 targets = discovery.kubernetes.nodes.targets
                 scheme     = "https"
@@ -86,6 +130,25 @@ spec:
               }
 
               prometheus.operator.servicemonitors "servicemonitors" {
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              discovery.relabel "cadvisor" {
+                targets = discovery.kubernetes.nodes.targets
+
+                rule {
+                  replacement   = "/metrics/cadvisor"
+                  target_label  = "__metrics_path__"
+                }
+              }
+
+              prometheus.scrape "cadvisor" {
+                targets = discovery.relabel.cadvisor.output
+                scheme     = "https"
+                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                tls_config {
+                  insecure_skip_verify = true
+                }
                 forward_to = [prometheus.remote_write.default.receiver]
               }
 
