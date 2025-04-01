@@ -9,6 +9,16 @@ spec:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: prometheus-node-exporter
     targetRevision: 4.43.1
+    helm:
+      valuesObject:
+        service:
+          annotations: 
+            prometheus.io/scrape: "false"
+        prometheus:
+          monitor:
+            enabled: true
+            attachMetadata:
+              node: true
   destination:
     namespace: kube-system
     server: https://kubernetes.default.svc
