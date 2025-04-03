@@ -19,16 +19,17 @@ spec:
               name: minio-tenant-config
             configSecret:
               existingSecret: true
-              accessKey: null
-              secretKey: null
+              accessKey:
+              secretKey:
             buckets:
               - name: mimir-blocks
               - name: mimir-alertmanager
               - name: mimir-ruler
-          pools:
-            - name: pool-0
-              size: 25Gi
-              volumesPerServer: 3
+            pools:
+              - servers: 4
+                name: pool-0
+                size: 25Gi
+                volumesPerServer: 4
   destination:
     namespace: minio
     server: https://kubernetes.default.svc
