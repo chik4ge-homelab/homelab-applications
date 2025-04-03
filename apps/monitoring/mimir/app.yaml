@@ -14,12 +14,48 @@ spec:
       targetRevision: 5.6.0
       helm:
         valuesObject:
+          compactor:
+            persistentVolume:
+              size: 10Gi
+
+          distributor:
+            replicas: 2
+
+          ingester:
+            persistentVolume:
+              size: 25Gi
+
+          chunks-cache:
+            enabled: true
+            replicas: 1
+            allocatedMemory: 1024
+
+          index-cache:
+            enabled: true
+            replicas: 3
+
+          metadata-cache:
+            enabled: true
+            replicas: 3
+
+          results-cache:
+            enabled: true
+            replicas: 3
+
+          minio:
+            enabled: false
+
           global:
             extraEnvFrom:
               - secretRef:
                   name: mimir-bucket-secret
-          minio:
-            enabled: false
+
+          runtimeConfig:
+            ingester_limits:
+              max_ingestion_rate: 0
+            distributor_limits:
+              max_ingestion_rate: 0
+
           mimir:
             structuredConfig:
               common:
@@ -32,7 +68,10 @@ spec:
                     http:
                       insecure_skip_verify: true
               limits:
+                ingestion_rate: 0
                 out_of_order_time_window: 1d
+              distributor:
+                remote_timeout: 1m
               blocks_storage:
                 s3:
                   bucket_name: mimir-blocks
@@ -42,9 +81,7 @@ spec:
               ruler_storage:
                 s3:
                   bucket_name: mimir-ruler
-          ingester:
-            persistentVolume:
-              size: 25Gi
+
   destination:
     namespace: mimir
     server: https://kubernetes.default.svc
