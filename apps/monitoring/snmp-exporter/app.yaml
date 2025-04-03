@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: snmp-exporter
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus-snmp-exporter
+    targetRevision: 9.2.0
+    helm:
+      valuesObject:
+        serviceMonitor:
+          enabled: true
+          relabelings:
+            - sourceLabels: [__param_target]
+              targetLabel: instance
+          params:
+            - name: vr-u500x
+              target: 192.168.0.1
+  destination:
+    namespace: snmp-exporter
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
