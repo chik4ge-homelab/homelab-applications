@@ -52,9 +52,9 @@ spec:
 
           runtimeConfig:
             ingester_limits:
-              max_ingestion_rate: 0
+              max_ingestion_rate: 100000
             distributor_limits:
-              max_ingestion_rate: 0
+              max_ingestion_rate: 100000
 
           mimir:
             structuredConfig:
@@ -68,7 +68,7 @@ spec:
                     http:
                       insecure_skip_verify: true
               limits:
-                ingestion_rate: 0
+                ingestion_rate: 100000
                 out_of_order_time_window: 1d
               distributor:
                 remote_timeout: 1m
