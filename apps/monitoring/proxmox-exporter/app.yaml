@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: proxmox-exporter
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/monitoring/proxmox-exporter/secrets
+    - repoURL: https://starttoaster.github.io/proxmox-exporter
+      chart: proxmox-exporter
+      targetRevision: 0.2.7
+      helm:
+        valuesObject:
+          config:
+            api_insecure: true
+            secretRef:
+              name: proxmox-secret
+          serviceMonitor:
+            enabled: true
+
+  destination:
+    namespace: proxmox-exporter
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
