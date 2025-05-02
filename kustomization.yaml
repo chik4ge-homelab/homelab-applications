@@ -5,6 +5,7 @@ resources:
   - ./apps/devops/argocd/app.yaml
   - ./apps/devops/desceduler/app.yaml
   - ./apps/monitoring/metrics-server/app.yaml
+  - ./apps/monitoring/proxmox-exporter/app.yaml
   - ./apps/monitoring/mimir/app.yaml
   - ./apps/monitoring/node-exporter/app.yaml
   - ./apps/monitoring/snmp-exporter/app.yaml
@@ -16,4 +17,3 @@ resources:
   - ./apps/storage/democratic-csi/app.yaml
   - ./apps/storage/minio-operator/app.yaml
   - ./apps/storage/minio/app.yaml
-  - ./apps/storage/mysql-operator/app.yaml
