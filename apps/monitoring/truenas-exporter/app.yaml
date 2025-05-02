@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: truenas-exporter
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: tccr.io/truecharts
+    chart: truenas-exporter
+    targetRevision: 3.6.2
+    helm:
+      valuesObject:
+        service:
+          main:
+            type: LoadBalancer
+            loadBalancerIP: 192.168.2.1
+  destination:
+    namespace: truenas-exporter
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
