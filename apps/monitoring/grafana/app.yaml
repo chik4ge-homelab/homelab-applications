@@ -55,6 +55,8 @@ spec:
                   access: proxy
                   url: http://mimir-nginx.mimir.svc.cluster.local/prometheus
                   isDefault: true
+                  jsonData:
+                    timeout: 1800
 
           extraObjects:
             - apiVersion: external-secrets.io/v1beta1
