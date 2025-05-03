@@ -79,10 +79,10 @@ spec:
                 out_of_order_time_window: 24h
                 compactor_blocks_retention_period: 720h
               distributor:
-                remote_timeout: 2m
+                remote_timeout: 30m
               server:
-                http_server_read_timeout: 2m
-                http_server_write_timeout: 2m
+                http_server_read_timeout: 30m
+                http_server_write_timeout: 30m
               blocks_storage:
                 s3:
                   bucket_name: mimir-blocks
