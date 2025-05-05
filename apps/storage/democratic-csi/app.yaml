@@ -39,6 +39,12 @@ spec:
               driver: freenas-api-iscsi
           csiDriver:
             name: truenas-iscsi
+          controller:
+            driver:
+              enabled: true
+              image:
+                registry: docker.io/democraticcsi/democratic-csi
+                tag: next
   destination:
     namespace: democratic-csi
     server: https://kubernetes.default.svc
