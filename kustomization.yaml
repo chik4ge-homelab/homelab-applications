@@ -4,10 +4,11 @@ kind: Kustomization
 resources:
   - ./apps/devops/argocd/app.yaml
   - ./apps/devops/desceduler/app.yaml
+  - ./apps/monitoring/loki/app.yaml
   - ./apps/monitoring/metrics-server/app.yaml
-  - ./apps/monitoring/proxmox-exporter/app.yaml
   - ./apps/monitoring/mimir/app.yaml
   - ./apps/monitoring/node-exporter/app.yaml
+  - ./apps/monitoring/proxmox-exporter/app.yaml
   - ./apps/monitoring/snmp-exporter/app.yaml
   - ./apps/networking/cilium/app.yaml
   - ./apps/networking/cloudflared/app.yaml
