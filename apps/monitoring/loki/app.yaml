@@ -11,10 +11,6 @@ spec:
     targetRevision: 6.29.0
     helm:
       valuesObject:
-        global:
-          extraEnvFrom:
-            - secretRef:
-                name: loki-bucket-secret
         extraObjects:
           - apiVersion: external-secrets.io/v1beta1
             kind: ExternalSecret
@@ -35,6 +31,7 @@ spec:
                   remoteRef:
                     key: "fff70b9b-bc39-4c4b-831d-b2d400b8ee26"
         loki:
+          auth_enabled: false
           commonConfig:
             replication_factor: 3
           schemaConfig:
@@ -54,20 +51,29 @@ spec:
           ruler:
             enable_api: true
           storage:
+            type: s3
             bucketNames:
               chunks: loki-chunks
               ruler: loki-ruler
               admin: loki-admin
             s3:
-              endpoint: minio.minio.svc.cluster.local
+              endpoint: myminio-hl.minio.svc.cluster.local:9000
               accessKeyId: "${AWS_ACCESS_KEY_ID}"
               secretAccessKey: "${AWS_SECRET_ACCESS_KEY}"
-              insecure: true
+              insecure: false
+              s3ForcePathStyle: true
+              http_config:
+                insecure_skip_verify: true
         minio:
           enabled: false
         deploymentMode: SingleBinary
         singleBinary:
           replicas: 3
+          extraArgs:
+            - "-config.expand-env=true"
+          extraEnvFrom:
+            - secretRef:
+                name: loki-bucket-secret
         backend:
           replicas: 0
         read:

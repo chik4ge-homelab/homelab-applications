@@ -57,6 +57,13 @@ spec:
                   isDefault: true
                   jsonData:
                     timeout: 1800
+                - name: Loki
+                  type: loki
+                  access: proxy
+                  url: http://loki.loki.svc.cluster.local:3100
+                  isDefault: false
+                  jsonData:
+                    maxLines: 1000
 
           extraObjects:
             - apiVersion: external-secrets.io/v1beta1
