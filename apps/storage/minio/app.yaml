@@ -11,7 +11,7 @@ spec:
       path: apps/storage/minio/secrets
     - repoURL: https://operator.min.io/
       chart: tenant
-      targetRevision: 7.0.0
+      targetRevision: 7.1.1
       helm:
         valuesObject:
           tenant:
