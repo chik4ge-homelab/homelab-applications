@@ -9,6 +9,9 @@ spec:
     # - repoURL: https://github.com/chik4ge-homelab/homelab-applications
     #   targetRevision: main
     #   path: apps/games/minecraft-cube/secrets
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/games/minecraft-cube/pvcs
     - repoURL: https://itzg.github.io/minecraft-server-charts/
       chart: minecraft
       targetRevision: 4.26.3
@@ -55,10 +58,7 @@ spec:
           persistence:
             dataDir:
               enabled: true
-              size: 25Gi
-              accessModes:
-                - ReadWriteOnce
-              existingClaim: minecraft-cube-srv-pvc
+              existingClaim: minecraft-cube-vanilla-pvc
   destination:
     namespace: minecraft-cube
     server: https://kubernetes.default.svc
