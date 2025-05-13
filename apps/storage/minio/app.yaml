@@ -15,9 +15,8 @@ spec:
       helm:
         valuesObject:
           tenant:
-            configuration:
-              name: minio-tenant-config
             configSecret:
+              name: minio-tenant-config
               existingSecret: true
               accessKey:
               secretKey:
@@ -38,3 +37,6 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: "privileged"
