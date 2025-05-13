@@ -10,7 +10,7 @@ spec:
     chart: reloader
     targetRevision: v1.4.2
     helm:
-      values:
+      valuesObject:
         reloader:
           deployment:
             resources:
