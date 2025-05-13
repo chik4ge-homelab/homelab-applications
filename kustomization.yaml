@@ -13,6 +13,7 @@ resources:
   - ./apps/monitoring/snmp-exporter/app.yaml
   - ./apps/networking/cilium/app.yaml
   - ./apps/networking/cloudflared/app.yaml
+  - ./apps/networking/tailscale/app.yaml
   - ./apps/secrets/cert-manager/app.yaml
   - ./apps/secrets/external-secrets/app.yaml
   - ./apps/secrets/trust-manager/app.yaml

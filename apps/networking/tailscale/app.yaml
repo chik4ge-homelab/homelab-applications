@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tailscale
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/game/networking/tailscale/secrets
+    - repoURL: https://pkgs.tailscale.com/helmcharts/
+      chart: tailscale-operator
+      targetRevision: 4.26.3
+  destination:
+    namespace: tailscale
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
