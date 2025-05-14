@@ -46,6 +46,8 @@ spec:
             memory: 1G
             serviceType: LoadBalancer
             loadBalancerClass: tailscale
+          serviceAnnotations:
+            tailscale.com/hostname: minecraft-cube-vanilla
 
           rcon:
             enabled: false # TODO: enable rcon

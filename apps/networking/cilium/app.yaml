@@ -29,6 +29,12 @@ spec:
             value: localhost
           - name: k8sServicePort
             value: "7445"
+          - name: routingMode
+            value: "native"
+          - name: ipv4NativeRoutingCIDR
+            value: "10.96.0.0/12"
+          - name: socketLB.hostNamespaceOnly
+            value: "true"
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/networking/cilium/l2announce
@@ -38,6 +44,5 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
     syncOptions:
       - CreateNamespace=true
