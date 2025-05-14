@@ -11,7 +11,7 @@ spec:
       path: apps/monitoring/mimir/secrets
     - repoURL: https://grafana.github.io/helm-charts
       chart: mimir-distributed
-      targetRevision: 5.7.0
+      targetRevision: 5.8.0-weekly.341
       helm:
         valuesObject:
           compactor:
@@ -19,13 +19,12 @@ spec:
               size: 10Gi
 
           distributor:
-            replicas: 3
+            replicas: 2
             resources:
-              requests:
-                cpu: 200m
-                memory: 2Gi
               limits:
-                memory: 2.5Gi
+                memory: 5.7Gi
+              requests:
+                memory: 4Gi
 
           ingester:
             replicas: 2
