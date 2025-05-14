@@ -157,6 +157,17 @@ spec:
                   url = "http://mimir-nginx.mimir.svc.cluster.local/api/v1/push"
                 }
               }
+
+              loki.source.kubernetes "pods" {
+                targets = discovery.kubernetes.pods.targets
+                forward_to = [loki.write.default.receiver]
+              }
+
+              loki.write "default" {
+                endpoint {
+                  url = "http://loki.loki.svc.cluster.local:3100/loki/api/v1/push"
+                }
+              }
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
       targetRevision: 20.0.0
