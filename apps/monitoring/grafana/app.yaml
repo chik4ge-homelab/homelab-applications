@@ -116,6 +116,20 @@ spec:
               grants:
                 - ALL
                 - PRIVILEGES
+          haproxy:
+            resources:
+              requests:
+                memory: 128Mi
+                cpu: 100m
+          pxc:
+            resources:
+              requests:
+                cpu: 100m
+          logcollector:
+            resources:
+              requests:
+                cpu: 0
+                memory: 0
 
   destination:
     namespace: grafana
