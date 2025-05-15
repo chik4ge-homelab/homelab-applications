@@ -19,10 +19,10 @@ spec:
         valuesObject:
           resources:
             requests:
-              memory: 1Gi
+              memory: 4Gi
               cpu: 1000m
             limits:
-              memory: 1Gi
+              memory: 4Gi
           workloadAsStatefulSet: true
           strategyType: RollingUpdate
           nodeSelector:
@@ -43,7 +43,7 @@ spec:
             motd: "Welcome to Minecraft on Kubernetes!"
             onlineMode: true
             enforceSecureProfile: true
-            memory: 1G
+            memory: 4096M
             serviceType: LoadBalancer
             loadBalancerClass: tailscale
           serviceAnnotations:
