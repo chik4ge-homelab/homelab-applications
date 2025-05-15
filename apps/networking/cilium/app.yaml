@@ -31,8 +31,6 @@ spec:
             value: "7445"
           - name: routingMode
             value: "native"
-          - name: ipv4NativeRoutingCIDR
-            value: "10.96.0.0/12"
           - name: socketLB.hostNamespaceOnly
             value: "true"
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
