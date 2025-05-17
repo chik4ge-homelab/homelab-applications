@@ -1,0 +1,78 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minecraft-cube
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    # - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    #   targetRevision: main
+    #   path: apps/games/minecraft-cube/secrets
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/games/minecraft-cube/pvcs
+    - repoURL: https://itzg.github.io/minecraft-server-charts/
+      chart: minecraft
+      targetRevision: 4.26.3
+      helm:
+        valuesObject:
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 1000m
+            limits:
+              memory: 4Gi
+          workloadAsStatefulSet: true
+          strategyType: RollingUpdate
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  preference:
+                    matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values:
+                          - k8s-w-edelweiss
+          minecraftServer:
+            eula: TRUE
+            version: 1.21.4
+            type: PAPER
+            difficulty: peaceful
+            announcePlayerAchievements: false
+            generateStructures: false
+            spawnAnimals: false
+            spawnMonsters: false
+            spawnNPCs: false
+            spawnProtection: 0
+            gameMode: creative
+            motd: "Welcome to Minecraft on Kubernetes!"
+            onlineMode: true
+            enforceSecureProfile: true
+            memory: 4096M
+            serviceType: LoadBalancer
+            loadBalancerClass: tailscale
+          serviceAnnotations:
+            tailscale.com/hostname: minecraft-cube-vanilla
+
+          rcon:
+            enabled: false # TODO: enable rcon
+
+          mcbackup:
+            enabled: false # TODO: enable mcbackup
+
+          # envFrom: # TODO: enable envFrom whitelist
+
+          persistence:
+            dataDir:
+              enabled: true
+              existingClaim: minecraft-cube-vanilla-pvc
+  destination:
+    namespace: minecraft-cube
+    server: { { .Values.spec.destination.server } }
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

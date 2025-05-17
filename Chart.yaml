@@ -1,0 +1,5 @@
+apiVersion: v2
+name: homelab-applications
+version: 0.1.0
+description: App of Apps Helm chart for homelab applications
+type: application
