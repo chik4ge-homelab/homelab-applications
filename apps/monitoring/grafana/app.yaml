@@ -66,7 +66,7 @@ spec:
                     maxLines: 1000
 
           extraObjects:
-            - apiVersion: external-secrets.io/v1beta1
+            - apiVersion: external-secrets.io/v1
               kind: ExternalSecret
               metadata:
                 name: grafana-secret
@@ -82,7 +82,7 @@ spec:
                     remoteRef:
                       key: "f7b7d08e-0571-4685-a889-b275010f851f"
 
-            - apiVersion: external-secrets.io/v1beta1
+            - apiVersion: external-secrets.io/v1
               kind: ExternalSecret
               metadata:
                 name: mysql-secret
