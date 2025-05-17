@@ -29,8 +29,6 @@ spec:
             value: localhost
           - name: k8sServicePort
             value: "7445"
-          - name: routingMode
-            value: "native"
           - name: socketLB.hostNamespaceOnly
             value: "true"
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
