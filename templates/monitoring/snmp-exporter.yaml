@@ -23,7 +23,7 @@ spec:
               target: 192.168.0.4
   destination:
     namespace: snmp-exporter
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

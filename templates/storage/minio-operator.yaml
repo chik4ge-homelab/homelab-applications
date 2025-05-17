@@ -11,7 +11,7 @@ spec:
     targetRevision: 7.1.1
   destination:
     namespace: minio-operator
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

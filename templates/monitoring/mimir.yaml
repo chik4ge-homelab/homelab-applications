@@ -95,7 +95,7 @@ spec:
 
   destination:
     namespace: mimir
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

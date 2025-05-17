@@ -23,7 +23,7 @@ spec:
 
   destination:
     namespace: proxmox-exporter
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

@@ -14,7 +14,7 @@ spec:
         args:
           - --kubelet-insecure-tls
   destination:
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
     namespace: kube-system
   syncPolicy:
     automated:

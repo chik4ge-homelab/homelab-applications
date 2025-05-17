@@ -21,7 +21,7 @@ spec:
               node: true
   destination:
     namespace: kube-system
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

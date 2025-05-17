@@ -47,7 +47,7 @@ spec:
                 tag: next
   destination:
     namespace: democratic-csi
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

@@ -14,7 +14,7 @@ spec:
       targetRevision: 1.82.5
   destination:
     namespace: tailscale
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true

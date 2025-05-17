@@ -172,7 +172,7 @@ spec:
       chart: prometheus-operator-crds
       targetRevision: 20.0.0
   destination:
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
     namespace: alloy
   syncPolicy:
     automated:

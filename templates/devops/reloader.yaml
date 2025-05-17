@@ -21,7 +21,7 @@ spec:
                 cpu: 10m
                 memory: 128Mi
   destination:
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
     namespace: reloader
   syncPolicy:
     automated:

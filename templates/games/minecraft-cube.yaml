@@ -70,7 +70,7 @@ spec:
               existingClaim: minecraft-cube-vanilla-pvc
   destination:
     namespace: minecraft-cube
-    server: { { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
       prune: true
