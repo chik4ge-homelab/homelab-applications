@@ -9,6 +9,48 @@ spec:
     - repoURL: https://kubernetes-sigs.github.io/descheduler/
       targetRevision: 0.33.0
       chart: descheduler
+      helm:
+        valuesObject:
+          deschedulerPolicy:
+            profiles:
+              - name: homelab-policy
+                pluginConfig:
+                  - name: DefaultEvictor
+                    args:
+                      ignorePvcPods: true
+                      evictLocalStoragePods: true
+                  - name: RemoveDuplicates
+                  - name: RemovePodsHavingTooManyRestarts
+                    args:
+                      podRestartThreshold: 50
+                      includingInitContainers: true
+                  - name: RemovePodsViolatingNodeAffinity
+                    args:
+                      nodeAffinityType:
+                        - requiredDuringSchedulingIgnoredDuringExecution
+                  - name: RemovePodsViolatingNodeTaints
+                  - name: RemovePodsViolatingInterPodAntiAffinity
+                  - name: RemovePodsViolatingTopologySpreadConstraint
+                  - name: LowNodeUtilization
+                    args:
+                      thresholds:
+                        cpu: 40
+                        memory: 40
+                      targetThresholds:
+                        cpu: 60
+                        memory: 60
+                plugins:
+                  balance:
+                    enabled:
+                      - RemoveDuplicates
+                      - RemovePodsViolatingTopologySpreadConstraint
+                      - LowNodeUtilization
+                  deschedule:
+                    enabled:
+                      - RemovePodsHavingTooManyRestarts
+                      - RemovePodsViolatingNodeTaints
+                      - RemovePodsViolatingNodeAffinity
+                      - RemovePodsViolatingInterPodAntiAffinity
 
   destination:
     namespace: kube-system

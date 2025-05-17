@@ -14,6 +14,8 @@ spec:
       chart: argo-cd
       helm:
         valuesObject:
+          global:
+            addPrometheusAnnotations: true
           configs:
             cm:
               url: https://argocd.chik4ge.me
@@ -39,18 +41,37 @@ spec:
                 g, chik4ge-homelab:admin, role:admin
           redis-ha:
             enabled: true
+            haproxy:
+              metrics:
+                enabled: true
 
           controller:
             replicas: 1
+            metrics:
+              enabled: true
 
           server:
             replicas: 2
+            metrics:
+              enabled: true
 
           repoServer:
             replicas: 2
+            metrics:
+              enabled: true
 
           applicationSet:
             replicas: 2
+            metrics:
+              enabled: true
+
+          dex:
+            metrics:
+              enabled: true
+          
+          redis:
+            metrics:
+              enabled: true
   destination:
     namespace: argocd
     server: https://kubernetes.default.svc
