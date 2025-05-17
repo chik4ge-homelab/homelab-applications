@@ -25,9 +25,16 @@ spec:
               memory: 4Gi
           workloadAsStatefulSet: true
           strategyType: RollingUpdate
-          nodeSelector:
-            kubernetes.io/hostname: k8s-w-edelweiss
-
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  preference:
+                    matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values:
+                          - k8s-w-edelweiss
           minecraftServer:
             eula: TRUE
             version: 1.21.4
