@@ -35,7 +35,7 @@ spec:
                   value: talos-etcd-backup
                 # S3_PREFIX is optional; if omitted it will fall back to the cluster name.
                 - name: S3_PREFIX
-                  value: "backups/backup"
+                  value: "backups"
                 - name: AGE_X25519_PUBLIC_KEY
                   value: "age16d0xzhr4qk7wgva9vknqnalgnv444andqanu8mwqamzhk7hscdjsnftn5e"
                 # USE_PATH_STYLE is optional; set this to false if you have another s3 like endpoint such as minio.
