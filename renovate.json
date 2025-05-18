@@ -3,9 +3,15 @@
   "extends": [
     "config:recommended"
   ],
+  "reviewers": [
+    "chik4ge"
+  ],
+  "assignees": [
+    "chik4ge"
+  ],
   "argocd": {
     "fileMatch": [
-      "apps/.*\\.yaml"
+      "templates/.*\\.yaml"
     ]
   }
 }
