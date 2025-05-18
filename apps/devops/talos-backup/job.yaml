@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: talos-backup
+spec:
+  schedule: "0/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: talos-backup
+              image: ghcr.io/siderolabs/talos-backup:v0.1.0-beta.3
+              workingDir: /tmp
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: BUCKET
+                  value: talos-etcd-backup
+                # S3_PREFIX is optional; if omitted it will fall back to the cluster name.
+                - name: S3_PREFIX
+                  value: "backups/backup"
+                - name: AGE_X25519_PUBLIC_KEY
+                  value: "age16d0xzhr4qk7wgva9vknqnalgnv444andqanu8mwqamzhk7hscdjsnftn5e"
+                # USE_PATH_STYLE is optional; set this to false if you have another s3 like endpoint such as minio.
+                # If not, the S3 will resolve to a hostname based on https://$BUCKET_NAME.$CUSTOM_S3_ENDPOINT/
+                - name: USE_PATH_STYLE
+                  value: "true"
+              securityContext:
+                runAsUser: 1000
+                runAsGroup: 1000
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                capabilities:
+                  drop:
+                    - ALL
+                seccompProfile:
+                  type: RuntimeDefault
+              command:
+                - /talos-backup
+              volumeMounts:
+                - mountPath: /tmp
+                  name: tmp
+                - mountPath: /var/run/secrets/talos.dev
+                  name: talos-secrets
+          restartPolicy: OnFailure
+          volumes:
+            - emptyDir: {}
+              name: tmp
+            - name: talos-secrets
+              secret:
+                secretName: talos-backup-secrets

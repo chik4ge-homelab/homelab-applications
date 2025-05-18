@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: talos-backup
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    targetRevision: main
+    path: apps/devops/talos-backup
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: talos-backup
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
