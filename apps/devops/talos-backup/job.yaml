@@ -29,6 +29,8 @@ spec:
                     secretKeyRef:
                       name: talos-backup-externalsecrets
                       key: endpoint
+                - name: AWS_REGION
+                  value: auto
                 - name: BUCKET
                   value: talos-etcd-backup
                 # S3_PREFIX is optional; if omitted it will fall back to the cluster name.
