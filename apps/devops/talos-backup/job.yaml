@@ -14,6 +14,21 @@ spec:
               workingDir: /tmp
               imagePullPolicy: IfNotPresent
               env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: talos-backup-externalsecrets
+                      key: access-key-id
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: talos-backup-externalsecrets
+                      key: secret-access-key
+                - name: CUSTOM_S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: talos-backup-externalsecrets
+                      key: endpoint
                 - name: BUCKET
                   value: talos-etcd-backup
                 # S3_PREFIX is optional; if omitted it will fall back to the cluster name.
