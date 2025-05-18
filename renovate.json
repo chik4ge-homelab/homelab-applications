@@ -10,13 +10,13 @@
     "chik4ge"
   ],
   "argocd": {
-    "fileMatch": [
-      "templates/.*\\.yaml"
+    "managerFilePatterns": [
+      "/templates/.+\\.yaml$/"
     ]
   },
   "kubernetes": {
     "managerFilePatterns": [
-      "apps/.*\\.yaml"
+      "/apps/.+\\.yaml$/"
     ]
   }
 }
