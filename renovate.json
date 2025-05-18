@@ -13,5 +13,10 @@
     "fileMatch": [
       "templates/.*\\.yaml"
     ]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "apps/.*\\.yaml"
+    ]
   }
 }
