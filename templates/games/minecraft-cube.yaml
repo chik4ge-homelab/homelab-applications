@@ -12,12 +12,13 @@ spec:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/games/minecraft-cube/pvcs
+      ref: repo
     - repoURL: https://itzg.github.io/minecraft-server-charts/
       chart: minecraft
       targetRevision: 4.26.3
       helm:
         valueFiles:
-          - apps/games/minecraft-cube/values/vanilla.yaml
+          - $repo/apps/games/minecraft-cube/values/vanilla.yaml
   destination:
     namespace: minecraft-cube
     server: {{ .Values.spec.destination.server }}
