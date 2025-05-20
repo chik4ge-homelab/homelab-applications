@@ -5,10 +5,10 @@ sidecarContainers: []
 
 resources:
   requests:
-    memory: 4Gi
+    memory: 5Gi
     cpu: 1000m
   limits:
-    memory: 4Gi
+    memory: 5Gi
 
 workloadAsStatefulSet: true
 strategyType: RollingUpdate
@@ -39,7 +39,7 @@ minecraftServer:
   motd: "Welcome to Minecraft on Kubernetes!"
   onlineMode: true
   enforceSecureProfile: true
-  memory: 4096M
+  memory: 4G
   serviceType: LoadBalancer
   loadBalancerClass: tailscale
   modrinth:
