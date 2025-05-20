@@ -44,9 +44,9 @@ minecraftServer:
   loadBalancerClass: tailscale
   modrinth:
     projects:
-      - "terralith"
-      - "terratonic"
-      - "william-wythers-overhauled-overworld-(datapack)"
+      - "datapack:terralith"
+      - "datapack:terratonic:BE3gZYQ5"
+      - "datapack:william-wythers-overhauled-overworld-(datapack)"
 serviceAnnotations:
   tailscale.com/hostname: minecraft-cube-vanilla
 
