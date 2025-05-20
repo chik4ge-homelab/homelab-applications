@@ -29,6 +29,7 @@ spec:
                       nodeAffinityType:
                         - requiredDuringSchedulingIgnoredDuringExecution
                         - preferredDuringSchedulingIgnoredDuringExecution
+                      nodeFit: true
                   - name: RemovePodsViolatingNodeTaints
                   - name: RemovePodsViolatingInterPodAntiAffinity
                   - name: RemovePodsViolatingTopologySpreadConstraint
