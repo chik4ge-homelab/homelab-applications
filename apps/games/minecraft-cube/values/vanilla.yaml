@@ -8,6 +8,7 @@ resources:
     memory: 5Gi
     cpu: 1000m
   limits:
+    cpu: 1000m
     memory: 5Gi
 
 workloadAsStatefulSet: true
