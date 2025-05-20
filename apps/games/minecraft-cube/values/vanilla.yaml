@@ -45,7 +45,7 @@ minecraftServer:
   modrinth:
     projects:
       - "datapack:terralith"
-      - "datapack:terratonic:BE3gZYQ5"
+      - "datapack:terratonic"
       - "datapack:william-wythers-overhauled-overworld-(datapack)"
 serviceAnnotations:
   tailscale.com/hostname: minecraft-cube-vanilla
