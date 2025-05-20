@@ -17,6 +17,7 @@ spec:
                 pluginConfig:
                   - name: DefaultEvictor
                     args:
+                      nodeFit: true
                       ignorePvcPods: true
                       evictLocalStoragePods: true
                   - name: RemoveDuplicates
@@ -29,7 +30,6 @@ spec:
                       nodeAffinityType:
                         - requiredDuringSchedulingIgnoredDuringExecution
                         - preferredDuringSchedulingIgnoredDuringExecution
-                      nodeFit: true
                   - name: RemovePodsViolatingNodeTaints
                   - name: RemovePodsViolatingInterPodAntiAffinity
                   - name: RemovePodsViolatingTopologySpreadConstraint
