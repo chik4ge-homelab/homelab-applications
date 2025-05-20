@@ -16,7 +16,7 @@ strategyType: RollingUpdate
 
 affinity:
   nodeAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
+    requiredDuringSchedulingIgnoredDuringExecution:
       - weight: 100
         preference:
           matchExpressions:
