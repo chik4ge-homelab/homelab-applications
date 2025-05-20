@@ -17,9 +17,8 @@ strategyType: RollingUpdate
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        preference:
-          matchExpressions:
+      nodeSelectorTerms:
+        - matchExpressions:
             - key: kubernetes.io/hostname
               operator: In
               values:
