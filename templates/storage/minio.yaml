@@ -32,7 +32,7 @@ spec:
             certificate:
               requestAutoCert: false
               externalCertSecret:
-                - name: minio-tls
+                - name: minio-tls-secret
                   type: cert-manager.io/v1
               externalCaCertSecret:
                 - name: operator-ca-tls-minio
