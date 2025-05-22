@@ -31,6 +31,9 @@ spec:
                 volumesPerServer: 4
             certificate:
               requestAutoCert: false
+              externalCertSecret:
+                - name: minio-tls
+                  type: cert-manager.io/v1
               externalCaCertSecret:
                 - name: operator-ca-tls-minio
                   type: cert-manager.io/v1
