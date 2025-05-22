@@ -29,6 +29,11 @@ spec:
                 name: pool-0
                 size: 25Gi
                 volumesPerServer: 4
+            certificate:
+              requestAutoCert: false
+              externalCaCertSecret:
+                - name: minio-tls-secret
+                  type: cert-manager.io/v1
   destination:
     namespace: minio
     server: {{ .Values.spec.destination.server }}
