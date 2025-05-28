@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: argocd-notifications-cm
 data:
+  context: |
+    argocdUrl: https://argocd.chik4ge.me
   service.webhook.discord: |
     url: $discord-webhook-url
     headers:
@@ -21,123 +23,149 @@ data:
         - on-sync-status-unknown
         - on-sync-succeeded
   template.app-created: |
+    message: |
+      Application {{.app.metadata.name}} has been created.
     webhook:
       discord:
         method: POST
         body: |
           {
-            "text": Application {{.app.metadata.name}} has been created.
+            "embeds": [{
+              "title": ":sparkles: Application Created :sparkles:",
+              "description": "Application [**{{.app.metadata.name}}**]({{.context.argocdUrl}}/applications/{{.app.metadata.name}}) has been created.",
+              "color": 3066993,
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-deleted: |
+    message: |
+      Application {{.app.metadata.name}} has been deleted.
     webhook:
       discord:
         method: POST
         body: |
           {
-            "text": Application {{.app.metadata.name}} has been deleted.
+            "embeds": [{
+              "title": ":wastebasket: Application Deleted :wastebasket:",
+              "description": "Application **{{.app.metadata.name}}** has been deleted.",
+              "color": 15158332,
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-deployed: |
     message: |
-      {{if eq .serviceType "webhook"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} is now running new version of deployments manifests.
+      :white_check_mark: Application {{.app.metadata.name}} is now running new version of deployments manifests.
     webhook:
       discord:
         method: POST
         body: |
           {
-            "title": "{{ .app.metadata.name}}",
-            "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-            "color": "#18be52",
-            "fields": [
-            {
-              "title": "Sync Status",
-              "value": "{{.app.status.sync.status}}",
-              "short": true
-            },
-            {
-              "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-              "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
-              "short": true
-            },
-            {
-              "title": "Revision",
-              "value": "{{.app.status.sync.revision}}",
-              "short": true
-            }
-            {{range $index, $c := .app.status.conditions}}
-            ,
-            {
-              "title": "{{$c.type}}",
-              "value": "{{$c.message}}",
-              "short": true
-            }
-            {{end}}
-            ]
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Deployed",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+              "description": ":white_check_mark: Application **{{.app.metadata.name}}** is now running new version of deployments manifests.",
+              "color": 1621842,
+              "fields": [
+                {
+                  "name": "Sync Status",
+                  "value": "{{.app.status.sync.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                },
+                {
+                  "name": "Revision",
+                  "value": "{{.app.status.sync.revision}}",
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-health-degraded: |
     message: |
-      {{if eq .serviceType "webhook"}}:exclamation:{{end}} Application {{.app.metadata.name}} has degraded.
+      :exclamation: Application {{.app.metadata.name}} has degraded.
       Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
     webhook:
       discord:
         method: POST
         body: |
           {
-            "title": "{{ .app.metadata.name}}",
-            "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-            "color": "#f4c030",
-            "fields": [
-            {
-              "title": "Health Status",
-              "value": "{{.app.status.health.status}}",
-              "short": true
-            },
-            {
-              "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-              "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
-              "short": true
-            }
-            {{range $index, $c := .app.status.conditions}}
-            ,
-            {
-              "title": "{{$c.type}}",
-              "value": "{{$c.message}}",
-              "short": true
-            }
-            {{end}}
-            ]
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Health Degraded",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+              "description": ":exclamation: Application **{{.app.metadata.name}}** has degraded.",
+              "color": 15949872,
+              "fields": [
+                {
+                  "name": "Health Status",
+                  "value": "{{.app.status.health.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-sync-failed: |
     message: |
-      {{if eq .serviceType "webhook"}}:exclamation:{{end}}  The sync operation of application {{.app.metadata.name}} has failed at {{.app.status.operationState.finishedAt}} with the following error: {{.app.status.operationState.message}}
+      :x:  The sync operation of application {{.app.metadata.name}} has failed at {{.app.status.operationState.finishedAt}} with the following error: {{.app.status.operationState.message}}
       Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
     webhook:
       discord:
         method: POST
         body: |
           {
-            "title": "{{ .app.metadata.name}}",
-            "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-            "color": "#E96D76",
-            "fields": [
-            {
-              "title": "Sync Status",
-              "value": "{{.app.status.sync.status}}",
-              "short": true
-            },
-            {
-              "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-              "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
-              "short": true
-            }
-            {{range $index, $c := .app.status.conditions}}
-            ,
-            {
-              "title": "{{$c.type}}",
-              "value": "{{$c.message}}",
-              "short": true
-            }
-            {{end}}
-            ]
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Sync Failed",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true",
+              "description": ":x: The sync operation of application **{{.app.metadata.name}}** has failed at {{.app.status.operationState.finishedAt}}.\n**Error:** {{.app.status.operationState.message}}",
+              "color": 15297910,
+              "fields": [
+                {
+                  "name": "Sync Status",
+                  "value": "{{.app.status.sync.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-sync-running: |
     message: |
@@ -148,33 +176,37 @@ data:
         method: POST
         body: |
           {
-            "title": "{{ .app.metadata.name}}",
-            "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-            "color": "#0DADEA",
-            "fields": [
-            {
-              "title": "Sync Status",
-              "value": "{{.app.status.sync.status}}",
-              "short": true
-            },
-            {
-              "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-              "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
-              "short": true
-            }
-            {{range $index, $c := .app.status.conditions}}
-            ,
-            {
-              "title": "{{$c.type}}",
-              "value": "{{$c.message}}",
-              "short": true
-            }
-            {{end}}
-            ]
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Sync Running",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true",
+              "description": ":gear: The sync operation of application **{{.app.metadata.name}}** has started at {{.app.status.operationState.startedAt}}.",
+              "color": 896746,
+              "fields": [
+                {
+                  "name": "Sync Status",
+                  "value": "{{.app.status.sync.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-sync-status-unknown: |
     message: |
-      {{if eq .serviceType "webhook"}}:exclamation:{{end}} Application {{.app.metadata.name}} sync is 'Unknown'.
+      :question: Application {{.app.metadata.name}} sync is 'Unknown'.
       Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
       {{if ne .serviceType "webhook"}}
       {{range $c := .app.status.conditions}}
@@ -186,62 +218,70 @@ data:
         method: POST
         body: |
           {
-            "title": "{{ .app.metadata.name}}",
-            "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-            "color": "#E96D76",
-            "fields": [
-            {
-              "title": "Sync Status",
-              "value": "{{.app.status.sync.status}}",
-              "short": true
-            },
-            {
-              "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-              "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
-              "short": true
-            }
-            {{range $index, $c := .app.status.conditions}}
-            ,
-            {
-              "title": "{{$c.type}}",
-              "value": "{{$c.message}}",
-              "short": true
-            }
-            {{end}}
-            ]
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Sync Status Unknown",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+              "description": ":question: Application **{{.app.metadata.name}}** sync status is 'Unknown'.",
+              "color": 15297910,
+              "fields": [
+                {
+                  "name": "Sync Status",
+                  "value": "{{.app.status.sync.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   template.app-sync-succeeded: |
     message: |
-      {{if eq .serviceType "webhook"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} has been successfully synced at {{.app.status.operationState.finishedAt}}.
+      :white_check_mark: Application {{.app.metadata.name}} has been successfully synced at {{.app.status.operationState.finishedAt}}.
       Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
     webhook:
       discord:
         method: POST
         body: |
           {
-            "title": "{{ .app.metadata.name}}",
-            "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-            "color": "#18be52",
-            "fields": [
-            {
-              "title": "Sync Status",
-              "value": "{{.app.status.sync.status}}",
-              "short": true
-            },
-            {
-              "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-              "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
-              "short": true
-            }
-            {{range $index, $c := .app.status.conditions}}
-            ,
-            {
-              "title": "{{$c.type}}",
-              "value": "{{$c.message}}",
-              "short": true
-            }
-            {{end}}
-            ]
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Sync Succeeded",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true",
+              "description": ":white_check_mark: Application **{{.app.metadata.name}}** has been successfully synced at {{.app.status.operationState.finishedAt}}.",
+              "color": 1621842,
+              "fields": [
+                {
+                  "name": "Sync Status",
+                  "value": "{{.app.status.sync.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
           }
   trigger.on-created: |
     - description: Application is created.
