@@ -5,7 +5,7 @@ metadata:
 data:
   service.webhook.discord: |
     url: $discord-webhook-url
-  subsciptions: |
+  subscriptions: |
     - recipients:
         - discord
       triggers:
