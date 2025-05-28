@@ -5,6 +5,8 @@ metadata:
 data:
   service.webhook.discord: |
     url: $discord-webhook-url
+    headers:
+      Content-Type: application/json
   subscriptions: |
     - recipients:
         - discord
