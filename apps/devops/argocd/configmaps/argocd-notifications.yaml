@@ -6,7 +6,8 @@ data:
   service.webhook.discord: |
     url: $discord-webhook-url
     headers:
-      Content-Type: application/json
+    - name: Content-Type
+      value: application/json
   subscriptions: |
     - recipients:
         - discord
@@ -23,12 +24,18 @@ data:
     webhook:
       discord:
         method: POST
-        body: Application {{.app.metadata.name}} has been created.
+        body: |
+          {
+            "text": Application {{.app.metadata.name}} has been created.
+          }
   template.app-deleted: |
     webhook:
       discord:
         method: POST
-        body: Application {{.app.metadata.name}} has been deleted.
+        body: |
+          {
+            "text": Application {{.app.metadata.name}} has been deleted.
+          }
   template.app-deployed: |
     message: |
       {{if eq .serviceType "webhook"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} is now running new version of deployments manifests.
@@ -36,7 +43,7 @@ data:
       discord:
         method: POST
         body: |
-          [{
+          {
             "title": "{{ .app.metadata.name}}",
             "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
             "color": "#18be52",
@@ -65,7 +72,7 @@ data:
             }
             {{end}}
             ]
-          }]
+          }
   template.app-health-degraded: |
     message: |
       {{if eq .serviceType "webhook"}}:exclamation:{{end}} Application {{.app.metadata.name}} has degraded.
@@ -74,7 +81,7 @@ data:
       discord:
         method: POST
         body: |
-          [{
+          {
             "title": "{{ .app.metadata.name}}",
             "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
             "color": "#f4c030",
@@ -98,7 +105,7 @@ data:
             }
             {{end}}
             ]
-          }]
+          }
   template.app-sync-failed: |
     message: |
       {{if eq .serviceType "webhook"}}:exclamation:{{end}}  The sync operation of application {{.app.metadata.name}} has failed at {{.app.status.operationState.finishedAt}} with the following error: {{.app.status.operationState.message}}
@@ -107,7 +114,7 @@ data:
       discord:
         method: POST
         body: |
-          [{
+          {
             "title": "{{ .app.metadata.name}}",
             "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
             "color": "#E96D76",
@@ -131,7 +138,7 @@ data:
             }
             {{end}}
             ]
-          }]
+          }
   template.app-sync-running: |
     message: |
       The sync operation of application {{.app.metadata.name}} has started at {{.app.status.operationState.startedAt}}.
@@ -140,7 +147,7 @@ data:
       discord:
         method: POST
         body: |
-          [{
+          {
             "title": "{{ .app.metadata.name}}",
             "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
             "color": "#0DADEA",
@@ -164,7 +171,7 @@ data:
             }
             {{end}}
             ]
-          }]
+          }
   template.app-sync-status-unknown: |
     message: |
       {{if eq .serviceType "webhook"}}:exclamation:{{end}} Application {{.app.metadata.name}} sync is 'Unknown'.
@@ -178,7 +185,7 @@ data:
       discord:
         method: POST
         body: |
-          [{
+          {
             "title": "{{ .app.metadata.name}}",
             "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
             "color": "#E96D76",
@@ -202,7 +209,7 @@ data:
             }
             {{end}}
             ]
-          }]
+          }
   template.app-sync-succeeded: |
     message: |
       {{if eq .serviceType "webhook"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} has been successfully synced at {{.app.status.operationState.finishedAt}}.
@@ -211,7 +218,7 @@ data:
       discord:
         method: POST
         body: |
-          [{
+          {
             "title": "{{ .app.metadata.name}}",
             "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
             "color": "#18be52",
@@ -235,7 +242,7 @@ data:
             }
             {{end}}
             ]
-          }]
+          }
   trigger.on-created: |
     - description: Application is created.
       oncePer: app.metadata.name
