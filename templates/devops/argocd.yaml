@@ -72,6 +72,57 @@ spec:
           redis:
             metrics:
               enabled: true
+              
+          # ArgoCD Notifications Controller の設定
+          notifications:
+            enabled: true
+            metrics:
+              enabled: true
+            secret:
+              create: false
+              name: argocd-notifications-secret
+            templates:
+              app-sync-running: |
+                message: |
+                  The sync operation of application {{.app.metadata.name}} has started at {{.app.status.operationState.startedAt}}.
+                  Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
+                discord:
+                  attachments: |
+                    [{
+                      "title": "{{ .app.metadata.name}}",
+                      "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                      "color": "#0DADEA",
+                      "fields": [
+                      {
+                        "title": "Sync Status",
+                        "value": "{{.app.status.sync.status}}",
+                        "short": true
+                      },
+                      {
+                        "title": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                        "value": {{- if .app.spec.source }} ":arrow_heading_up: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:arrow_heading_up: {{ $source.repoURL }}{{- end }}" {{- end }},
+                        "short": true
+                      }
+                      {{range $index, $c := .app.status.conditions}}
+                      ,
+                      {
+                        "title": "{{$c.type}}",
+                        "value": "{{$c.message}}",
+                        "short": true
+                      }
+                      {{end}}
+                      ]
+                    }]
+            triggers:
+              on-sync-running: |
+                - description: Application is being synced
+                  oncePer: app.status.operationState?.syncResult?.revision
+                  send: [app-sync-running]
+                  when: app.status.operationState != nil and app.status.operationState.phase in ['Running']
+            notifiers:
+              discord:
+                enabled: true
+                token: $discord-webhook-url
   destination:
     namespace: argocd
     server: {{ .Values.spec.destination.server }}
