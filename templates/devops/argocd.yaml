@@ -84,33 +84,33 @@ spec:
             templates:
               app-sync-running: |
                 message: |
-                  The sync operation of application \{{ .app.metadata.name \}} has started at \{{ .app.status.operationState.startedAt \}}.
-                  Sync operation details are available at: \{{ .context.argocdUrl \}}/applications/\{{ .app.metadata.name \}}?operation=true .
+                  The sync operation of application {{ "{{" }}.app.metadata.name{{ "}}" }} has started at {{ "{{" }}.app.status.operationState.startedAt{{ "}}" }}.
+                  Sync operation details are available at: {{ "{{" }}.context.argocdUrl{{ "}}" }}/applications/{{ "{{" }}.app.metadata.name{{ "}}" }}?operation=true .
                 discord:
                   attachments: |
                     [{
-                      "title": "\{{ .app.metadata.name \}}",
-                      "title_link":"\{{ .context.argocdUrl \}}/applications/\{{ .app.metadata.name \}}",
+                      "title": "{{ "{{" }} .app.metadata.name{{ "}}" }}",
+                      "title_link":"{{ "{{" }}.context.argocdUrl{{ "}}" }}/applications/{{ "{{" }}.app.metadata.name{{ "}}" }}",
                       "color": "#0DADEA",
                       "fields": [
                       {
                         "title": "Sync Status",
-                        "value": "\{{ .app.status.sync.status \}}",
+                        "value": "{{ "{{" }}.app.status.sync.status{{ "}}" }}",
                         "short": true
                       },
                       {
-                        "title": \{{- if .app.spec.source \}} "Repository" \{{- else if .app.spec.sources \}} "Repositories" \{{- end \}},
-                        "value": \{{- if .app.spec.source \}} ":arrow_heading_up: \{{ .app.spec.source.repoURL \}}" \{{- else if .app.spec.sources \}} "\{{- range $index, $source := .app.spec.sources \}}\{{ if $index \}}\n\{{ end \}}:arrow_heading_up: \{{ $source.repoURL \}}\{{- end \}}" \{{- end \}},
+                        "title": {{ "{{" }}- if .app.spec.source {{ "}}" }} "Repository" {{ "{{" }}- else if .app.spec.sources {{ "}}" }} "Repositories" {{ "{{" }}- end {{ "}}" }},
+                        "value": {{ "{{" }}- if .app.spec.source {{ "}}" }} ":arrow_heading_up: {{ "{{" }} .app.spec.source.repoURL {{ "}}" }}" {{ "{{" }}- else if .app.spec.sources {{ "}}" }} "{{ "{{" }}- range $index, $source := .app.spec.sources {{ "}}" }}{{ "{{" }} if $index {{ "}}" }}\n{{ "{{" }} end {{ "}}" }}:arrow_heading_up: {{ "{{" }} $source.repoURL {{ "}}" }}{{ "{{" }}- end {{ "}}" }}" {{ "{{" }}- end {{ "}}" }},
                         "short": true
                       }
-                      \{{range $index, $c := .app.status.conditions\}}
+                      {{ "{{" }}range $index, $c := .app.status.conditions{{ "}}" }}
                       ,
                       {
-                        "title": "\{{$c.type\}}",
-                        "value": "\{{$c.message\}}",
+                        "title": "{{ "{{" }}$c.type{{ "}}" }}",
+                        "value": "{{ "{{" }}$c.message{{ "}}" }}",
                         "short": true
                       }
-                      \{{end\}}
+                      {{ "{{" }}end{{ "}}" }}
                       ]
                     }]
             triggers:
