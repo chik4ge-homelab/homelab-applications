@@ -17,6 +17,7 @@ spec:
           global:
             addPrometheusAnnotations: true
             deploymentStrategy:
+              type: RollingUpdate
               rollingUpdate:
                 maxSurge: 0
                 maxUnavailable: 1
