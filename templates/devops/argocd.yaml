@@ -16,6 +16,10 @@ spec:
         valuesObject:
           global:
             addPrometheusAnnotations: true
+            deploymentStrategy:
+            rollingUpdate:
+              maxSurge: 0
+              maxUnavailable: 1
           configs:
             cm:
               url: https://argocd.chik4ge.me
