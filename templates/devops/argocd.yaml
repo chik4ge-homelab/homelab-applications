@@ -41,6 +41,10 @@ spec:
                     - CiliumIdentity
                   clusters:
                     - "*"
+              resource.customizations.ignoreDifferences.apps_Deployment: |
+                jqPathExpressions:
+                  - .spec.template.metadata.annotations."kubectl.kubernetes.io/restartedAt"
+                  - if (.spec.template.metadata.annotations | length) == 0 then .spec.template.metadata.annotations else empty end
             rbac:
               policy.csv: |
                 g, chik4ge-homelab:admin, role:admin
