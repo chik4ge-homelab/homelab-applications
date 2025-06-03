@@ -16,7 +16,6 @@ data:
       triggers:
         - on-created
         - on-deleted
-        - on-deployed
         - on-health-degraded
         - on-sync-failed
         - on-sync-status-unknown
@@ -47,47 +46,6 @@ data:
               "title": ":wastebasket: Application Deleted :wastebasket:",
               "description": "Application **{{.app.metadata.name}}** has been deleted.",
               "color": 15158332,
-              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
-            }]
-          }
-  template.app-deployed: |
-    message: |
-      :white_check_mark: Application {{.app.metadata.name}} is now running new version of deployments manifests.
-    webhook:
-      discord:
-        method: POST
-        body: |
-          {
-            "embeds": [{
-              "title": "{{ .app.metadata.name }} - Deployed",
-              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-              "description": ":white_check_mark: Application **{{.app.metadata.name}}** is now running new version of deployments manifests.",
-              "color": 1621842,
-              "fields": [
-                {
-                  "name": "Sync Status",
-                  "value": "{{.app.status.sync.status}}",
-                  "inline": true
-                },
-                {
-                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
-                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
-                  "inline": true
-                },
-                {
-                  "name": "Revision",
-                  "value": "{{.app.status.sync.revision}}",
-                  "inline": true
-                }
-                {{range $index, $c := .app.status.conditions}}
-                ,
-                {
-                  "name": "{{$c.type}}",
-                  "value": "{{$c.message}}",
-                  "inline": true
-                }
-                {{end}}
-              ],
               "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
             }]
           }
@@ -219,14 +177,6 @@ data:
       send:
       - app-deleted
       when: app.metadata.deletionTimestamp != nil
-  trigger.on-deployed: |
-    - description: Application is synced and healthy. Triggered once per commit.
-      oncePer: app.status.operationState?.syncResult?.revision
-      send:
-      - app-deployed
-      when: app.status.operationState != nil and app.status.operationState.phase in ['Succeeded']
-        and app.status.health.status == 'Healthy' and (!time.Parse(app.status.health.lastTransitionTime).Add(1
-        * time.Minute).Before(time.Parse(app.status.operationState.finishedAt)) or time.Parse(app.status.health.lastTransitionTime).Before(time.Parse(app.status.operationState.startedAt)))
   trigger.on-health-degraded: |
     - description: Application has degraded
       oncePer: app.status.operationState?.syncResult?.revision
