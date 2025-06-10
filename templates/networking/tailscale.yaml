@@ -11,7 +11,7 @@ spec:
       path: apps/networking/tailscale/secrets
     - repoURL: https://pkgs.tailscale.com/helmcharts/
       chart: tailscale-operator
-      targetRevision: 1.84.0
+      targetRevision: 1.84.2
   destination:
     namespace: tailscale
     server: {{ .Values.spec.destination.server }}
