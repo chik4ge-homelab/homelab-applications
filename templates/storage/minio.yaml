@@ -20,6 +20,8 @@ spec:
               existingSecret: true
               accessKey:
               secretKey:
+            metrics:
+              enabled: true
             buckets:
               - name: mimir-blocks
               - name: mimir-alertmanager
@@ -29,6 +31,11 @@ spec:
                 name: pool-0
                 size: 25Gi
                 volumesPerServer: 4
+            poolsMetadata:
+              annotations:
+                prometheus.io/scrape: "true"
+                prometheus.io/path: "/minio/v2/metrics/cluster"
+                prometheus.io/port: "9000"
             certificate:
               requestAutoCert: false
               externalCertSecret:
