@@ -22,6 +22,9 @@ spec:
               secretKey:
             metrics:
               enabled: true
+            env:
+              - name: MINIO_PROMETHEUS_AUTH_TYPE
+                value: "public"
             buckets:
               - name: mimir-blocks
               - name: mimir-alertmanager
