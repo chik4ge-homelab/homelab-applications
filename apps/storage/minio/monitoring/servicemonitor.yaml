@@ -8,7 +8,7 @@ spec:
     matchLabels:
       v1.min.io/tenant: myminio
   endpoints:
-  - port: minio
+  - port: 9000
     path: /minio/metrics/v3
     scheme: https
     tlsConfig:
