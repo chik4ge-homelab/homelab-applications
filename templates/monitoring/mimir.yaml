@@ -36,6 +36,10 @@ spec:
             replicas: 1
             allocatedMemory: 1024
 
+          metaMonitoring:
+            serviceMonitor:
+              enabled: true
+
           index-cache:
             enabled: true
             replicas: 3
