@@ -6,11 +6,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      v1.min.io/tenant: myminio
+      app: minio
   endpoints:
-  - port: 9000
-    path: /minio/metrics/v3
-    scheme: https
-    tlsConfig:
-      insecureSkipVerify: true
-    interval: 30s
+    - port: https-minio
+      path: /minio/metrics/v3
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+      interval: 30s

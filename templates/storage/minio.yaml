@@ -34,6 +34,9 @@ spec:
                 name: pool-0
                 size: 25Gi
                 volumesPerServer: 4
+            serviceMetadata:
+              minioServiceLabels:
+                app: minio
             certificate:
               requestAutoCert: false
               externalCertSecret:
