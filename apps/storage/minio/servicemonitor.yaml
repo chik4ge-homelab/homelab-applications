@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: minio-metrics
+  namespace: minio
+spec:
+  selector:
+    matchLabels:
+      v1.min.io/tenant: myminio
+  endpoints:
+  - port: minio
+    path: /minio/metrics/v3
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+    interval: 30s
