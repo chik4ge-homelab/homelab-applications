@@ -22,6 +22,13 @@ spec:
             node:
               initContainers:
                 enabled: false
+        io_engine:
+          cpuCount: "1"
+          resources:
+            limits:
+              hugepages2Mi: "1Gi"
+            requests:
+              hugepages2Mi: "1Gi"
         loki:
           enabled: false
         alloy:
