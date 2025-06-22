@@ -74,6 +74,9 @@ spec:
           extraEnvFrom:
             - secretRef:
                 name: loki-bucket-secret
+          resources:
+            requests:
+              cpu: 100m
         backend:
           replicas: 0
         read:

@@ -35,6 +35,9 @@ spec:
             enabled: true
             replicas: 1
             allocatedMemory: 1024
+            resources:
+              requests:
+                cpu: 100m
 
           metaMonitoring:
             serviceMonitor:
@@ -43,14 +46,23 @@ spec:
           index-cache:
             enabled: true
             replicas: 3
+            resources:
+              requests:
+                cpu: 100m
 
           metadata-cache:
             enabled: true
             replicas: 3
+            resources:
+              requests:
+                cpu: 100m
 
           results-cache:
             enabled: true
             replicas: 3
+            resources:
+              requests:
+                cpu: 100m
 
           minio:
             enabled: false
