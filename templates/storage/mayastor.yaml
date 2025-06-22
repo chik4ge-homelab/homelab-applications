@@ -22,6 +22,10 @@ spec:
             node:
               initContainers:
                 enabled: false
+        loki:
+          enabled: false
+        alloy:
+          enabled: false
   destination:
     namespace: openebs
     server: {{ .Values.spec.destination.server }}
