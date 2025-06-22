@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openebs
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://openebs.github.io/openebs
+    chart: openebs
+    targetRevision: 4.3.1
+    helm:
+      valuesObject:
+        engines:
+          local:
+            lvm:
+              enabled: false
+            zfs:
+              enabled: false
+        mayastor:
+          csi:
+            node:
+              initContainers:
+                enabled: false
+  destination:
+    namespace: openebs
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: "privileged"
