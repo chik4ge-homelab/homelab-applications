@@ -5,34 +5,37 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://openebs.github.io/openebs
-    chart: openebs
-    targetRevision: 4.3.1
-    helm:
-      valuesObject:
-        engines:
-          local:
-            lvm:
-              enabled: false
-            zfs:
-              enabled: false
-        mayastor:
-          csi:
-            node:
-              initContainers:
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/storage/mayastor
+    - repoURL: https://openebs.github.io/openebs
+      chart: openebs
+      targetRevision: 4.3.1
+      helm:
+        valuesObject:
+          engines:
+            local:
+              lvm:
                 enabled: false
-          io_engine:
-            cpuCount: "1"
-            resources:
-              limits:
-                hugepages2Mi: "1Gi"
-              requests:
-                hugepages2Mi: "1Gi"
-        loki:
-          enabled: false
-        alloy:
-          enabled: false
+              zfs:
+                enabled: false
+            mayastor:
+              csi:
+                node:
+                  initContainers:
+                    enabled: false
+              io_engine:
+                cpuCount: "1"
+                resources:
+                  limits:
+                    hugepages2Mi: "1Gi"
+                  requests:
+                    hugepages2Mi: "1Gi"
+            loki:
+              enabled: false
+            alloy:
+              enabled: false
   destination:
     namespace: openebs
     server: {{ .Values.spec.destination.server }}
