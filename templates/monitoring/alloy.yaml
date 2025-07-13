@@ -27,6 +27,10 @@ spec:
                 role = "node"
               }
 
+              discovery.kubernetes "endpoints" {
+                role = "endpoints"
+              }
+
               discovery.relabel "pods" {
                 targets = discovery.kubernetes.pods.targets
 
@@ -151,23 +155,24 @@ spec:
               }
 
               discovery.relabel "kube_apiserver" {
-                targets = discovery.kubernetes.nodes.targets
+                targets = discovery.kubernetes.endpoints.targets
 
                 rule {
-                  replacement   = "/metrics"
-                  target_label  = "__metrics_path__"
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  regex = "default"
+                  action = "keep"
                 }
 
                 rule {
-                  replacement   = "6443"
-                  target_label  = "__port__"
+                  source_labels = ["__meta_kubernetes_service_name"]
+                  regex = "kubernetes"
+                  action = "keep"
                 }
 
                 rule {
-                  source_labels = ["__address__"]
-                  regex         = "([^:]+)"
-                  replacement   = "$${1}:6443"
-                  target_label  = "__address__"
+                  source_labels = ["__meta_kubernetes_endpoint_port_name"]
+                  regex = "https"
+                  action = "keep"
                 }
 
                 rule {
@@ -178,7 +183,7 @@ spec:
 
               prometheus.scrape "kube_apiserver" {
                 targets = discovery.relabel.kube_apiserver.output
-                scheme     = "https"
+                scheme = "https"
                 bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
                 tls_config {
                   insecure_skip_verify = true
@@ -187,23 +192,24 @@ spec:
               }
 
               discovery.relabel "kube_scheduler" {
-                targets = discovery.kubernetes.nodes.targets
+                targets = discovery.kubernetes.pods.targets
 
                 rule {
-                  replacement   = "/metrics"
-                  target_label  = "__metrics_path__"
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  regex = "kube-system"
+                  action = "keep"
                 }
 
                 rule {
-                  replacement   = "10259"
-                  target_label  = "__port__"
+                  source_labels = ["__meta_kubernetes_pod_label_component"]
+                  regex = "kube-scheduler"
+                  action = "keep"
                 }
 
                 rule {
                   source_labels = ["__address__"]
-                  regex         = "([^:]+)"
-                  replacement   = "$${1}:10259"
-                  target_label  = "__address__"
+                  replacement = "$1:10259"
+                  target_label = "__address__"
                 }
 
                 rule {
@@ -229,11 +235,16 @@ spec:
                   replacement   = "/metrics/cadvisor"
                   target_label  = "__metrics_path__"
                 }
+
+                rule {
+                  replacement   = "cadvisor"
+                  target_label  = "job"
+                }
               }
 
               prometheus.scrape "cadvisor" {
                 targets = discovery.relabel.cadvisor.output
-                scheme     = "https"
+                scheme = "https"
                 bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
                 tls_config {
                   insecure_skip_verify = true
@@ -241,7 +252,6 @@ spec:
                 forward_to = [prometheus.remote_write.default.receiver]
               }
 
-              // kubelet metrics
               discovery.relabel "kubelet" {
                 targets = discovery.kubernetes.nodes.targets
 
@@ -258,7 +268,7 @@ spec:
 
               prometheus.scrape "kubelet" {
                 targets = discovery.relabel.kubelet.output
-                scheme     = "https"
+                scheme = "https"
                 bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
                 tls_config {
                   insecure_skip_verify = true
