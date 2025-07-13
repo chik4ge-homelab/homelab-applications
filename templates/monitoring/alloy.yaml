@@ -138,7 +138,7 @@ spec:
               }
 
               mimir.rules.kubernetes "default" {
-                address = "http://mimir-ruler.mimir.svc.cluster.local:8080"
+                address = "http://mimir-nginx.mimir.svc.cluster.local"
               }
 
               prometheus.scrape "pods" {
