@@ -9,9 +9,7 @@ spec:
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
     path: apps/monitoring/kubernetes-mixin
-    jsonnet:
-      libs:
-        - vendor
+    jsonnet: {}
     directory:
       exclude: 'jsonnetfile.json'
   destination:
