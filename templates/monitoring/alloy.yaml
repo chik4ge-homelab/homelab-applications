@@ -199,6 +199,9 @@ spec:
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
       targetRevision: 21.0.0
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/monitoring/alloy/rules
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: alloy
