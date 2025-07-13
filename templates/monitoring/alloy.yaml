@@ -208,7 +208,7 @@ spec:
 
                 rule {
                   source_labels = ["__address__"]
-                  replacement = "$1:10259"
+                  replacement = "$$1:10259"
                   target_label = "__address__"
                 }
 
