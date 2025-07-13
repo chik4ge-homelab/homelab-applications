@@ -12,6 +12,8 @@ spec:
     jsonnet:
       libs:
         - vendor
+    directory:
+      exclude: 'jsonnetfile.json'
   destination:
     namespace: kubernetes-mixin
     server: {{ .Values.spec.destination.server }}
