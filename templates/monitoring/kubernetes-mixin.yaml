@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-mixin
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    targetRevision: main
+    path: apps/monitoring/kubernetes-mixin
+    jsonnet:
+      libs:
+        - vendor
+  destination:
+    namespace: kubernetes-mixin
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
