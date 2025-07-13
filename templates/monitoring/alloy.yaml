@@ -107,6 +107,34 @@ spec:
                   replacement = "$$1:$$2"
                   action = "replace"
                 }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_namespace"]
+                  action = "replace"
+                  target_label = "namespace"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_service_name"]
+                  action = "replace"
+                  target_label = "service"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_name"]
+                  regex = "(.+)"
+                  action = "replace"
+                  target_label = "job"
+                  replacement = "$$1"
+                }
+
+                rule {
+                  source_labels = ["__meta_kubernetes_service_name"]
+                  regex = "(.+)"
+                  action = "replace"
+                  target_label = "job"
+                  replacement = "$$1"
+                }
               }
 
               prometheus.scrape "pods" {
