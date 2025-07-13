@@ -137,6 +137,10 @@ spec:
                 }
               }
 
+              mimir.rules.kubernetes "default" {
+                address = "http://mimir-ruler.mimir.svc.cluster.local:8080"
+              }
+
               prometheus.scrape "pods" {
                 targets = discovery.relabel.pods.output
                 forward_to = [prometheus.remote_write.default.receiver]
