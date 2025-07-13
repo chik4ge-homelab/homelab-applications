@@ -11,6 +11,7 @@ spec:
     targetRevision: 4.47.0
     helm:
       valuesObject:
+        fullnameOverride: node-exporter
         service:
           annotations:
             prometheus.io/scrape: "false"
