@@ -1,3 +1,3 @@
-local mixin = import 'github.com/kubernetes-monitoring/kubernetes-mixin/version-1.2.0/mixin.libsonnet';
+local mixin = import 'vendor/kubernetes-mixin/mixin.libsonnet';
 
 mixin.grafanaDashboards + mixin.prometheusRules
