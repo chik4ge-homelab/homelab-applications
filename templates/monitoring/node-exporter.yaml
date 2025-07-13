@@ -17,6 +17,7 @@ spec:
         prometheus:
           monitor:
             enabled: true
+            jobLabel: node-exporter
             attachMetadata:
               node: true
   destination:

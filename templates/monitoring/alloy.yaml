@@ -119,22 +119,6 @@ spec:
                   action = "replace"
                   target_label = "service"
                 }
-
-                rule {
-                  source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_name"]
-                  regex = "(.+)"
-                  action = "replace"
-                  target_label = "job"
-                  replacement = "$$1"
-                }
-
-                rule {
-                  source_labels = ["__meta_kubernetes_service_name"]
-                  regex = "(.+)"
-                  action = "replace"
-                  target_label = "job"
-                  replacement = "$$1"
-                }
               }
 
               mimir.rules.kubernetes "default" {
@@ -159,9 +143,82 @@ spec:
                   insecure_skip_verify = true
                 }
                 forward_to = [prometheus.remote_write.default.receiver]
+                job_name = "node-exporter"
               }
 
               prometheus.operator.servicemonitors "servicemonitors" {
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              discovery.relabel "kube_apiserver" {
+                targets = discovery.kubernetes.nodes.targets
+
+                rule {
+                  replacement   = "/metrics"
+                  target_label  = "__metrics_path__"
+                }
+
+                rule {
+                  replacement   = "6443"
+                  target_label  = "__port__"
+                }
+
+                rule {
+                  source_labels = ["__address__"]
+                  regex         = "([^:]+)"
+                  replacement   = "$${1}:6443"
+                  target_label  = "__address__"
+                }
+
+                rule {
+                  replacement   = "kube-apiserver"
+                  target_label  = "job"
+                }
+              }
+
+              prometheus.scrape "kube_apiserver" {
+                targets = discovery.relabel.kube_apiserver.output
+                scheme     = "https"
+                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                tls_config {
+                  insecure_skip_verify = true
+                }
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              discovery.relabel "kube_scheduler" {
+                targets = discovery.kubernetes.nodes.targets
+
+                rule {
+                  replacement   = "/metrics"
+                  target_label  = "__metrics_path__"
+                }
+
+                rule {
+                  replacement   = "10259"
+                  target_label  = "__port__"
+                }
+
+                rule {
+                  source_labels = ["__address__"]
+                  regex         = "([^:]+)"
+                  replacement   = "$${1}:10259"
+                  target_label  = "__address__"
+                }
+
+                rule {
+                  replacement   = "kube-scheduler"
+                  target_label  = "job"
+                }
+              }
+
+              prometheus.scrape "kube_scheduler" {
+                targets = discovery.relabel.kube_scheduler.output
+                scheme     = "https"
+                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                tls_config {
+                  insecure_skip_verify = true
+                }
                 forward_to = [prometheus.remote_write.default.receiver]
               }
 
@@ -176,6 +233,31 @@ spec:
 
               prometheus.scrape "cadvisor" {
                 targets = discovery.relabel.cadvisor.output
+                scheme     = "https"
+                bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+                tls_config {
+                  insecure_skip_verify = true
+                }
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              // kubelet metrics
+              discovery.relabel "kubelet" {
+                targets = discovery.kubernetes.nodes.targets
+
+                rule {
+                  replacement   = "/metrics"
+                  target_label  = "__metrics_path__"
+                }
+
+                rule {
+                  replacement   = "kubelet"
+                  target_label  = "job"
+                }
+              }
+
+              prometheus.scrape "kubelet" {
+                targets = discovery.relabel.kubelet.output
                 scheme     = "https"
                 bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
                 tls_config {
