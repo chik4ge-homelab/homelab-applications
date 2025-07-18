@@ -1,0 +1,10 @@
+resources:
+  - deployment.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: haproxy-config
+    files:
+      - haproxy.cfg
+generatorOptions:
+  disableNameSuffixHash: false

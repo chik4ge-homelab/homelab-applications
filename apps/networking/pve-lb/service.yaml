@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: haproxy-proxmox
+spec:
+  selector:
+    app: haproxy-proxmox
+  ports:
+  - name: https
+    port: 8006
+    targetPort: 8006
+  type: ClusterIP

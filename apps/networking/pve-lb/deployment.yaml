@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy-proxmox
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: haproxy-proxmox
+  template:
+    metadata:
+      labels:
+        app: haproxy-proxmox
+    spec:
+      containers:
+        - name: haproxy
+          image: haproxy:3.1.8
+          ports:
+            - containerPort: 8006
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/local/etc/haproxy
+      volumes:
+        - name: config-volume
+          configMap:
+            name: haproxy-config
