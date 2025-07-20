@@ -31,6 +31,15 @@ spec:
                 role = "endpoints"
               }
 
+              discovery.static "proxmox_hosts" {
+                targets = [
+                  {"__address__" = "192.168.0.150:9100"},
+                  {"__address__" = "192.168.0.151:9100"},
+                  {"__address__" = "192.168.0.152:9100"},
+                  {"__address__" = "192.168.0.153:9100"},
+                ]
+              }
+
               discovery.relabel "pods" {
                 targets = discovery.kubernetes.pods.targets
 
@@ -125,6 +134,22 @@ spec:
                 }
               }
 
+              discovery.relabel "proxmox_hosts" {
+                targets = discovery.static.proxmox_hosts.targets
+
+                rule {
+                  replacement   = "node-exporter"
+                  target_label  = "job"
+                }
+
+                rule {
+                  source_labels = ["__address__"]
+                  regex = "([^:]+):.*"
+                  replacement = "$$1"
+                  target_label = "instance"
+                }
+              }
+
               mimir.rules.kubernetes "default" {
                 address = "http://mimir-nginx.mimir.svc.cluster.local"
               }
@@ -136,6 +161,11 @@ spec:
 
               prometheus.scrape "services" {
                 targets = discovery.relabel.services.output
+                forward_to = [prometheus.remote_write.default.receiver]
+              }
+
+              prometheus.scrape "proxmox_hosts" {
+                targets = discovery.relabel.proxmox_hosts.output
                 forward_to = [prometheus.remote_write.default.receiver]
               }
 
