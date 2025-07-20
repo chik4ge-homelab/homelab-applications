@@ -12,15 +12,15 @@ patches:
       name: democratic-csi-node
       namespace: democratic-csi
     patch: |-
-      - op: add
+      - op: replace
         path: /spec/template/spec/containers/2/livenessProbe/timeoutSeconds
         value: 30
       - op: add
         path: /spec/template/spec/containers/2/livenessProbe/initialDelaySeconds
         value: 30
-      - op: add
+      - op: replace
         path: /spec/template/spec/containers/2/livenessProbe/periodSeconds
         value: 10
-      - op: add
+      - op: replace
         path: /spec/template/spec/containers/2/livenessProbe/failureThreshold
         value: 3
