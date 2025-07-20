@@ -31,15 +31,6 @@ spec:
                 role = "endpoints"
               }
 
-              discovery.static "proxmox_hosts" {
-                targets = [
-                  {"__address__" = "192.168.0.150:9100"},
-                  {"__address__" = "192.168.0.151:9100"},
-                  {"__address__" = "192.168.0.152:9100"},
-                  {"__address__" = "192.168.0.153:9100"},
-                ]
-              }
-
               discovery.relabel "pods" {
                 targets = discovery.kubernetes.pods.targets
 
@@ -135,7 +126,12 @@ spec:
               }
 
               discovery.relabel "proxmox_hosts" {
-                targets = discovery.static.proxmox_hosts.targets
+                targets = [
+                  {"__address__" = "192.168.0.150:9100"},
+                  {"__address__" = "192.168.0.151:9100"},
+                  {"__address__" = "192.168.0.152:9100"},
+                  {"__address__" = "192.168.0.153:9100"},
+                ]
 
                 rule {
                   replacement   = "node-exporter"
