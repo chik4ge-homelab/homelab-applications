@@ -17,6 +17,7 @@ spec:
           compactor:
             persistentVolume:
               size: 10Gi
+              storageClass: openebs-single-replica
 
           distributor:
             replicas: 2
@@ -30,6 +31,7 @@ spec:
             replicas: 2
             persistentVolume:
               size: 50Gi
+              storageClass: openebs-single-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -49,6 +51,8 @@ spec:
                     topologyKey: "kubernetes.io/hostname"
                     
           store_gateway:
+            persistentVolume:
+              storageClass: openebs-single-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -74,6 +78,10 @@ spec:
             resources:
               requests:
                 cpu: 100m
+
+          alertmanager:
+            persistentVolume:
+              storageClass: openebs-single-replica
 
           metaMonitoring:
             serviceMonitor:
