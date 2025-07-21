@@ -47,8 +47,6 @@ spec:
               image:
                 registry: docker.io/democraticcsi/democratic-csi
                 tag: next
-            livenessProbe:
-              enabled: false
   destination:
     namespace: democratic-csi
     server: {{ .Values.spec.destination.server }}
