@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: alloy
+
+resources:
+  - rules/k8s-mixin-rules.yaml
+  - rules/mimir-mixin-rules.yaml
+
+configMapGenerator:
+  - name: alloy-config
+    files:
+      - config.alloy=config/alloy-config.alloy
+
+generatorOptions:
+  disableNameSuffixHash: true
