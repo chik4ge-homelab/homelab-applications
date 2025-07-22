@@ -9,7 +9,19 @@ spec:
       app: minio
   endpoints:
     - port: https-minio
-      path: /minio/metrics
+      path: /minio/v2/metrics/cluster
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+      interval: 30s
+    - port: https-minio
+      path: /minio/v2/metrics/bucket
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+      interval: 30s
+    - port: https-minio
+      path: /minio/v2/metrics/resource
       scheme: https
       tlsConfig:
         insecureSkipVerify: true
