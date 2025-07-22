@@ -9,7 +9,7 @@ spec:
       app: minio
   endpoints:
     - port: https-minio
-      path: /minio/metrics/v3
+      path: /minio/metrics
       scheme: https
       tlsConfig:
         insecureSkipVerify: true
