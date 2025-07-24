@@ -17,7 +17,7 @@ spec:
           compactor:
             persistentVolume:
               size: 10Gi
-              storageClass: openebs-single-replica
+              storageClass: mayastor-3-replica
 
           distributor:
             replicas: 2
@@ -52,7 +52,7 @@ spec:
                     
           store_gateway:
             persistentVolume:
-              storageClass: openebs-single-replica
+              storageClass: mayastor-3-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -81,7 +81,7 @@ spec:
 
           alertmanager:
             persistentVolume:
-              storageClass: openebs-single-replica
+              storageClass: mayastor-3-replica
 
           metaMonitoring:
             serviceMonitor:
