@@ -30,8 +30,8 @@ spec:
           ingester:
             replicas: 2
             persistentVolume:
-              size: 50Gi
-              storageClass: openebs-single-replica
+              size: 25Gi
+              storageClass: mayastor-3-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
