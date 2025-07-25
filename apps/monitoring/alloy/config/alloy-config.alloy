@@ -130,12 +130,22 @@ discovery.relabel "proxmox_hosts" {
 }
 
 prometheus.exporter.snmp "network_devices" {
-  target "vr-u500x" {
+  target "vr_u500x" {
     address = "192.168.0.1"
+    walk_param = "vr_u500x"
   }
 
-  target "sks7300-4x4t" {
+  target "sks7300_4x4t" {
     address = "192.168.0.4"
+    walk_param = "sks7300_4x4t"
+  }
+
+  walk_param "vr_u500x" {
+    name = "vr-u500x"
+  }
+
+  walk_param "sks7300_4x4t" {
+    name = "sks7300-4x4t"
   }
 }
 
