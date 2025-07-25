@@ -14,5 +14,3 @@ configMapGenerator:
 
 generatorOptions:
   disableNameSuffixHash: true
-  annotations:
-    reloader.stakater.com/match: "true"
