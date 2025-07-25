@@ -149,7 +149,7 @@ discovery.relabel "network_devices" {
 
   rule {
     source_labels = ["__param_target"]
-    regex = "([^:]+):.*"
+    regex = "([^:]+)(?::.*)?"
     replacement = "$1"
     target_label = "target"
   }
