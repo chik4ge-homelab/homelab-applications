@@ -139,6 +139,14 @@ prometheus.exporter.snmp "network_devices" {
   }
 }
 
+discovery.relabel "network_devices" {
+  targets = prometheus.exporter.snmp.network_devices.targets
+
+  rule {
+    replacement   = "snmp-exporter"
+    target_label  = "job"
+  }
+}
 mimir.rules.kubernetes "default" {
   address = "http://mimir-nginx.mimir.svc.cluster.local"
 }
@@ -158,10 +166,9 @@ prometheus.scrape "proxmox_hosts" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-prometheus.scrape "snmp_devices" {
-  targets = prometheus.exporter.snmp.network_devices.targets
+prometheus.scrape "network_devices" {
+  targets = discovery.relabel.network_devices.output
   forward_to = [prometheus.remote_write.default.receiver]
-  job_name = "snmp"
 }
 
 prometheus.scrape "nodes" {
