@@ -27,6 +27,9 @@ spec:
               requests:
                 memory: 4Gi
 
+          nginx:
+            replicas: 2
+
           ingester:
             replicas: 2
             persistentVolume:
