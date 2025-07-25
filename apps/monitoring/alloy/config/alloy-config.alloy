@@ -146,6 +146,13 @@ discovery.relabel "network_devices" {
     replacement   = "snmp-exporter"
     target_label  = "job"
   }
+
+  rule {
+    source_labels = ["__param_target"]
+    regex = "([^:]+):.*"
+    replacement = "$1"
+    target_label = "target"
+  }
 }
 mimir.rules.kubernetes "default" {
   address = "http://mimir-nginx.mimir.svc.cluster.local"
