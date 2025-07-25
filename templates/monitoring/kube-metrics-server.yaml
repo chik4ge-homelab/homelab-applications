@@ -11,15 +11,58 @@ spec:
     chart: kube-state-metrics
     helm:
       valuesObject:
+        # High Availability configuration
+        replicas: 2
+        
+        # Resource specifications
+        resources:
+          requests:
+            cpu: 20m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 512Mi
+        
+        # Pod Anti-Affinity for HA
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                    - kube-state-metrics
+                topologyKey: kubernetes.io/hostname
+        
+        # Topology spread constraints
+        topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: kube-state-metrics
+        
         service:
           annotations:
             prometheus.io/scrape: "false"
+        
+        # Use scrapeConfig instead of serviceMonitor for HA
         prometheus:
           monitor:
-            enabled: true
-            jobLabel: kube-state-metrics
-            attachMetadata:
-              node: true
+            enabled: false
+        
+        # Enable scrapeConfig for HA setup
+        scrapeConfig:
+          enabled: true
+          namespace: alloy
+          scrapeClass: default
+          jobLabel: kube-state-metrics
+          attachMetadata:
+            node: true
   destination:
     namespace: kube-system
     server: {{ .Values.spec.destination.server }}
