@@ -53,6 +53,21 @@ spec:
             haproxy:
               metrics:
                 enabled: true
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 64Mi
+                limits:
+                  cpu: 50m
+                  memory: 128Mi
+            redis:
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
 
           controller:
             replicas: 1
