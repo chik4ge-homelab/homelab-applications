@@ -19,6 +19,14 @@ spec:
             value: "alloy-config"
           - name: alloy.configMap.key
             value: "config.alloy"
+          - name: alloy.resources.requests.cpu
+            value: "50m"
+          - name: alloy.resources.requests.memory
+            value: "2Gi"
+          - name: alloy.resources.limits.cpu
+            value: "200m"
+          - name: alloy.resources.limits.memory
+            value: "4Gi"
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
       targetRevision: 21.0.0
