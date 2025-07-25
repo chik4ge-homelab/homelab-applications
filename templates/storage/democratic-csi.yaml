@@ -47,6 +47,54 @@ spec:
               image:
                 registry: docker.io/democraticcsi/democratic-csi
                 tag: next
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  cpu: 50m
+                  memory: 128Mi
+            externalAttacher:
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 16Mi
+                limits:
+                  cpu: 50m
+                  memory: 64Mi
+            externalProvisioner:
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 16Mi
+                limits:
+                  cpu: 50m
+                  memory: 64Mi
+            externalResizer:
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 16Mi
+                limits:
+                  cpu: 50m
+                  memory: 64Mi
+            externalSnapshotter:
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 16Mi
+                limits:
+                  cpu: 50m
+                  memory: 64Mi
+          node:
+            driver:
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 50m
+                  memory: 128Mi
   destination:
     namespace: democratic-csi
     server: {{ .Values.spec.destination.server }}
