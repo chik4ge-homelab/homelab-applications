@@ -11,3 +11,8 @@ configMapGenerator:
   - name: alloy-config
     files:
       - config.alloy=config/alloy-config.alloy
+
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    reloader.stakater.com/match: "true"
