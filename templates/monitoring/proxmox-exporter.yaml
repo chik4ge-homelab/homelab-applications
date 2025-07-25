@@ -14,6 +14,32 @@ spec:
       targetRevision: 0.2.8
       helm:
         valuesObject:
+          # High Availability configuration
+          replicaCount: 2
+          
+          # Resource specifications
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+          
+          # Pod Anti-Affinity for HA
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                      - proxmox-exporter
+                  topologyKey: kubernetes.io/hostname
+          
           config:
             api_insecure: true
             secretRef:
