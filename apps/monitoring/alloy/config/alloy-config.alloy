@@ -129,6 +129,16 @@ discovery.relabel "proxmox_hosts" {
   }
 }
 
+prometheus.exporter.snmp "network_devices" {
+  target "vr-u500x" {
+    address = "192.168.0.1"
+  }
+
+  target "sks7300-4x4t" {
+    address = "192.168.0.4"
+  }
+}
+
 mimir.rules.kubernetes "default" {
   address = "http://mimir-nginx.mimir.svc.cluster.local"
 }
@@ -146,6 +156,12 @@ prometheus.scrape "services" {
 prometheus.scrape "proxmox_hosts" {
   targets = discovery.relabel.proxmox_hosts.output
   forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.scrape "snmp_devices" {
+  targets = prometheus.exporter.snmp.network_devices.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+  job_name = "snmp"
 }
 
 prometheus.scrape "nodes" {
