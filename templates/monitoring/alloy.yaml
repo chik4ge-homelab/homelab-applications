@@ -11,21 +11,22 @@ spec:
       targetRevision: 1.1.1
       helm:
         valuesObject:
-          clustering:
-            enabled: true
-          configMap:
-            create: false
-            name: alloy-config
-            key: config.alloy
-          resources:
-            requests:
-              cpu: 50m
-              memory: 2Gi
-            limits:
-              cpu: 200m
-              memory: 4Gi
-          podAnnotations:
-            reloader.stakater.com/search: "true"
+          alloy:
+            clustering:
+              enabled: true
+            configMap:
+              create: false
+              name: alloy-config
+              key: config.alloy
+            resources:
+              requests:
+                cpu: 50m
+                memory: 2Gi
+              limits:
+                cpu: 200m
+                memory: 4Gi
+            podAnnotations:
+              reloader.stakater.com/search: "true"
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
       targetRevision: 21.0.0
