@@ -31,6 +31,22 @@ spec:
             value: "7445"
           - name: socketLB.hostNamespaceOnly
             value: "true"
+          - name: resources.requests.cpu
+            value: "50m"
+          - name: resources.requests.memory
+            value: "256Mi"
+          - name: resources.limits.cpu
+            value: "500m"
+          - name: resources.limits.memory
+            value: "1Gi"
+          - name: operator.resources.requests.cpu
+            value: "50m"
+          - name: operator.resources.requests.memory
+            value: "128Mi"
+          - name: operator.resources.limits.cpu
+            value: "200m"
+          - name: operator.resources.limits.memory
+            value: "256Mi"
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/networking/cilium/l2announce
