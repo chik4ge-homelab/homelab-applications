@@ -12,6 +12,16 @@ spec:
     - repoURL: https://pkgs.tailscale.com/helmcharts/
       chart: tailscale-operator
       targetRevision: 1.84.2
+      helm:
+        valuesObject:
+          operatorConfig:
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                cpu: 50m
+                memory: 128Mi
   destination:
     namespace: tailscale
     server: {{ .Values.spec.destination.server }}
