@@ -10,25 +10,22 @@ spec:
       chart: alloy
       targetRevision: 1.1.1
       helm:
-        parameters:
-          - name: alloy.clustering.enabled
-            value: "true"
-          - name: alloy.configMap.create
-            value: "false"
-          - name: alloy.configMap.name
-            value: "alloy-config"
-          - name: alloy.configMap.key
-            value: "config.alloy"
-          - name: alloy.resources.requests.cpu
-            value: "50m"
-          - name: alloy.resources.requests.memory
-            value: "2Gi"
-          - name: alloy.resources.limits.cpu
-            value: "200m"
-          - name: alloy.resources.limits.memory
-            value: "4Gi"
-          - name: alloy.podAnnotations.reloader\.stakater\.com\/search
-            value: "true"
+        valuesObject:
+          clustering:
+            enabled: true
+          configMap:
+            create: false
+            name: alloy-config
+            key: config.alloy
+          resources:
+            requests:
+              cpu: 50m
+              memory: 2Gi
+            limits:
+              cpu: 200m
+              memory: 4Gi
+          podAnnotations:
+            reloader.stakater.com/search: "true"
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
       targetRevision: 21.0.0
