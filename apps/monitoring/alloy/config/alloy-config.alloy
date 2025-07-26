@@ -160,26 +160,31 @@ mimir.rules.kubernetes "default" {
 
 prometheus.scrape "pods" {
   targets = discovery.relabel.pods.output
+  scrape_interval = "60s"
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "services" {
   targets = discovery.relabel.services.output
+  scrape_interval = "60s"
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "proxmox_hosts" {
   targets = discovery.relabel.proxmox_hosts.output
+  scrape_interval = "60s"
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "network_devices" {
   targets = discovery.relabel.network_devices.output
+  scrape_interval = "60s"
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "nodes" {
   targets = discovery.kubernetes.nodes.targets
+  scrape_interval = "60s"
   scheme     = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
@@ -223,6 +228,7 @@ discovery.relabel "kube_apiserver" {
 prometheus.scrape "kube_apiserver" {
   targets = discovery.relabel.kube_apiserver.output
   scheme = "https"
+  scrape_interval = "60s"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
@@ -260,6 +266,7 @@ discovery.relabel "kube_scheduler" {
 prometheus.scrape "kube_scheduler" {
   targets = discovery.relabel.kube_scheduler.output
   scheme     = "https"
+  scrape_interval = "60s"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
@@ -284,6 +291,7 @@ discovery.relabel "cadvisor" {
 prometheus.scrape "cadvisor" {
   targets = discovery.relabel.cadvisor.output
   scheme = "https"
+  scrape_interval = "60s"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
@@ -308,6 +316,7 @@ discovery.relabel "kubelet" {
 prometheus.scrape "kubelet" {
   targets = discovery.relabel.kubelet.output
   scheme = "https"
+  scrape_interval = "60s"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
