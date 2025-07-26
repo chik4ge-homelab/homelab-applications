@@ -46,23 +46,12 @@ spec:
             matchLabels:
               app.kubernetes.io/name: kube-state-metrics
         
-        service:
-          annotations:
-            prometheus.io/scrape: "false"
-        
-        # Use scrapeConfig instead of serviceMonitor for HA
         prometheus:
           monitor:
             enabled: false
-        
-        # Enable scrapeConfig for HA setup
-        scrapeConfig:
-          enabled: true
-          namespace: alloy
-          scrapeClass: default
-          jobLabel: kube-state-metrics
-          attachMetadata:
-            node: true
+            
+          scrapeconfig:
+            enabled: true
   destination:
     namespace: kube-system
     server: {{ .Values.spec.destination.server }}
