@@ -23,7 +23,7 @@ spec:
             replicas: 2
             resources:
               limits:
-                memory: 5.7Gi
+                memory: 6Gi
               requests:
                 memory: 4Gi
 
