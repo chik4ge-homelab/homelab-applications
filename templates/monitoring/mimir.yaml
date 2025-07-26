@@ -123,9 +123,9 @@ spec:
 
           runtimeConfig:
             ingester_limits:
-              max_ingestion_rate: 0
+              max_ingestion_rate: 999999999
             distributor_limits:
-              max_ingestion_rate: 0
+              max_ingestion_rate: 999999999
 
           mimir:
             structuredConfig:
@@ -139,7 +139,7 @@ spec:
                     http:
                       insecure_skip_verify: true
               limits:
-                ingestion_rate: 0
+                ingestion_rate: 999999999
                 out_of_order_time_window: 24h
                 compactor_blocks_retention_period: 720h
                 max_global_series_per_user: 0
