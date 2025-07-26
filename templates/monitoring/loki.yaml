@@ -82,6 +82,14 @@ spec:
           allocatedMemory: 512
         resultsCache:
           allocatedMemory: 64
+        lokiCanary:
+          resources:
+            requests:
+              cpu: 5m
+              memory: 32Mi
+            limits:
+              cpu: 20m
+              memory: 64Mi
         backend:
           replicas: 0
         read:
