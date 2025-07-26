@@ -217,6 +217,14 @@ prometheus.operator.servicemonitors "servicemonitors" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
+prometheus.operator.scrapeconfigs "scrapeconfigs" {
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
 discovery.relabel "kube_apiserver" {
   targets = discovery.kubernetes.endpoints.targets
 
