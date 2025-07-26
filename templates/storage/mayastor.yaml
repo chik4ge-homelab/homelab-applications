@@ -30,8 +30,10 @@ spec:
               resources:
                 limits:
                   hugepages2Mi: "1Gi"
+                  memory: "128Mi"
                 requests:
                   hugepages2Mi: "1Gi"
+                  memory: "128Mi"
           loki:
             enabled: false
           alloy:
