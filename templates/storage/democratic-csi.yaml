@@ -31,7 +31,7 @@ spec:
                 - name: ISCSIADM_HOST_PATH
                   value: /usr/local/sbin/iscsiadm
               iscsiDirHostPath: /etc/iscsi
-              iscsiDirHostPathType: "DirectoryOrCreate"
+              iscsiDirHostPathType: ""
               localtimeHostPath: null
             livenessProbe:
               enabled: false
