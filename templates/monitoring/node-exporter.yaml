@@ -21,6 +21,13 @@ spec:
             jobLabel: node-exporter
             attachMetadata:
               node: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
   destination:
     namespace: kube-system
     server: {{ .Values.spec.destination.server }}
