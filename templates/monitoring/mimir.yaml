@@ -139,7 +139,7 @@ spec:
                     http:
                       insecure_skip_verify: true
               limits:
-                ingestion_rate: 50000
+                ingestion_rate: 200000
                 out_of_order_time_window: 24h
                 compactor_blocks_retention_period: 720h
                 max_global_series_per_user: 0
