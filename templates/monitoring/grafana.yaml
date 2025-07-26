@@ -64,7 +64,7 @@ spec:
                   isDefault: true
                   jsonData:
                     timeout: 1800
-                    scrape_interval: 60s
+                    timeInterval: 60s
                 - name: Loki
                   type: loki
                   access: proxy
