@@ -65,6 +65,11 @@ discovery.relabel "pods" {
     action = "replace"
     target_label = "app"
   }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
 }
 
 discovery.relabel "services" {
@@ -106,6 +111,11 @@ discovery.relabel "services" {
     action = "replace"
     target_label = "service"
   }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
 }
 
 discovery.relabel "proxmox_hosts" {
@@ -119,6 +129,11 @@ discovery.relabel "proxmox_hosts" {
   rule {
     replacement   = "node-exporter"
     target_label  = "job"
+  }
+
+  rule {
+    replacement   = "proxmox"
+    target_label  = "cluster"
   }
 
   rule {
@@ -195,6 +210,10 @@ prometheus.scrape "nodes" {
 }
 
 prometheus.operator.servicemonitors "servicemonitors" {
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
@@ -222,6 +241,11 @@ discovery.relabel "kube_apiserver" {
   rule {
     replacement   = "kube-apiserver"
     target_label  = "job"
+  }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
   }
 }
 
@@ -261,6 +285,11 @@ discovery.relabel "kube_scheduler" {
     replacement   = "kube-scheduler"
     target_label  = "job"
   }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
 }
 
 prometheus.scrape "kube_scheduler" {
@@ -286,6 +315,11 @@ discovery.relabel "cadvisor" {
     replacement   = "cadvisor"
     target_label  = "job"
   }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
 }
 
 prometheus.scrape "cadvisor" {
@@ -310,6 +344,26 @@ discovery.relabel "kubelet" {
   rule {
     replacement   = "kubelet"
     target_label  = "job"
+  }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
+}
+
+discovery.relabel "nodes" {
+  targets = discovery.kubernetes.nodes.targets
+
+  rule {
+    source_labels = ["__meta_kubernetes_node_label_kubernetes_io_hostname"]
+    action = "replace"
+    target_label = "hostname"
+  }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
   }
 }
 
