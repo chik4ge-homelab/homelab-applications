@@ -77,6 +77,11 @@ spec:
           resources:
             requests:
               cpu: 100m
+              memory: 800Mi
+        chunksCache:
+          allocatedMemory: 512
+        resultsCache:
+          allocatedMemory: 64
         backend:
           replicas: 0
         read:
