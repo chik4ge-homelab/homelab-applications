@@ -35,11 +35,11 @@ spec:
                   - name: LowNodeUtilization
                     args:
                       thresholds:
-                        cpu: 50
-                        memory: 50
+                        cpu: 60
+                        memory: 60
                       targetThresholds:
-                        cpu: 70
-                        memory: 70
+                        cpu: 80
+                        memory: 80
                 plugins:
                   balance:
                     enabled:
