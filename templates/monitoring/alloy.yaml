@@ -13,6 +13,8 @@ spec:
         parameters:
           - name: alloy.clustering.enabled
             value: "true"
+          - name: alloy.stabilityLevel
+            value: "experimental" # to use scrapeconfigs
           - name: alloy.configMap.create
             value: "false"
           - name: alloy.configMap.name

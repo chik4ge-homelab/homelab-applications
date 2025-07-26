@@ -197,8 +197,23 @@ prometheus.scrape "network_devices" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-prometheus.scrape "nodes" {
+discovery.relabel "nodes" {
   targets = discovery.kubernetes.nodes.targets
+
+  rule {
+    source_labels = ["__meta_kubernetes_node_label_kubernetes_io_hostname"]
+    action = "replace"
+    target_label = "hostname"
+  }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
+}
+
+prometheus.scrape "nodes" {
+  targets = discovery.relabel.nodes.output
   scrape_interval = "60s"
   scheme     = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
@@ -352,21 +367,6 @@ discovery.relabel "kubelet" {
   rule {
     replacement   = "kubelet"
     target_label  = "job"
-  }
-
-  rule {
-    replacement   = "talos-k8s"
-    target_label  = "cluster"
-  }
-}
-
-discovery.relabel "nodes" {
-  targets = discovery.kubernetes.nodes.targets
-
-  rule {
-    source_labels = ["__meta_kubernetes_node_label_kubernetes_io_hostname"]
-    action = "replace"
-    target_label = "hostname"
   }
 
   rule {
