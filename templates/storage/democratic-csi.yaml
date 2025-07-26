@@ -25,6 +25,13 @@ spec:
           node:
             hostPID: true
             driver:
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 50m
+                  memory: 128Mi
               extraEnv:
                 - name: ISCSIADM_HOST_STRATEGY
                   value: nsenter
@@ -86,15 +93,6 @@ spec:
                 limits:
                   cpu: 50m
                   memory: 64Mi
-          node:
-            driver:
-              resources:
-                requests:
-                  cpu: 10m
-                  memory: 32Mi
-                limits:
-                  cpu: 50m
-                  memory: 128Mi
   destination:
     namespace: democratic-csi
     server: {{ .Values.spec.destination.server }}
