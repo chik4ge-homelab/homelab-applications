@@ -85,25 +85,55 @@ spec:
             replicas: 1
             metrics:
               enabled: true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
 
           server:
             replicas: 2
             metrics:
               enabled: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 80Mi
+              limits:
+                memory: 128Mi
 
           repoServer:
             replicas: 2
             metrics:
               enabled: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 80Mi
+              limits:
+                memory: 128Mi
 
           applicationSet:
             replicas: 2
             metrics:
               enabled: true
+            resources:
+              requests:
+                cpu: 5m
+                memory: 150Mi
+              limits:
+                memory: 200Mi
 
           dex:
             metrics:
               enabled: true
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
 
           redis:
             metrics:
@@ -113,6 +143,12 @@ spec:
             enabled: true
             metrics:
               enabled: true
+            resources:
+              requests:
+                cpu: 5m
+                memory: 48Mi
+              limits:
+                memory: 64Mi
             cm:
               create: false
             secret:
