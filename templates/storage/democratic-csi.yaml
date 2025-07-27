@@ -30,6 +30,7 @@ spec:
                   cpu: 10m
                   memory: 32Mi
                 limits:
+                  cpu: 50m
                   memory: 128Mi
               extraEnv:
                 - name: ISCSIADM_HOST_STRATEGY
@@ -58,6 +59,7 @@ spec:
                   cpu: 10m
                   memory: 64Mi
                 limits:
+                  cpu: 50m
                   memory: 128Mi
             externalAttacher:
               resources:
@@ -65,6 +67,7 @@ spec:
                   cpu: 5m
                   memory: 16Mi
                 limits:
+                  cpu: 50m
                   memory: 64Mi
             externalProvisioner:
               resources:
@@ -72,6 +75,7 @@ spec:
                   cpu: 5m
                   memory: 16Mi
                 limits:
+                  cpu: 50m
                   memory: 64Mi
             externalResizer:
               resources:
@@ -79,6 +83,7 @@ spec:
                   cpu: 5m
                   memory: 16Mi
                 limits:
+                  cpu: 50m
                   memory: 64Mi
             externalSnapshotter:
               resources:
@@ -86,6 +91,7 @@ spec:
                   cpu: 5m
                   memory: 16Mi
                 limits:
+                  cpu: 50m
                   memory: 64Mi
   destination:
     namespace: democratic-csi
