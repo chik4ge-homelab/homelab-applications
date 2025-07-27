@@ -20,7 +20,6 @@ spec:
             cpu: 20m
             memory: 128Mi
           limits:
-            cpu: 100m
             memory: 512Mi
         
         # Pod Anti-Affinity for HA
