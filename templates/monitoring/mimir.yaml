@@ -82,9 +82,6 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 4Gi
-              limits:
-                memory: 4Gi
 
           alertmanager:
             persistentVolume:
@@ -153,6 +150,10 @@ spec:
               blocks_storage:
                 s3:
                   bucket_name: mimir-blocks
+                bucket_store:
+                  chunks_cache:
+                    memcached:
+                      timeout: 5s
               alertmanager_storage:
                 s3:
                   bucket_name: mimir-alertmanager
