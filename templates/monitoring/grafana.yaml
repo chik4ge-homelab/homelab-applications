@@ -19,7 +19,6 @@ spec:
               cpu: 10m
               memory: 128Mi
             limits:
-              cpu: 100m
               memory: 256Mi
           grafana.ini:
             server:
