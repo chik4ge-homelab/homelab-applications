@@ -26,7 +26,7 @@ spec:
                 memory: 4Gi
               requests:
                 cpu: 200m
-                memory: 4Gi
+                memory: 6Gi
 
           nginx:
             replicas: 2
@@ -78,7 +78,7 @@ spec:
           chunks-cache:
             enabled: true
             replicas: 1
-            allocatedMemory: 1024
+            allocatedMemory: 4096
             resources:
               requests:
                 cpu: 100m
