@@ -32,13 +32,13 @@ spec:
             pools:
               - servers: 4
                 name: pool-0
-                size: 25Gi
+                size: 35Gi
                 volumesPerServer: 4
                 resources:
                   requests:
                     memory: 1Gi
                     cpu: 100m
-                  limits:
+                  そs:
                     memory: 2Gi
             serviceMetadata:
               minioServiceLabels:
