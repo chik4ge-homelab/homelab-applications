@@ -112,7 +112,7 @@ spec:
                 cpu: 10m
                 memory: 80Mi
               limits:
-                memory: 128Mi
+                memory: 512Mi
 
           applicationSet:
             replicas: 2
