@@ -29,6 +29,10 @@ spec:
               - name: mimir-blocks
               - name: mimir-alertmanager
               - name: mimir-ruler
+              - name: loki-admin
+              - name: loki-chunks
+              - name: loki-ruler
+              - name: cube-vanilla-backup
             pools:
               - servers: 4
                 name: pool-0
