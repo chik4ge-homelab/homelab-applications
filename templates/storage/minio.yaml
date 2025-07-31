@@ -38,7 +38,7 @@ spec:
                   requests:
                     memory: 1Gi
                     cpu: 100m
-                  そs:
+                  limits:
                     memory: 2Gi
             serviceMetadata:
               minioServiceLabels:
