@@ -16,7 +16,7 @@ spec:
         valuesObject:
           compactor:
             persistentVolume:
-              size: 10Gi
+              size: 20Gi
               storageClass: mayastor-3-replica
 
           distributor:
@@ -140,7 +140,7 @@ spec:
               limits:
                 ingestion_rate: 999999999
                 out_of_order_time_window: 24h
-                compactor_blocks_retention_period: 48h
+                compactor_blocks_retention_period: 72h
                 max_global_series_per_user: 0
               distributor:
                 remote_timeout: 30m
