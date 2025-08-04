@@ -15,6 +15,11 @@ spec:
       helm:
         valuesObject:
           compactor:
+            compaction_ranges:
+              - 2h
+              - 6h
+              - 12h
+              - 24h
             persistentVolume:
               size: 20Gi
               storageClass: mayastor-3-replica
