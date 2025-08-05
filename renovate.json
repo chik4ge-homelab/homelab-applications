@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended"
   ],
+  "prConcurrentLimit": 0,
   "reviewers": [
     "chik4ge"
   ],
