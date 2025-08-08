@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: proxmox-exporter
+  labels:
+    app.kubernetes.io/name: proxmox-exporter
+    app.kubernetes.io/instance: proxmox-exporter
+spec:
+  honorLabels: true
+  jobName: proxmox-exporter
+  staticConfigs:
+  - targets:
+    - "proxmox-exporter.proxmox-exporter.svc:8080"

@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/monitoring/proxmox-exporter/secrets
+      path: apps/monitoring/proxmox-exporter
     - repoURL: https://starttoaster.github.io/proxmox-exporter
       chart: proxmox-exporter
       targetRevision: 0.2.8
@@ -48,7 +48,7 @@ spec:
             secretRef:
               name: proxmox-secret
           serviceMonitor:
-            enabled: true
+            enabled: false
 
   destination:
     namespace: proxmox-exporter
