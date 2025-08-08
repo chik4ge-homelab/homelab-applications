@@ -17,6 +17,10 @@ spec:
           # High Availability configuration
           replicaCount: 2
           
+          # Disable Pod discovery scraping to avoid duplicates with ServiceMonitor
+          podAnnotations:
+            prometheus.io/scrape: "false"
+          
           # Resource specifications
           resources:
             requests:
