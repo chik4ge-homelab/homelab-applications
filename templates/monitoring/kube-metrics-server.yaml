@@ -45,12 +45,20 @@ spec:
             matchLabels:
               app.kubernetes.io/name: kube-state-metrics
         
+        service:
+          annotations:
+            prometheus.io/scrape: "false"
+        
         prometheus:
           monitor:
             enabled: false
             
           scrapeconfig:
             enabled: true
+            honorLabels: false
+            relabelings:
+              - targetLabel: job
+                replacement: "kube-state-metrics"
   destination:
     namespace: kube-system
     server: {{ .Values.spec.destination.server }}
