@@ -9,9 +9,9 @@ spec:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/monitoring/nut_exporter
-    - repoURL: https://github.com/DRuggeri/nut_exporter
+    - repoURL: https://git.shivering-isles.com/api/v4/projects/233/packages/helm/main
       chart: nut-exporter
-      targetRevision: 1.0.0
+      targetRevision: 0.4.0
       helm:
         valuesObject:
           replicaCount: 2
