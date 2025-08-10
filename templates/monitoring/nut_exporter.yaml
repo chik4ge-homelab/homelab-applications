@@ -11,7 +11,7 @@ spec:
       path: apps/monitoring/nut_exporter
     - repoURL: https://github.com/DRuggeri/nut_exporter.git
       targetRevision: v3.2.1
-      path: chart
+      path: charts/nut-exporter
       helm:
         valuesObject:
           replicaCount: 2
