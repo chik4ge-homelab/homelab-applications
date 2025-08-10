@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: nut-exporter
+  labels:
+    app.kubernetes.io/name: nut-exporter
+    app.kubernetes.io/instance: nut-exporter
+spec:
+  honorLabels: true
+  jobName: nut-exporter
+  staticConfigs:
+  - targets:
+    - "nut-exporter.nut-exporter.svc:9199"

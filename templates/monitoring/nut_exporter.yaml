@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nut-exporter
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/monitoring/nut-exporter
+    - repoURL: https://github.com/DRuggeri/nut_exporter
+      chart: nut-exporter
+      targetRevision: 1.0.0
+      helm:
+        valuesObject:
+          replicaCount: 2
+          envSecret: {}
+          env:
+            - name: NUT_EXPORTER_SERVER
+              value: "192.168.0.150"
+            - name: NUT_EXPORTER_SERVERPORT
+              value: "3493"
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              memory: 64Mi
+              cpu: 10m
+
+  destination:
+    namespace: nut-exporter
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
