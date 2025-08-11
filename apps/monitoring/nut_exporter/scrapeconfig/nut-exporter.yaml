@@ -1,13 +1,18 @@
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: ScrapeConfig
 metadata:
-  name: nut-exporter
+  name: nut-exporter-bw120t
   labels:
     app.kubernetes.io/name: nut-exporter
     app.kubernetes.io/instance: nut-exporter
 spec:
   honorLabels: true
-  jobName: nut-exporter
+  jobName: nut-exporter-bw120t
+  metricsPath: /ups_metrics
+  params:
+    ups: ["bw120t"]
   staticConfigs:
   - targets:
     - "nut-exporter.nut-exporter.svc:9199"
+    labels:
+      ups: "bw120t"
