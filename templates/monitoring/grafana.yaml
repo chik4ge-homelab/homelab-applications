@@ -107,7 +107,7 @@ spec:
 
     - chart: pxc-db
       repoURL: https://percona.github.io/percona-helm-charts/
-      targetRevision: 1.17.1
+      targetRevision: 1.18.0
       helm:
         parameters:
           - name: pxc.certManager
