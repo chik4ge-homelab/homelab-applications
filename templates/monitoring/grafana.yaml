@@ -119,7 +119,7 @@ spec:
                 - grafana
               passwordSecretRef:
                 name: mysql-secret
-                key: rootPassword
+                key: password
               grants:
                 - ALL
                 - PRIVILEGES
