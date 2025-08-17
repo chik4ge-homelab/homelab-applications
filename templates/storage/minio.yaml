@@ -75,6 +75,13 @@ spec:
               externalCaCertSecret:
                 - name: operator-ca-tls-minio
                   type: cert-manager.io/v1
+          ingress:
+            api:
+              enabled: true
+              ingressClassName: tailscale
+              tls:
+                - hosts:
+                  - minio
   destination:
     namespace: minio
     server: {{ .Values.spec.destination.server }}
