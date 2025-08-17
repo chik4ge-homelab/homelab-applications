@@ -54,6 +54,10 @@ spec:
                     cpu: 100m
                   limits:
                     memory: 2Gi
+              - name: pool-2
+                servers: 4
+                size: 100Gi
+                volumesPerServer: 1
             serviceMetadata:
               minioServiceLabels:
                 app: minio
