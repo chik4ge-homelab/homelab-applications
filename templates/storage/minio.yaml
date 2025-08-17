@@ -54,7 +54,7 @@ spec:
                     cpu: 100m
                   limits:
                     memory: 2Gi
-              - name: pool-2
+              - name: pool-3
                 servers: 4
                 size: 50Gi
                 volumesPerServer: 2
