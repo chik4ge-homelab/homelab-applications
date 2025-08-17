@@ -140,7 +140,7 @@ spec:
               limits:
                 ingestion_rate: 999999999
                 out_of_order_time_window: 24h
-                compactor_blocks_retention_period: 72h
+                compactor_blocks_retention_period: 120h
                 max_global_series_per_user: 0
               distributor:
                 remote_timeout: 30m
