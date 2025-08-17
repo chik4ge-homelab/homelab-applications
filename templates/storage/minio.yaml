@@ -79,6 +79,7 @@ spec:
             api:
               enabled: true
               ingressClassName: tailscale
+              host: ""
               tls:
                 - hosts:
                   - minio
