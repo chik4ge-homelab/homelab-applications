@@ -34,26 +34,6 @@ spec:
               - name: loki-ruler
               - name: cube-vanilla-backup
             pools:
-              - servers: 4
-                name: pool-0
-                size: 35Gi
-                volumesPerServer: 4
-                resources:
-                  requests:
-                    memory: 1Gi
-                    cpu: 100m
-                  limits:
-                    memory: 2Gi
-              - servers: 3
-                name: pool-1
-                size: 60Gi
-                volumesPerServer: 3
-                resources:
-                  requests:
-                    memory: 1Gi
-                    cpu: 100m
-                  limits:
-                    memory: 2Gi
               - name: pool-3
                 servers: 4
                 size: 50Gi
