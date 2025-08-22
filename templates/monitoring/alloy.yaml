@@ -29,7 +29,7 @@ spec:
             value: "4Gi"
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
-      targetRevision: 22.0.2
+      targetRevision: 23.0.0
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/monitoring/alloy
