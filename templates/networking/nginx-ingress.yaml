@@ -6,6 +6,9 @@ metadata:
 spec:
   project: default
   sources:
+  - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    targetRevision: main
+    path: apps/networking/nginx-ingress
   - repoURL: https://kubernetes.github.io/ingress-nginx
     chart: ingress-nginx
     targetRevision: 4.13.2
@@ -20,6 +23,8 @@ spec:
             requests:
               cpu: 100m
               memory: 90Mi
+          extraArgs:
+            default-ssl-certificate: "nginx-ingress/wildcard-chik4ge-me-tls"
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: ingress-nginx

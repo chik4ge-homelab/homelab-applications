@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-chik4ge-me
+  namespace: nginx-ingress
+spec:
+  secretName: wildcard-chik4ge-me-tls
+  issuerRef:
+    name: chik4ge-me-issuer
+    kind: ClusterIssuer
+  commonName: "*.chik4ge.me"
+  dnsNames:
+    - "*.chik4ge.me"
