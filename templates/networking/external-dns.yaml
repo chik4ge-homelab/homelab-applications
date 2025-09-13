@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: external-dns
-  namespace: external-dns
+  namespace: argocd
 spec:
   project: default
   sources:
@@ -23,7 +23,7 @@ spec:
                   key: api-token
   destination:
     server: {{ .Values.spec.destination.server }}
-    namespace: kube-system
+    namespace: external-dns
   syncPolicy:
     automated:
       prune: true
