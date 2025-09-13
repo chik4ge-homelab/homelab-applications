@@ -12,7 +12,8 @@ spec:
     helm:
       valuesObject:
         controller:
-          loadBalancerClass: tailscale
+          service:
+            loadBalancerClass: tailscale
           resources:
             limits:
               memory: 200Mi
