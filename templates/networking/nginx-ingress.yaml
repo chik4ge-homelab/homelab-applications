@@ -6,9 +6,19 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://kubernetes.github.io/ingress-nginx
-      chart: ingress-nginx
-      targetRevision: 4.13.2
+  - repoURL: https://kubernetes.github.io/ingress-nginx
+    chart: ingress-nginx
+    targetRevision: 4.13.2
+    helm:
+      valuesObject:
+        controller:
+          loadBalancerClass: tailscale
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 90Mi
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: ingress-nginx
@@ -16,4 +26,4 @@ spec:
     automated:
       prune: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
