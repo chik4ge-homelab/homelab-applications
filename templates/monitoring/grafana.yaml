@@ -72,6 +72,15 @@ spec:
                   jsonData:
                     maxLines: 1000
 
+          ingress:
+            enabled: true
+            tls:
+              - hosts:
+                  - grafana.chik4ge.me
+            hosts:
+              - grafana.chik4ge.me
+            ingressClassName: nginx
+
           extraObjects:
             - apiVersion: external-secrets.io/v1
               kind: ExternalSecret
