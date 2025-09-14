@@ -7,6 +7,5 @@ spec:
   issuerRef:
     name: chik4ge-me-issuer
     kind: ClusterIssuer
-  commonName: "*.chik4ge.me"
   dnsNames:
     - "*.chik4ge.me"
