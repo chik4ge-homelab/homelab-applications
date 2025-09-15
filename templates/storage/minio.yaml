@@ -58,11 +58,13 @@ spec:
           ingress:
             api:
               enabled: true
-              ingressClassName: tailscale
-              host: ""
+              ingressClassName: nginx
+              host: "minio.chik4ge.me"
+              annotations:
+                nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
               tls:
                 - hosts:
-                  - minio
+                  - minio.chik4ge.me
             console:
               enabled: true
               ingressClassName: nginx
