@@ -23,6 +23,8 @@ spec:
                 maxSurge: 0
                 maxUnavailable: 1
           configs:
+            params:
+              "server.insecure": "true"
             cm:
               url: https://argocd.chik4ge.me
               dex.config: |
@@ -94,7 +96,6 @@ spec:
                 memory: 1Gi
 
           server:
-            insecure: true
             replicas: 2
             metrics:
               enabled: true
