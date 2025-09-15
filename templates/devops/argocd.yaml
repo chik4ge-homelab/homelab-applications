@@ -106,6 +106,7 @@ spec:
             ingress:
               enabled: true
               ingressClassName: nginx
+              tls: true
 
           repoServer:
             replicas: 2
