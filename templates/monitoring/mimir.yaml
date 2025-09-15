@@ -46,7 +46,8 @@ spec:
               hosts:
                 - host: mimir.chik4ge.me
                   paths:
-                    - pat: /
+                    - path: /
+                      pathType: Prefix
               tls:
                 - hosts:
                     - mimir.chik4ge.me
