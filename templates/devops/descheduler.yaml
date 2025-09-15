@@ -21,7 +21,7 @@ spec:
                       ignorePvcPods: true
                       evictLocalStoragePods: true
                       # noEvictionPolicy: Mandatory
-                  - name: RemoveDuplicates
+                  # - name: RemoveDuplicates
                   - name: RemovePodsHavingTooManyRestarts
                     args:
                       podRestartThreshold: 50
