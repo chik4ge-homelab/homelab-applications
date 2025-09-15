@@ -49,9 +49,6 @@ spec:
             rbac:
               policy.csv: |
                 g, chik4ge-homelab:admin, role:admin
-          ingress:
-            enabled: true
-            ingressClassName: nginx
           redis-ha:
             enabled: true
             haproxy:
@@ -106,6 +103,9 @@ spec:
                 memory: 80Mi
               limits:
                 memory: 128Mi
+            ingress:
+              enabled: true
+              ingressClassName: nginx
 
           repoServer:
             replicas: 2
