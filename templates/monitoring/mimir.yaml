@@ -18,6 +18,12 @@ spec:
             persistentVolume:
               size: 20Gi
               storageClass: mayastor-3-replica
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 1Gi
 
           distributor:
             replicas: 2
@@ -25,7 +31,7 @@ spec:
               limits:
                 memory: 6Gi
               requests:
-                cpu: 200m
+                cpu: 100m
                 memory: 4Gi
 
           nginx:
@@ -57,6 +63,12 @@ spec:
                           values:
                             - ingester
                     topologyKey: "kubernetes.io/hostname"
+            resources:
+              requests:
+                cpu: 150m
+                memory: 1Gi
+              limits:
+                memory: 3Gi
                     
           store_gateway:
             persistentVolume:
@@ -78,6 +90,12 @@ spec:
                           values:
                             - store-gateway
                     topologyKey: "kubernetes.io/hostname"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
 
           chunks-cache:
             enabled: true
@@ -85,7 +103,10 @@ spec:
             allocatedMemory: 4096
             resources:
               requests:
-                cpu: 100m
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
 
           alertmanager:
             persistentVolume:
@@ -100,14 +121,20 @@ spec:
             replicas: 3
             resources:
               requests:
-                cpu: 100m
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 200Mi
 
           metadata-cache:
             enabled: true
             replicas: 3
             resources:
               requests:
-                cpu: 100m
+                cpu: 10m
+                memory: 10Mi
+              limits:
+                memory: 50Mi
 
           results-cache:
             enabled: true
@@ -115,6 +142,14 @@ spec:
             resources:
               requests:
                 cpu: 100m
+          
+          ruler:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
 
           minio:
             enabled: false
