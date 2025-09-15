@@ -29,7 +29,7 @@ spec:
                 memory: 4Gi
 
           nginx:
-            replicas: 2
+            enabled: false
 
           gateway:
             enabledNonEnterprise: true
