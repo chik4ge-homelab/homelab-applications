@@ -170,7 +170,7 @@ discovery.relabel "network_devices" {
   }
 }
 mimir.rules.kubernetes "default" {
-  address = "http://mimir-nginx.mimir.svc.cluster.local"
+  address = "http://mimir-gateway.mimir.svc.cluster.local"
 }
 
 prometheus.scrape "pods" {
@@ -388,7 +388,7 @@ prometheus.scrape "kubelet" {
 
 prometheus.remote_write "default" {
   endpoint {
-    url = "http://mimir-nginx.mimir.svc.cluster.local/api/v1/push"
+    url = "http://mimir-gateway.mimir.svc.cluster.local/api/v1/push"
   }
 }
 
