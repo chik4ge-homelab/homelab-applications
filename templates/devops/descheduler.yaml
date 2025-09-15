@@ -20,9 +20,7 @@ spec:
                       nodeFit: true
                       ignorePvcPods: true
                       evictLocalStoragePods: true
-                      evictableNamespaces:
-                        exclude:
-                          - default
+                      noEvictionPolicy: Mandatory
                   - name: RemoveDuplicates
                   - name: RemovePodsHavingTooManyRestarts
                     args:
