@@ -15,6 +15,7 @@ spec:
       helm:
         valuesObject:
           global:
+            domain: argocd.chik4ge.me
             addPrometheusAnnotations: true
             deploymentStrategy:
               type: RollingUpdate
@@ -48,6 +49,9 @@ spec:
             rbac:
               policy.csv: |
                 g, chik4ge-homelab:admin, role:admin
+          ingress:
+            enabled: true
+            ingressClassName: nginx
           redis-ha:
             enabled: true
             haproxy:
