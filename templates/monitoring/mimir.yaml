@@ -31,6 +31,10 @@ spec:
           nginx:
             replicas: 2
 
+          gateway:
+            enabledNonEnterprise: true
+            replicas: 2
+
           ingester:
             replicas: 2
             persistentVolume:
