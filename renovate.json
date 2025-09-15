@@ -19,5 +19,17 @@
     "managerFilePatterns": [
       "/apps/.+\\.yaml$/"
     ]
-  }
+  },
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "loki"
+      ],
+      "fetchChangeLogs": "off",
+      "prBodyNotes": [
+        "helm chart changelogs: https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md#{{{replace '\\.' '' newVersion}}}",
+        "loki changelogs: https://github.com/grafana/loki/blob/main/CHANGELOG.md"
+      ]
+    }
+  ]
 }
