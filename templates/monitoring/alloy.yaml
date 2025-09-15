@@ -10,23 +10,29 @@ spec:
       chart: alloy
       targetRevision: 1.2.1
       helm:
-        parameters:
-          - name: alloy.clustering.enabled
-            value: "true"
-          - name: alloy.stabilityLevel
-            value: "experimental" # to use scrapeconfigs
-          - name: alloy.configMap.create
-            value: "false"
-          - name: alloy.configMap.name
-            value: "alloy-config"
-          - name: alloy.configMap.key
-            value: "config.alloy"
-          - name: alloy.resources.requests.cpu
-            value: "50m"
-          - name: alloy.resources.requests.memory
-            value: "2Gi"
-          - name: alloy.resources.limits.memory
-            value: "4Gi"
+        valuesObject:
+          alloy:
+            clustering:
+              enabled: true
+            stabilityLevel: "experimental" # to use scrapeconfigs
+            configMap:
+              create: false
+              name: "alloy-config"
+              key: "config.alloy"
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "2Gi"
+              limits:
+                memory: "4Gi"
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            path: /
+            faroPort: 12345 # Ingress backend port (12347=Faro, 12345=UI)
+            pathType: Prefix
+            hosts:
+              - alloy.chik4ge.me
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
       targetRevision: 23.0.0
