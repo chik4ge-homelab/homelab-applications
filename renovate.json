@@ -27,8 +27,38 @@
       ],
       "fetchChangeLogs": "off",
       "prBodyNotes": [
-        "helm chart changelogs: https://github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md#{{{replace '\\.' '' newVersion}}}",
-        "loki changelogs: https://github.com/grafana/loki/blob/main/CHANGELOG.md"
+        "helm chart changelogs: https://redirect.github.com/grafana/loki/blob/main/production/helm/loki/CHANGELOG.md#{{{replace '\\.' '' newVersion}}}",
+        "loki changelogs: https://redirect.github.com/grafana/loki/blob/main/CHANGELOG.md"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "grafana"
+      ],
+      "fetchChangeLogs": "off",
+      "prBodyNotes": [
+        "helm chart changelogs: https://github.com/grafana/helm-charts/releases/tag/grafana-{{newVersion}}",
+        "loki changelogs: https://redirect.github.com/grafana/grafana/blob/main/CHANGELOG.md"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "mimir"
+      ],
+      "fetchChangeLogs": "off",
+      "prBodyNotes": [
+        "helm chart changelogs: https://github.com/grafana/mimir/blob/main/operations/helm/charts/mimir-distributed/CHANGELOG.md#{{{replace '\\.' '' newVersion}}}",
+        "loki changelogs: https://redirect.github.com/grafana/mimir/blob/main/CHANGELOG.md"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "alloy"
+      ],
+      "fetchChangeLogs": "off",
+      "prBodyNotes": [
+        "helm chart changelogs: https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/CHANGELOG.md",
+        "loki changelogs: https://redirect.github.com/grafana/alloy/blob/main/CHANGELOG.md"
       ]
     }
   ]
