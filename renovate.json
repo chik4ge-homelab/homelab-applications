@@ -35,7 +35,6 @@
       "matchPackageNames": [
         "grafana"
       ],
-      "fetchChangeLogs": "off",
       "prBodyNotes": [
         "helm chart changelogs: https://github.com/grafana/helm-charts/releases/tag/grafana-{{newVersion}}",
         "loki changelogs: https://redirect.github.com/grafana/grafana/blob/main/CHANGELOG.md"
