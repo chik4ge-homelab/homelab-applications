@@ -40,6 +40,16 @@ spec:
           gateway:
             enabledNonEnterprise: true
             replicas: 2
+            ingress:
+              enabled: true
+              ingressClassName: nginx
+              hosts:
+                - host: mimir.chik4ge.me
+                  paths:
+                    - pat: /
+              tls:
+                - hosts:
+                    - mimir.chik4ge.me
 
           ingester:
             replicas: 2
@@ -68,7 +78,7 @@ spec:
                 cpu: 150m
                 memory: 1Gi
               limits:
-                memory: 3Gi
+                memory: 5Gi
                     
           store_gateway:
             persistentVolume:
