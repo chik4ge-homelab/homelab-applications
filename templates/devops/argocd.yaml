@@ -94,6 +94,7 @@ spec:
                 memory: 1Gi
 
           server:
+            insecure: true
             replicas: 2
             metrics:
               enabled: true
