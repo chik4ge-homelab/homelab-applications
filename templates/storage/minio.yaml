@@ -67,6 +67,8 @@ spec:
               enabled: true
               ingressClassName: nginx
               host: minio-console.chik4ge.me
+              annotations:
+                nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
               tls:
                 - hosts:
                   - minio-console.chik4ge.me
