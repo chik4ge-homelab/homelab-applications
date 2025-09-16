@@ -10,7 +10,7 @@ spec:
       targetRevision: main
       path: apps/devops/argocd
     - repoURL: https://argoproj.github.io/argo-helm
-      targetRevision: 8.3.7
+      targetRevision: 8.3.9
       chart: argo-cd
       helm:
         valuesObject:
