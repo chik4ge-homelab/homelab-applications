@@ -58,6 +58,15 @@
         "helm chart changelogs: https://github.com/grafana/alloy/blob/main/operations/helm/charts/alloy/CHANGELOG.md",
         "alloy changelogs: https://redirect.github.com/grafana/alloy/blob/main/CHANGELOG.md"
       ]
+    },
+    {
+      "matchPackageNames": [
+        "tailscale-operator"
+      ],
+      "fetchChangeLogs": "off",
+      "prBodyNotes": [
+        "changelogs: https://tailscale.com/changelog#service"
+      ]
     }
   ]
 }
