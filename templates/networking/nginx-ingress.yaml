@@ -20,10 +20,10 @@ spec:
               loadBalancerClass: tailscale
           resources:
             limits:
-              memory: 200Mi
+              memory: 400Mi
             requests:
               cpu: 100m
-              memory: 90Mi
+              memory: 200Mi
           extraArgs:
             default-ssl-certificate: "ingress-nginx/wildcard-chik4ge-me-tls"
   destination:
