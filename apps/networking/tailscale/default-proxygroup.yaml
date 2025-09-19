@@ -1,7 +1,7 @@
 apiVersion: tailscale.com/v1alpha1
 kind: ProxyGroup
 metadata:
-  name: ts-proxies
+  name: ts-proxies-ingress
 spec:
-  type: egress
+  type: ingress
   replicas: 2
