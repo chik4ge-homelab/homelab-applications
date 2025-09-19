@@ -18,7 +18,7 @@ spec:
           replicaCount: 2
           service:
             annotations:
-              tailscale.com/proxy-group: "ts-proxies"
+              tailscale.com/proxy-group: "ts-proxies-ingress"
             loadBalancerClass: tailscale
           resources:
             limits:
