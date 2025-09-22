@@ -12,8 +12,6 @@ spec:
       helm:
         valuesObject:
           replicas: 2
-          image:
-            tag: 11.4.2
           resources:
             requests:
               cpu: 10m
