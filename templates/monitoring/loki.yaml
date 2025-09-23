@@ -21,15 +21,17 @@ spec:
             spec:
               refreshInterval: 1h
               secretStoreRef:
-                name: bitwarden-secretsmanager
+                name: 1password-connect
                 kind: ClusterSecretStore
               data:
                 - secretKey: AWS_ACCESS_KEY_ID
                   remoteRef:
-                    key: "ac15ac14-563b-4b3e-88b2-b2d400b8cfae"
+                    key: "Loki Minio Credentials"
+                    property: accessKey
                 - secretKey: AWS_SECRET_ACCESS_KEY
                   remoteRef:
-                    key: "fff70b9b-bc39-4c4b-831d-b2d400b8ee26"
+                    key: "Loki Minio Credentials"
+                    property: secretKey
         loki:
           auth_enabled: false
           commonConfig:
