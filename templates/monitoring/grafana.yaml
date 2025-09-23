@@ -98,12 +98,13 @@ spec:
               spec:
                 refreshInterval: 1h
                 secretStoreRef:
-                  name: bitwarden-secretsmanager
+                  name: 1password-connect
                   kind: ClusterSecretStore
                 data:
                   - secretKey: github-sso-client-secret
                     remoteRef:
-                      key: "f7b7d08e-0571-4685-a889-b275010f851f"
+                      key: "Grafana GitHub Client Secret"
+                      property: secret
 
             - apiVersion: external-secrets.io/v1
               kind: ExternalSecret
@@ -114,12 +115,13 @@ spec:
               spec:
                 refreshInterval: 1h
                 secretStoreRef:
-                  name: bitwarden-secretsmanager
+                  name: 1password-connect
                   kind: ClusterSecretStore
                 data:
                   - secretKey: password
                     remoteRef:
-                      key: "5f685cc0-9229-4a78-8a4e-b2750104d6fd"
+                      key: "Grafana MySQL"
+                      property: password
 
     - chart: pxc-db
       repoURL: https://percona.github.io/percona-helm-charts/
