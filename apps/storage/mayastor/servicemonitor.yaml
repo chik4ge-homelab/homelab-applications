@@ -7,6 +7,6 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: mayastor
+      app: metrics-exporter-io-engine
   endpoints:
     - port: metrics
