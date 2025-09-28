@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mayastor-monitoring
+  labels:
+    app: mayastor
+spec:
+  selector:
+    matchLabels:
+      app: mayastor
+  endpoints:
+    - port: metrics
