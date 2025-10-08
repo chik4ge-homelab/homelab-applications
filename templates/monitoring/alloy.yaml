@@ -35,7 +35,7 @@ spec:
               - alloy.chik4ge.me
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: prometheus-operator-crds
-      targetRevision: 23.0.0
+      targetRevision: 24.0.0
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/monitoring/alloy
