@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: home-assistant
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: http://pajikos.github.io/home-assistant-helm-chart/
+      chart: home-assistant
+      targetRevision: 0.3.24
+      helm:
+        valuesObject:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+            hosts:
+              - host: home.chik4ge.me
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - hosts:
+                  - home.chik4ge.me
+          persistence:
+            enabled: true
+            storageClass: mayastor-3-replica
+            size: 20Gi
+  destination:
+    namespace: home-assistant
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
