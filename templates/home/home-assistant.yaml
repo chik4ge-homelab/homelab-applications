@@ -58,16 +58,18 @@ spec:
     - repoURL: https://charts.derwitt.dev
       chart: home-assistant-matter-server 
       targetRevision: 3.1.1
-      networkInterface: net0
-      resources:
-        requests:
-          cpu: 100m
-          memory: 256Mi
-        limits:
-          memory: 512Mi
-      persistence:
-        storageClassName: mayastor-3-replica
-        size: 2Gi
+      helm:
+        valuesObject:
+          networkInterface: net0
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          persistence:
+            storageClassName: mayastor-3-replica
+            size: 2Gi
   destination:
     namespace: home-assistant
     server: {{ .Values.spec.destination.server }}
