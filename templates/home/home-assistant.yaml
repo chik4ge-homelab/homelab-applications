@@ -37,9 +37,6 @@ spec:
           configuration:
             enabled: true
             forceInit: true
-            trusted_proxies:
-              - 10.244.0.0/16
-              - 127.0.0.1
             templateConfig: |-
               # Loads default set of integrations. Do not remove.
               default_config:
@@ -47,9 +44,8 @@ spec:
               http:
                 use_x_forwarded_for: true
                 trusted_proxies:
-                  {{- range .Values.configuration.trusted_proxies }}
-                  - {{ . }}
-                  {{- end }}
+                  - 127.0.0.1
+                  - 10.244.0.0/16
 
               # Load frontend themes from the themes folder
               frontend:
