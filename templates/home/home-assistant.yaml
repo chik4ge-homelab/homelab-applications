@@ -46,6 +46,9 @@ spec:
                 trusted_proxies:
                   - 127.0.0.1
                   - 10.244.0.0/16
+              
+              prometheus:
+                requires_auth: false
 
               # Load frontend themes from the themes folder
               frontend:
@@ -54,6 +57,9 @@ spec:
               automation: !include automations.yaml
               script: !include scripts.yaml
               scene: !include scenes.yaml
+          serviceMonitor:
+            enabled: true
+            scrapeInterval: 5m
 
     - repoURL: https://charts.derwitt.dev
       chart: home-assistant-matter-server 
