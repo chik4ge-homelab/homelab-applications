@@ -54,6 +54,29 @@ spec:
               automation: !include automations.yaml
               script: !include scripts.yaml
               scene: !include scenes.yaml
+    - repoURL: https://charts.derwitt.dev
+      chart: home-assistant-matter-server 
+      targetRevision: 3.1.1
+      ingress:
+        enabled: true
+        className: nginx
+        hosts:
+          - host: matter.chik4ge.me
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - matter.chik4ge.me
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
+      persistence:
+        storageClassName: mayastor-3-replica
+        size: 2Gi
   destination:
     namespace: home-assistant
     server: {{ .Values.spec.destination.server }}
