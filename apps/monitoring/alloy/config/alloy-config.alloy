@@ -176,24 +176,28 @@ mimir.rules.kubernetes "default" {
 prometheus.scrape "pods" {
   targets = discovery.relabel.pods.output
   scrape_interval = "60s"
+  clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "services" {
   targets = discovery.relabel.services.output
   scrape_interval = "60s"
+  clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "proxmox_hosts" {
   targets = discovery.relabel.proxmox_hosts.output
   scrape_interval = "60s"
+  clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
 prometheus.scrape "network_devices" {
   targets = discovery.relabel.network_devices.output
   scrape_interval = "60s"
+  clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
@@ -215,6 +219,7 @@ discovery.relabel "nodes" {
 prometheus.scrape "nodes" {
   targets = discovery.relabel.nodes.output
   scrape_interval = "60s"
+  clustering { enabled = true }
   scheme     = "https"
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
@@ -229,6 +234,7 @@ prometheus.operator.servicemonitors "servicemonitors" {
     replacement   = "talos-k8s"
     target_label  = "cluster"
   }
+  clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
@@ -237,6 +243,7 @@ prometheus.operator.scrapeconfigs "scrapeconfigs" {
     replacement   = "talos-k8s"
     target_label  = "cluster"
   }
+  clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
@@ -276,6 +283,7 @@ prometheus.scrape "kube_apiserver" {
   targets = discovery.relabel.kube_apiserver.output
   scheme = "https"
   scrape_interval = "60s"
+  clustering { enabled = true }
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
@@ -319,6 +327,7 @@ prometheus.scrape "kube_scheduler" {
   targets = discovery.relabel.kube_scheduler.output
   scheme     = "https"
   scrape_interval = "60s"
+  clustering { enabled = true }
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
@@ -349,6 +358,7 @@ prometheus.scrape "cadvisor" {
   targets = discovery.relabel.cadvisor.output
   scheme = "https"
   scrape_interval = "60s"
+  clustering { enabled = true }
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
@@ -379,6 +389,7 @@ prometheus.scrape "kubelet" {
   targets = discovery.relabel.kubelet.output
   scheme = "https"
   scrape_interval = "60s"
+  clustering { enabled = true }
   bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
   tls_config {
     insecure_skip_verify = true
