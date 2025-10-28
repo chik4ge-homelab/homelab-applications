@@ -52,7 +52,7 @@ spec:
               enabled: true
               image:
                 registry: docker.io/democraticcsi/democratic-csi
-                tag: next
+                tag: 1.9.4
               resources:
                 requests:
                   cpu: 10m

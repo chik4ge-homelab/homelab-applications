@@ -10,6 +10,36 @@
   "assignees": [
     "chik4ge"
   ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "apps/.+\\.yaml$"
+      ],
+      "matchStrings": [
+        "image:\\s*(?<depName>[^:]+):(?<currentValue>.+)"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": [
+        ".*\\.yaml$"
+      ],
+      "matchStrings": [
+        "https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/refs/tags/(?<currentValue>[^/]+)/"
+      ],
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "fileMatch": [
+        "templates/storage/democratic-csi\\.yaml$"
+      ],
+      "matchStrings": [
+        "registry:\\s*(?<depName>docker\\.io/democraticcsi/democratic-csi)",
+        "tag:\\s*(?<currentValue>.+)"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
   "argocd": {
     "managerFilePatterns": [
       "/templates/.+\\.yaml$/"
