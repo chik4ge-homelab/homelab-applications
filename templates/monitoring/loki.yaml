@@ -47,6 +47,7 @@ spec:
                   period: 24h
           compactor:
             retention_enabled: true
+            delete_request_store: s3
           pattern_ingester:
             enabled: true
           limits_config:
