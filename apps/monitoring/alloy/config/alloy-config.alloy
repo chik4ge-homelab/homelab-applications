@@ -144,6 +144,29 @@ discovery.relabel "proxmox_hosts" {
   }
 }
 
+discovery.relabel "garage_truenas_metrics" {
+  targets = [
+    {"__address__" = "192.168.0.200:30190"},
+  ]
+
+  rule {
+    replacement   = "truenas"
+    target_label  = "job"
+  }
+
+  rule {
+    replacement   = "truenas"
+    target_label  = "cluster"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    regex = "([^:]+):.*"
+    replacement = "$1"
+    target_label = "instance"
+  }
+}
+
 prometheus.exporter.snmp "network_devices" {
   target "vr_u500x" {
     address = "192.168.0.1"
@@ -189,6 +212,13 @@ prometheus.scrape "services" {
 
 prometheus.scrape "proxmox_hosts" {
   targets = discovery.relabel.proxmox_hosts.output
+  scrape_interval = "60s"
+  clustering { enabled = true }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.scrape "truenas_metrics" {
+  targets = discovery.relabel.truenas_metrics.output
   scrape_interval = "60s"
   clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
