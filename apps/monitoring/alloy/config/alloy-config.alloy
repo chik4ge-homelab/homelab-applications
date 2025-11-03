@@ -217,8 +217,8 @@ prometheus.scrape "proxmox_hosts" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-prometheus.scrape "truenas_metrics" {
-  targets = discovery.relabel.truenas_metrics.output
+prometheus.scrape "garage_truenas_metrics" {
+  targets = discovery.relabel.garage_truenas_metrics.output
   scrape_interval = "60s"
   clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
