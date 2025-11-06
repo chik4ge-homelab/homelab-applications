@@ -39,17 +39,17 @@ spec:
 
           controllerService:
             type: LoadBalancer
-            loadBalancerIP: 192.168.0.100
+            loadBalancerIP: 192.168.1.100
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
           stunService:
             type: LoadBalancer
-            loadBalancerIP: 192.168.0.100
+            loadBalancerIP: 192.168.1.100
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
           discoveryService:
             type: LoadBalancer
-            loadBalancerIP: 192.168.0.100
+            loadBalancerIP: 192.168.1.100
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
 
