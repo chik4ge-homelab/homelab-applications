@@ -22,7 +22,7 @@ spec:
             enabled: true
             ingressClassName: nginx
             hosts:
-              - host: unifi.chik4ge.me
+              - unifi.chik4ge.me
             tls:
               - hosts:
                   - unifi.chik4ge.me
