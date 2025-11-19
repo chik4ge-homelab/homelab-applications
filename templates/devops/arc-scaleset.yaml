@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
+  sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/devops/arc/secrets
