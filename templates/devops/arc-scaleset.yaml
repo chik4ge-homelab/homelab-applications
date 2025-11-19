@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/devops/arc/secrets
+      path: apps/devops/arc
     - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
       chart: arc
       targetRevision: 0.13.0
