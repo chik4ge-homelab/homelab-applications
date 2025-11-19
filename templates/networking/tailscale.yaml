@@ -11,7 +11,7 @@ spec:
       path: apps/networking/tailscale
     - repoURL: https://pkgs.tailscale.com/helmcharts/
       chart: tailscale-operator
-      targetRevision: 1.90.6
+      targetRevision: 1.90.8
       helm:
         valuesObject:
           operatorConfig:
