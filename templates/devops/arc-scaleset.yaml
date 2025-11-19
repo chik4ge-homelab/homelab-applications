@@ -10,7 +10,7 @@ spec:
       targetRevision: main
       path: apps/devops/arc/secrets
     - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
-      chart: arc-runner-set
+      chart: arc
       targetRevision: 0.13.0
       helm:
         valuesObject:
