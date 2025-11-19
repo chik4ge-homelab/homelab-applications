@@ -6,47 +6,47 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://github.com/chik4ge-homelab/homelab-applications
-    targetRevision: main
-    path: apps/devops/arc
-  - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
-    chart: arc
-    targetRevision: 0.13.0
-    helm:
-      valuesObject:
-        githubConfigUrl: https://github.com/chik4ge-homelab
-        githubConfigSecret: arc-github-config
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/devops/arc
+    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+      chart: arc
+      targetRevision: 0.13.0
+      helm:
+        valuesObject:
+          githubConfigUrl: https://github.com/chik4ge-homelab
+          githubConfigSecret: arc-github-config
 
-        maxRunners: 5
-        minRunners: 0
+          maxRunners: 5
+          minRunners: 0
 
-        runnerGroup: "self-hosted"
-        runnerScaleSetName: "self-hosted-s"
+          runnerGroup: "self-hosted"
+          runnerScaleSetName: "self-hosted-s"
 
-        template:
-          spec:
-            containers:
-            - name: runner
-              image: ghcr.io/actions/actions-runner:latest
-              command: [ "/home/runner/run.sh" ]
-              resources:
-                limits:
-                  cpu: 500m
-                  memory: 1Gi
-                requests:
-                  cpu: 500m
-                  memory: 1Gi
-
-        controllerServiceAccount:
-          namespace: arc-systems
-          name: arc-controller-gha-rs-controller
-
+          template:
+            spec:
+              containers:
+                - name: runner
+                  image: ghcr.io/actions/actions-runner:latest
+                  command: ["/home/runner/run.sh"]
+                  resources:
+                    limits:
+                      cpu: 500m
+                      memory: 1Gi
+                    requests:
+                      cpu: 500m
+                      memory: 1Gi
+          
+          controllerServiceAccount:
+            namespace: arc-systems
+            name: arc-controller-gha-rs-controller
+            
   destination:
-    server: { ? { .Values.spec.destination.server } }
+    server: {{ .Values.spec.destination.server }}
     namespace: arc-runners
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
