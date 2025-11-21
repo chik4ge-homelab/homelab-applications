@@ -11,7 +11,7 @@ spec:
       path: apps/storage/mayastor
     - repoURL: https://openebs.github.io/openebs
       chart: openebs
-      targetRevision: 4.3.3
+      targetRevision: 4.4.0
       helm:
         valuesObject:
           engines:
