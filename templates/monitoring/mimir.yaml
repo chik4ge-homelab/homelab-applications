@@ -53,10 +53,9 @@ spec:
                     - mimir.chik4ge.me
 
           ingester:
-            replicas: 2
             persistentVolume:
               size: 25Gi
-              storageClass: mayastor-3-replica
+              storageClass: mayastor-1-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -83,7 +82,7 @@ spec:
                     
           store_gateway:
             persistentVolume:
-              storageClass: mayastor-3-replica
+              storageClass: mayastor-1-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
