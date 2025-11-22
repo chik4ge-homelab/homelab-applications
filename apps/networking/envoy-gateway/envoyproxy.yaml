@@ -11,7 +11,3 @@ spec:
         type: LoadBalancer
         loadBalancerClass: tailscale
         externalTrafficPolicy: Local
-        ports:
-          - name: https
-            port: 443
-            targetPort: 10443
