@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: envoy-gateway
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://docker.io/envoyproxy/gateway-helm
+      chart: gateway-helm
+      targetRevision: v1.6.0
+      helm:
+        releaseName: eg
+        valuesObject:
+          deployment:
+            envoyGateway:
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+          envoyGateway:
+            envoyProxy:
+              service:
+                type: LoadBalancer
+                loadBalancerClassName: tailscale
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: apps/networking/envoy-gateway
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: envoy-gateway
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

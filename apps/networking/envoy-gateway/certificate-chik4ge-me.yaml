@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-chik4ge-me
+  namespace: envoy-gateway
+spec:
+  secretName: wildcard-chik4ge-me-tls
+  issuerRef:
+    name: chik4ge-me-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.chik4ge.me"
