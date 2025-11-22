@@ -55,7 +55,7 @@ spec:
           ingester:
             persistentVolume:
               size: 25Gi
-              storageClass: mayastor-1-replica
+              storageClass: mayastor-2-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -82,7 +82,7 @@ spec:
                     
           store_gateway:
             persistentVolume:
-              storageClass: mayastor-1-replica
+              storageClass: mayastor-2-replica
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
