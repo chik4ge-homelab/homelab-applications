@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gateway-api-crds
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/kubernetes-sigs/gateway-api
+      targetRevision: v1.4.0
+      path: config/crd
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - Replace=true
