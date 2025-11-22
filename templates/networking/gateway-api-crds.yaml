@@ -6,9 +6,18 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://github.com/kubernetes-sigs/gateway-api
-      targetRevision: v1.4.0
-      path: config/crd
+    - repoURL: https://github.com/envoyproxy/gateway
+      targetRevision: v1.6.0
+      path: charts/gateway-crds-helm
+      helm:
+        releaseName: gateway-api-crds
+        valuesObject:
+          crds:
+            gatewayAPI:
+              enabled: true
+              channel: standard
+            envoyGateway:
+              enabled: true
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: kube-system
