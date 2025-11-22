@@ -10,6 +10,7 @@ spec:
       chart: gateway-helm
       targetRevision: v1.6.0
       helm:
+        skipCrds: true
         releaseName: eg
         valuesObject:
           deployment:
