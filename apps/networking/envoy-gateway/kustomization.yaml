@@ -5,3 +5,4 @@ resources:
   - gatewayclass.yaml
   - gateway.yaml
   - certificate-chik4ge-me.yaml
+  - envoyproxy.yaml

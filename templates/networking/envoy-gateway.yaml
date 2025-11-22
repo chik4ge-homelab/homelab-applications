@@ -22,12 +22,6 @@ spec:
                 limits:
                   cpu: 500m
                   memory: 512Mi
-          config:
-            envoyGateway:
-              provider:
-                kubernetes:
-                  envoyService:
-                    loadBalancerClass: tailscale
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: apps/networking/envoy-gateway
