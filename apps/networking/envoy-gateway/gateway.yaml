@@ -7,6 +7,9 @@ spec:
   gatewayClassName: envoy-gateway
   listeners:
     - name: https
+      allowedRoutes:
+        namespaces:
+          from: All
       hostname: "*.chik4ge.me"
       port: 443
       protocol: HTTPS
