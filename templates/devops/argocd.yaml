@@ -110,6 +110,7 @@ spec:
               parentRefs:
                 - name: envoy-gateway
                   namespace: envoy-gateway
+                  sectionName: https
               hostnames:
                 - argocd.chik4ge.me
             grpcroute:
@@ -117,8 +118,15 @@ spec:
               parentRefs:
                 - name: envoy-gateway
                   namespace: envoy-gateway
+                  sectionName: https
               hostnames:
                 - argocd.chik4ge.me
+              rules:
+                - matches:
+                    - method:
+                        type: RegularExpression
+                        service: .*
+                        method: .*
           repoServer:
             replicas: 2
             metrics:
