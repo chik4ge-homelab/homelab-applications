@@ -113,20 +113,20 @@ spec:
                   sectionName: https
               hostnames:
                 - argocd.chik4ge.me
-            grpcroute:
-              enabled: true
-              parentRefs:
-                - name: envoy-gateway
-                  namespace: envoy-gateway
-                  sectionName: https
-              hostnames:
-                - argocd.chik4ge.me
-              rules:
-                - matches:
-                    - method:
-                        type: RegularExpression
-                        service: .*
-                        method: .*
+            # grpcroute:
+            #   enabled: true
+            #   parentRefs:
+            #     - name: envoy-gateway
+            #       namespace: envoy-gateway
+            #       sectionName: https
+            #   hostnames:
+            #     - argocd.chik4ge.me
+            #   rules:
+            #     - matches:
+            #         - method:
+            #             type: RegularExpression
+            #             service: .*
+            #             method: .*
           repoServer:
             replicas: 2
             metrics:
