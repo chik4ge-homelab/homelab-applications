@@ -105,11 +105,20 @@ spec:
                 memory: 80Mi
               limits:
                 memory: 128Mi
-            ingress:
+            httproute:
               enabled: true
-              ingressClassName: nginx
-              tls: true
-
+              parentRefs:
+                - name: envoy-gateway
+                  namespace: envoy-gateway
+              hostnames:
+                - argocd.chik4ge.me
+            grpcroute:
+              enabled: true
+              parentRefs:
+                - name: envoy-gateway
+                  namespace: envoy-gateway
+              hostnames:
+                - argocd.chik4ge.me
           repoServer:
             replicas: 2
             metrics:
