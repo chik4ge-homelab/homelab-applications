@@ -1,0 +1,36 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaUser
+metadata:
+  name: mimir
+  labels:
+    strimzi.io/cluster: kafka-cluster
+spec:
+  authentication:
+    type: scram-sha-512
+    password:
+      valueFrom:
+        secretKeyRef:
+          name: mimir-password
+          key: password
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: mimir-ingest
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+          - Write
+      - resource:
+          type: group
+          name: "*"
+          operations:
+          - Read
+          - Describe
+      - resource:
+          type: cluster
+          name: kafka-cluster
+        operations:
+          - Describe
