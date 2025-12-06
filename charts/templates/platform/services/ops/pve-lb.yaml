@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    path: manifests/networking/pve-lb
+    path: manifests/platform/services/ops/pve-lb
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
   destination:
