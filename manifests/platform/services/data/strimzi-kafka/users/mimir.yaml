@@ -31,6 +31,5 @@ spec:
           - Describe
       - resource:
           type: cluster
-          name: kafka-cluster
         operations:
           - Describe
