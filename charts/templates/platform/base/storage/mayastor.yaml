@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: manifests/storage/mayastor
+      path: manifests/platform/base/storage/mayastor
     - repoURL: https://openebs.github.io/openebs
       chart: openebs
       targetRevision: 4.4.0
