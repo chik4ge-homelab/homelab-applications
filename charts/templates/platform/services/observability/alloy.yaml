@@ -41,7 +41,7 @@ spec:
       targetRevision: 25.0.0
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: manifests/monitoring/alloy
+      path: manifests/platform/services/observability/alloy
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: alloy

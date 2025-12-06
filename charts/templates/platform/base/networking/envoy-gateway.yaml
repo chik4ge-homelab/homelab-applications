@@ -24,7 +24,7 @@ spec:
                   memory: 512Mi
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: manifests/networking/envoy-gateway
+      path: manifests/platform/base/networking/envoy-gateway
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: envoy-gateway

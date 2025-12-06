@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    path: manifests/networking/cloudflared
+    path: manifests/platform/base/networking/cloudflared
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
   destination:

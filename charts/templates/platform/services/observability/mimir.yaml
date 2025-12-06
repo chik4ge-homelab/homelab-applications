@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: manifests/monitoring/mimir/secrets
+      path: manifests/platform/services/observability/mimir/secrets
     - repoURL: https://grafana.github.io/helm-charts
       chart: mimir-distributed
       targetRevision: 6.0.5
