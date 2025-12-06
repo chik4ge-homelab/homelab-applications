@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: manifests/platform/services/storage/minio
+      path: manifests/platform/services/data/minio
     - repoURL: https://operator.min.io/
       chart: tenant
       targetRevision: 7.1.1
