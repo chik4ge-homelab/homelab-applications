@@ -45,7 +45,7 @@ spec:
             value: "256Mi"
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/networking/cilium/l2announce
+      path: manifests/networking/cilium/l2announce
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: kube-system

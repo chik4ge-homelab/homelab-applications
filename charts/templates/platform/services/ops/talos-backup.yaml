@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
-    path: apps/devops/talos-backup
+    path: manifests/devops/talos-backup
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: talos-backup

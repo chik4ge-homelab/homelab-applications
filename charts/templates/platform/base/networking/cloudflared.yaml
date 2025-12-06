@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: pve-lb
+  name: cloudflared
   namespace: argocd
 spec:
   project: default
   source:
-    path: apps/networking/pve-lb
+    path: manifests/networking/cloudflared
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
   destination:
-    namespace: pve-lb
+    namespace: cloudflared
     server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:

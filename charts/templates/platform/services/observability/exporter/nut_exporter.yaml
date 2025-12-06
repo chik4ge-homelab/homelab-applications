@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/monitoring/nut_exporter
+      path: manifests/monitoring/nut_exporter
     - repoURL: https://github.com/DRuggeri/nut_exporter.git
       targetRevision: v3.2.2
       path: charts/nut-exporter

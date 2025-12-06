@@ -8,10 +8,10 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/storage/minio/secrets
+      path: manifests/storage/minio/secrets
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/storage/minio/monitoring
+      path: manifests/storage/minio/monitoring
     - repoURL: https://operator.min.io/
       chart: tenant
       targetRevision: 7.1.1

@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: apps/devops/argocd
+      path: manifests/devops/argocd
     - repoURL: https://argoproj.github.io/argo-helm
       targetRevision: 9.1.6
       chart: argo-cd
