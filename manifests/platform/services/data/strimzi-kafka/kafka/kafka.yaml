@@ -11,8 +11,9 @@ spec:
         tls: false
         configuration:
           useServiceDnsDomain: true
-        authentication:
-          type: scram-sha-512
+        # mimirがSASL/PLAINでのみ接続可能なため、対応までコメントアウト
+        # authentication:
+        #   type: scram-sha-512
     authorization:
       type: simple
     version: 4.1.1

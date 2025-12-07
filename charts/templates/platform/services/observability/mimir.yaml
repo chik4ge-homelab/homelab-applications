@@ -210,8 +210,9 @@ spec:
                   address: kafka-cluster-kafka-bootstrap.strimzi-kafka.svc.cluster.local:9092
                   topic: mimir-ingest
                   auto_create_topic_enabled: false
-                  sasl_username: mimir
-                  sasl_password: "${KAFKA_PASSWORD}"
+                  # strimzi-kafkaがSASL/PLAINに対応していないため、mimir側でSASL/SCRAMを指定できるようになるまでコメントアウト
+                  # sasl_username: mimir
+                  # sasl_password: "${KAFKA_PASSWORD}"
               alertmanager_storage:
                 s3:
                   bucket_name: mimir-alertmanager
