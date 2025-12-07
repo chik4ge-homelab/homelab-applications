@@ -14,8 +14,8 @@ spec:
         # mimirがSASL/PLAINでのみ接続可能なため、対応までコメントアウト
         # authentication:
         #   type: scram-sha-512
-    authorization:
-      type: simple
+    # authorization:
+    #   type: simple
     version: 4.1.1
     metadataVersion: "4.1"
     config:
