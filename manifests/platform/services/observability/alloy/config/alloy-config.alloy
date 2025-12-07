@@ -258,6 +258,15 @@ prometheus.scrape "nodes" {
   job_name = "node-exporter"
 }
 
+prometheus.operator.podmonitors "podmonitors" {
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "cluster"
+  }
+  clustering { enabled = true }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
 prometheus.operator.servicemonitors "servicemonitors" {
   rule {
     replacement   = "talos-k8s"
