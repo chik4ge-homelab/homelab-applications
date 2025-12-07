@@ -67,6 +67,13 @@ spec:
     topicRegex: ".*"
     groupExcludeRegex: "^excluded-.*"
     topicExcludeRegex: "^excluded-.*"
+    template:
+      pod:
+        metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9404"
+            prometheus.io/path: "/metrics"
     # resources:
     #   requests:
     #     cpu: 200m
