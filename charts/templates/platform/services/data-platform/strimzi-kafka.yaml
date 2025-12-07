@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
-      path: manifests/platform/services/data/strimzi-kafka
+      path: manifests/platform/services/data-platform/strimzi-kafka
   destination:
     namespace: strimzi-kafka
     server: {{ .Values.spec.destination.server }}

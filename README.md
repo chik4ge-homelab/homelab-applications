@@ -14,13 +14,13 @@ templates/
 │
 ├── platform/
 │   ├── base/
-│   │   ├── data/
+│   │   ├── operators/
 │   │   ├── networking/
 │   │   ├── secrets/
 │   │   └── storage/
 │   │
 │   └── services/
-│       ├── data/
+│       ├── data-platform/
 │       ├── gitops/
 │       ├── networking/
 │       ├── observability/
