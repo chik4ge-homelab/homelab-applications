@@ -2,15 +2,13 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: bridge-metrics
-  labels:
-    app: strimzi
 spec:
   selector:
     matchLabels:
       strimzi.io/kind: KafkaBridge
   namespaceSelector:
     matchNames:
-      - myproject
+      - strimzi-kafka
   podMetricsEndpoints:
     - path: /metrics
       port: rest-api
