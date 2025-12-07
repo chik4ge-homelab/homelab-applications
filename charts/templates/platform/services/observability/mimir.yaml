@@ -11,7 +11,7 @@ spec:
       path: manifests/platform/services/observability/mimir/secrets
     - repoURL: https://grafana.github.io/helm-charts
       chart: mimir-distributed
-      targetRevision: 5.8.0
+      targetRevision: 6.0.5
       helm:
         valuesObject:
           compactor:
@@ -168,6 +168,8 @@ spec:
             extraEnvFrom:
               - secretRef:
                   name: mimir-bucket-secret
+              - secretRef:
+                  name: kafka-password
 
           runtimeConfig:
             ingester_limits:
@@ -203,6 +205,13 @@ spec:
                   chunks_cache:
                     memcached:
                       timeout: 15s
+              ingest_storage:
+                kafka:
+                  address: kafka-cluster-kafka-bootstrap.strimzi-kafka.svc.cluster.local:9092
+                  topic: mimir-ingest
+                  auto_create_topic_enabled: false
+                  sasl_username: mimir
+                  sasl_password: "${KAFKA_PASSWORD}"
               alertmanager_storage:
                 s3:
                   bucket_name: mimir-alertmanager
