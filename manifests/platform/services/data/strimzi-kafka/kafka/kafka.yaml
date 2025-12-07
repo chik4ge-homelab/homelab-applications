@@ -25,6 +25,7 @@ spec:
       transaction.state.log.min.isr: 2
       default.replication.factor: 3
       min.insync.replicas: 2
+
       log.retention.hours: 2
       log.segment.bytes: 1073741824
       log.cleanup.policy: delete
