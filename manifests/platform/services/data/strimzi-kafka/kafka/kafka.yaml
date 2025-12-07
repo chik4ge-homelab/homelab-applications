@@ -33,6 +33,12 @@ spec:
       message.max.bytes: 10485760
       replica.fetch.max.bytes: 10485760
       max.request.size: 10485760
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics-config
+          key: kafka-metrics.yaml
   entityOperator:
     topicOperator:
       watchedNamespace: strimzi-kafka
@@ -68,9 +74,3 @@ spec:
     #   limits:
     #     cpu: 500m
     #     memory: 128Mi
-  metricsConfig:
-    type: jmxPrometheusExporter
-    valueFrom:
-      configMapKeyRef:
-        name: kafka-metrics-config
-        key: kafka-metrics.yaml
