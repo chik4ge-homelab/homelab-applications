@@ -7,3 +7,4 @@ resources:
   - nodepools/broker-nodepool.yaml
   - topics
   - users
+  - metrics

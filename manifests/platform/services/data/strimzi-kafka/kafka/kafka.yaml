@@ -56,3 +56,21 @@ spec:
       #   limits:
       #     memory: 512Mi
       #     cpu: "1"
+  kafkaExporter:
+    groupRegex: ".*"
+    topicRegex: ".*"
+    groupExcludeRegex: "^excluded-.*"
+    topicExcludeRegex: "^excluded-.*"
+    # resources:
+    #   requests:
+    #     cpu: 200m
+    #     memory: 64Mi
+    #   limits:
+    #     cpu: 500m
+    #     memory: 128Mi
+  metricsConfig:
+    type: jmxPrometheusExporter
+    valueFrom:
+      configMapKeyRef:
+        name: kafka-metrics-config
+        key: kafka-metrics.yaml
