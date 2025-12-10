@@ -7,5 +7,16 @@ spec:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: external-rgw-route
+  healthCheck:
+    active:
+      type: HTTP
+      interval: 5s
+      timeout: 2s
+      unhealthyThreshold: 3
+      healthyThreshold: 1
+      http:
+        path: /swift/healthcheck
+        expectedStatuses:
+          - 200
   loadBalancer:
     type: RoundRobin
