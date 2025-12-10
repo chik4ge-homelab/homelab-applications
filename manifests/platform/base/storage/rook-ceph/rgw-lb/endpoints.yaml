@@ -9,4 +9,6 @@ subsets:
       - ip: 192.168.0.152
       - ip: 192.168.0.153
     ports:
-      - port: 7480
+      - name: http
+        port: 7480
+        protocol: TCP
