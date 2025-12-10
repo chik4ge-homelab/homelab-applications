@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rook-ceph-operator
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.rook.io/release
+      chart: rook-ceph
+      targetRevision: 1.18.8
+      helm:
+        valuesObject:
+          csi:
+            enableCephfsDriver: false
+            serviceMonitor:
+              enabled: true
+          monitoring:
+            enabled: true
+  destination:
+    namespace: rook-ceph-operator
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
