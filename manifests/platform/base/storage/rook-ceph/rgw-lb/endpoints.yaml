@@ -4,18 +4,17 @@ metadata:
   name: external-rgw-backend
   labels:
     kubernetes.io/service-name: external-rgw-backend
-spec:
-  addressType: IPv4
-  ports:
-    - name: http
-      port: 7480
-      protocol: TCP
-  endpoints:
-    - addresses:
-        - 192.168.0.150
-    - addresses:
-        - 192.168.0.151
-    - addresses:
-        - 192.168.0.152
-    - addresses:
-        - 192.168.0.153
+addressType: IPv4
+ports:
+  - name: http
+    port: 7480
+    protocol: TCP
+endpoints:
+  - addresses:
+      - 192.168.0.150
+  - addresses:
+      - 192.168.0.151
+  - addresses:
+      - 192.168.0.152
+  - addresses:
+      - 192.168.0.153
