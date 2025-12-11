@@ -9,15 +9,11 @@ spec:
       name: external-pve-route
   healthCheck:
     active:
-      type: HTTP
+      type: TCP
       interval: 5s
       timeout: 2s
       unhealthyThreshold: 3
       healthyThreshold: 1
-      http:
-        path: /
-        expectedStatuses:
-          - 200
   loadBalancer:
     type: ConsistentHash
     consistentHash:
