@@ -2,12 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - deployment.yaml
-  - service.yaml
-
-configMapGenerator:
-  - name: haproxy-config
-    files:
-      - haproxy.cfg
-generatorOptions:
-  disableNameSuffixHash: false
+  - ./service.yaml
+  - ./endpointslice.yaml
+  - ./httproute.yaml
+  - ./trafficpolicy.yaml
