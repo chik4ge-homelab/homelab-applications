@@ -1,0 +1,19 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: external-rgw-backend
+spec:
+  type: Endpoints
+  endpoints:
+    - ip:
+        address: 192.168.0.150
+        port: 7480
+    - ip:
+        address: 192.168.0.151
+        port: 7480
+    - ip:
+        address: 192.168.0.152
+        port: 7480
+    - ip:
+        address: 192.168.0.153
+        port: 7480
