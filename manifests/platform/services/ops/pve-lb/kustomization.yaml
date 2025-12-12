@@ -6,3 +6,5 @@ resources:
   - ./endpointslice.yaml
   - ./httproute.yaml
   - ./trafficpolicy.yaml
+  - ./backendtlspolicy.yaml
+  - ./ca-configmap.yaml
