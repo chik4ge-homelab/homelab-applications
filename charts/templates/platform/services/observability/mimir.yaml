@@ -187,7 +187,7 @@ spec:
                 storage:
                   backend: s3
                   s3:
-                    endpoint: "http://${BUCKET_HOST}:${BUCKET_PORT}"
+                    endpoint: "http://external-rgw-backend.rook-ceph.svc.cluster.local:7480"
                     access_key_id: "${AWS_ACCESS_KEY_ID}"
                     secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
                     http:
