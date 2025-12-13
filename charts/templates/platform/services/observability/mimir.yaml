@@ -17,7 +17,7 @@ spec:
           compactor:
             persistentVolume:
               size: 20Gi
-              storageClass: mayastor-3-replica
+              storageClass: ceph-rbd
             resources:
               requests:
                 cpu: 10m
@@ -57,7 +57,7 @@ spec:
           ingester:
             persistentVolume:
               size: 25Gi
-              storageClass: mayastor-2-replica
+              storageClass: ceph-rbd
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -84,7 +84,7 @@ spec:
                     
           store_gateway:
             persistentVolume:
-              storageClass: mayastor-2-replica
+              storageClass: ceph-rbd
             affinity:
               podAntiAffinity:
                 requiredDuringSchedulingIgnoredDuringExecution:
@@ -122,7 +122,7 @@ spec:
 
           alertmanager:
             persistentVolume:
-              storageClass: mayastor-3-replica
+              storageClass: ceph-rbd
 
           metaMonitoring:
             serviceMonitor:
