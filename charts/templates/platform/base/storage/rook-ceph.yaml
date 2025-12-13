@@ -41,6 +41,10 @@ spec:
                 mon:
                   disabled: false
                   interval: 45s
+            mgr:
+              count: 4
+            mon:
+              count: 4
           monitoring:
             enabled: true
             externalMgrPrometheusPort: 9283
