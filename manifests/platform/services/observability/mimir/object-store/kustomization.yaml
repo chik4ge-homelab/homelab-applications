@@ -3,4 +3,6 @@ kind: Kustomization
 
 resources:
   - ./alertmanager-bucket-claim.yaml
+  - ./blocks-bucket-claim.yaml
+  - ./ruler-bucket-claim.yaml
   - ./user.yaml

@@ -1,9 +1,9 @@
 apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
-  name: mimir-alertmanager
+  name: mimir-ruler
 spec:
-  bucketName: mimir-alertmanager
+  bucketName: mimir-ruler
   storageClassName: ceph-bucket
   additionalConfig:
     maxSize: 10Gi
