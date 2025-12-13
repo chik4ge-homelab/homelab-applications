@@ -29,6 +29,8 @@ spec:
                 name: ceph-bucket
                 reclaimPolicy: Delete
                 volumeBindingMode: "Immediate"
+              allowUsersInNamespaces:
+                - mimir
           cephClusterSpec:
             external:
               enable: true
