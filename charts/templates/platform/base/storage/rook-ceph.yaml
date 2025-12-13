@@ -15,6 +15,9 @@ spec:
       helm:
         valuesObject:
           operatorNamespace: rook-ceph-operator
+          cephBlockPools: []
+          cephFileSystems: []
+          cephObjectStores: []
           cephClusterSpec:
             external:
               enable: true
@@ -25,9 +28,6 @@ spec:
                 mon:
                   disabled: false
                   interval: 45s
-            cephBlockPools: {}
-            cephFileSystems: {}
-            cephObjectStores: {}
   destination:
     namespace: rook-ceph
     server: {{ .Values.spec.destination.server }}
