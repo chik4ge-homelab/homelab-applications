@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  args: |
+    [Configurations]
+    namespace = rook-ceph
+    rgw-pool-prefix = default
+    format = bash
+    rbd-data-pool-name = rbd
+    rgw-endpoint = external-rgw-backend.rook-ceph.svc.cluster.local:7480
+    monitoring-endpoint = 192.168.0.150,192.168.0.151,192.168.0.152,192.168.0.153
+kind: ConfigMap
+metadata:
+  name: external-cluster-user-command
+  namespace: rook-ceph
