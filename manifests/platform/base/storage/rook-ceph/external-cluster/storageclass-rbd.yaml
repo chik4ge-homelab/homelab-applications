@@ -15,5 +15,5 @@ parameters:
   imageFeatures: layering
   imageFormat: "2"
   pool: rbd
-provisioner: rook-ceph.rbd.csi.ceph.com
+provisioner: rook-ceph-operator.rbd.csi.ceph.com
 reclaimPolicy: Delete
