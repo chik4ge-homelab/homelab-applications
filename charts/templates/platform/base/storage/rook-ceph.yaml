@@ -9,25 +9,25 @@ spec:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: manifests/platform/base/storage/rook-ceph
-    # - repoURL: https://charts.rook.io/release
-    #   chart: rook-ceph-cluster
-    #   targetRevision: 1.18.8
-    #   helm:
-    #     valuesObject:
-    #       operatorNamespace: rook-ceph-operator
-    #       cephClusterSpec:
-    #         external:
-    #           enable: true
-    #         crashCollector:
-    #           disable: true
-    #         healthCheck:
-    #           daemonHealth:
-    #             mon:
-    #               disabled: false
-    #               interval: 45s
-    #         cephBlockPools: {}
-    #         cephFileSystems: {}
-    #         cephObjectStores: {}
+    - repoURL: https://charts.rook.io/release
+      chart: rook-ceph-cluster
+      targetRevision: 1.18.8
+      helm:
+        valuesObject:
+          operatorNamespace: rook-ceph-operator
+          cephClusterSpec:
+            external:
+              enable: true
+            crashCollector:
+              disable: true
+            healthCheck:
+              daemonHealth:
+                mon:
+                  disabled: false
+                  interval: 45s
+            cephBlockPools: {}
+            cephFileSystems: {}
+            cephObjectStores: {}
   destination:
     namespace: rook-ceph
     server: {{ .Values.spec.destination.server }}
