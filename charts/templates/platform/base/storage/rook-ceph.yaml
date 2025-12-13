@@ -24,13 +24,13 @@ spec:
                   port: 7480
                   externalRgwEndpoints:
                     - hostname: external-rgw-backend.rook-ceph.svc.cluster.local
+                allowUsersInNamespaces:
+                  - mimir
               storageClass:
                 enabled: true
                 name: ceph-bucket
                 reclaimPolicy: Delete
                 volumeBindingMode: "Immediate"
-              allowUsersInNamespaces:
-                - mimir
           cephClusterSpec:
             external:
               enable: true
