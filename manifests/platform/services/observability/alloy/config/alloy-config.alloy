@@ -268,6 +268,7 @@ prometheus.operator.podmonitors "podmonitors" {
 }
 
 prometheus.operator.servicemonitors "servicemonitors" {
+  kubernetes_role = "endpointslice"
   rule {
     replacement   = "talos-k8s"
     target_label  = "cluster"
