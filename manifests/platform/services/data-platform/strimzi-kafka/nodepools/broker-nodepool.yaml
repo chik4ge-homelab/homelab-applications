@@ -14,5 +14,5 @@ spec:
       - id: 0
         type: persistent-claim
         size: 30Gi
-        class: truenas-iscsi
+        class: truenas-iscsi-csi
         deleteClaim: true
