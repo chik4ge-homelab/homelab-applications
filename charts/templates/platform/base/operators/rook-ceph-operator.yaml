@@ -17,6 +17,7 @@ spec:
               enabled: true
           monitoring:
             enabled: true
+          obcAllowAdditionalConfigFields: "maxObjects,maxSize, bucketOwner"
   destination:
     namespace: rook-ceph-operator
     server: {{ .Values.spec.destination.server }}
