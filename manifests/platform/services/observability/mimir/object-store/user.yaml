@@ -1,0 +1,7 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStoreUser
+metadata:
+  name: mimir-user
+spec:
+  store: default
+  displayName: mimir-user
