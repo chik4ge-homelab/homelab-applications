@@ -15,8 +15,11 @@ spec:
             enableCephfsDriver: false
             serviceMonitor:
               enabled: true
+            enableGrpcMetrics: true
+            enableLiveness: true
           monitoring:
             enabled: true
+            createPrometheusRules: true
           obcAllowAdditionalConfigFields: "maxObjects,maxSize,bucketOwner"
   destination:
     namespace: rook-ceph-operator

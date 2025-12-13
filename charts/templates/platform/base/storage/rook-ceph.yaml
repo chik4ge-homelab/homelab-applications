@@ -41,6 +41,8 @@ spec:
                 mon:
                   disabled: false
                   interval: 45s
+          monitoring:
+            enabled: true
   destination:
     namespace: rook-ceph
     server: {{ .Values.spec.destination.server }}
