@@ -11,7 +11,5 @@ spec:
     - "rgw.chik4ge.me"
   rules:
     - backendRefs:
-        - group: gateway.envoyproxy.io
-          kind: Backend
-          name: external-rgw-backend
+        - name: external-rgw-backend
           port: 7480
