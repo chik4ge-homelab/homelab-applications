@@ -29,9 +29,11 @@ spec:
               cpuCount: "1"
               resources:
                 limits:
+                  hugepages-1Gi: '0'
                   hugepages2Mi: "1Gi"
                   memory: "128Mi"
                 requests:
+                  hugepages-1Gi: '0'
                   hugepages2Mi: "1Gi"
                   memory: "128Mi"
           loki:
