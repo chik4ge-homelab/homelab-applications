@@ -17,7 +17,13 @@ spec:
           operatorNamespace: rook-ceph-operator
           cephBlockPools: []
           cephFileSystems: []
-          cephObjectStores: []
+          cephObjectStores:
+            - name: default
+              spec:
+                gateway:
+                  port: 7480
+                  externalRgwEndpoints:
+                    - hostname: external-rgw-backend.rook-ceph.svc.cluster.local
           cephClusterSpec:
             external:
               enable: true
