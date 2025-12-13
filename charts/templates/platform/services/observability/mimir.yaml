@@ -169,7 +169,9 @@ spec:
           global:
             extraEnvFrom:
               - secretRef:
-                  name: rook-ceph-object-user-default-mimir-user
+                  name: mimir-blocks
+              - configMapRef:
+                  name: mimir-blocks
               - secretRef:
                   name: kafka-password
 
@@ -185,9 +187,9 @@ spec:
                 storage:
                   backend: s3
                   s3:
-                    endpoint: "${Endpoint}"
-                    access_key_id: "${AccessKey}"
-                    secret_access_key: "${SecretKey}"
+                    endpoint: "http://${BUCKET_HOST}:${BUCKET_PORT}"
+                    access_key_id: "${AWS_ACCESS_KEY_ID}"
+                    secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
                     http:
                       insecure_skip_verify: true
               limits:
