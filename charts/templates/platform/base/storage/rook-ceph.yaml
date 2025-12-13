@@ -25,7 +25,7 @@ spec:
                   externalRgwEndpoints:
                     - hostname: external-rgw-backend.rook-ceph.svc.cluster.local
               storageClass:
-                enabled: false
+                enabled: true
           cephClusterSpec:
             external:
               enable: true
