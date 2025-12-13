@@ -26,6 +26,9 @@ spec:
                     - hostname: external-rgw-backend.rook-ceph.svc.cluster.local
               storageClass:
                 enabled: true
+                name: ceph-bucket
+                reclaimPolicy: Delete
+                volumeBindingMode: "Immediate"
           cephClusterSpec:
             external:
               enable: true
