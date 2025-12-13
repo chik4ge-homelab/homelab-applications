@@ -14,5 +14,5 @@ spec:
       - id: 0
         type: persistent-claim
         size: 5Gi
-        class: mayastor-2-replica
+        class: ceph-rbd
         deleteClaim: true
