@@ -43,6 +43,12 @@ spec:
                   interval: 45s
           monitoring:
             enabled: true
+            externalMgrPrometheusPort: 9283
+            externalMgrEndpoints:
+              - ip: 192.168.0.150
+              - ip: 192.168.0.151
+              - ip: 192.168.0.152
+              - ip: 192.168.0.153
   destination:
     namespace: rook-ceph
     server: {{ .Values.spec.destination.server }}
