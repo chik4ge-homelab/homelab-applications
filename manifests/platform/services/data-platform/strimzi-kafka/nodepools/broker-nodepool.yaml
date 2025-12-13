@@ -14,5 +14,5 @@ spec:
       - id: 0
         type: persistent-claim
         size: 30Gi
-        class: mayastor-2-replica
+        class: truenas-iscsi
         deleteClaim: true
