@@ -169,7 +169,7 @@ spec:
           global:
             extraEnvFrom:
               - secretRef:
-                  name: mimir-bucket-secret
+                  name: rook-ceph-object-user-default-mimir-user
               - secretRef:
                   name: kafka-password
 
@@ -185,9 +185,9 @@ spec:
                 storage:
                   backend: s3
                   s3:
-                    endpoint: minio.minio.svc.cluster.local
-                    access_key_id: "${AWS_ACCESS_KEY_ID}"
-                    secret_access_key: "${AWS_SECRET_ACCESS_KEY}"
+                    endpoint: "${Endpoint}"
+                    access_key_id: "${AccessKey}"
+                    secret_access_key: "${SecretKey}"
                     http:
                       insecure_skip_verify: true
               limits:
