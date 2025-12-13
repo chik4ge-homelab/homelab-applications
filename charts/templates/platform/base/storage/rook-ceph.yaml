@@ -24,6 +24,8 @@ spec:
                   port: 7480
                   externalRgwEndpoints:
                     - hostname: external-rgw-backend.rook-ceph.svc.cluster.local
+                storageClass:
+                  enabled: false
           cephClusterSpec:
             external:
               enable: true
