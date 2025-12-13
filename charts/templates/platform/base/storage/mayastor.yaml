@@ -29,11 +29,9 @@ spec:
               cpuCount: "1"
               resources:
                 limits:
-                  hugepages-1Gi: '0'
                   hugepages2Mi: "1Gi"
                   memory: "128Mi"
                 requests:
-                  hugepages-1Gi: '0'
                   hugepages2Mi: "1Gi"
                   memory: "128Mi"
           loki:
@@ -51,3 +49,11 @@ spec:
     managedNamespaceMetadata:
       labels:
         pod-security.kubernetes.io/enforce: "privileged"
+  ignoreDifferences:
+    - group: apps
+      kind: DaemonSet
+      name: openebs-io-engine
+      namespace: openebs
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources/limits/hugepages-1Gi
+        - /spec/template/spec/containers/0/resources/requests/hugepages-1Gi
