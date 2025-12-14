@@ -14,7 +14,7 @@ spec:
           persistence:
             enabled: true
             size: 10Gi
-            storageClass: mayastor-3-replica
+            storageClass: ceph-rbd
             skipuninstall: true
           timezone: Asia/Tokyo
 
