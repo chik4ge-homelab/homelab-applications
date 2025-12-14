@@ -50,22 +50,22 @@ spec:
                 secretAccessKey: "${AWS_SECRET_ACCESS_KEY}"
                 insecure: true
                 s3ForcePathStyle: true
-            minio:
-              enabled: false
-        deploymentMode: SingleBinary
-        singleBinary:
-          replicas: 3
-          persistence:
-            enabled: true
-            size: 10Gi
-            storageClass: ceph-rbd
-          extraArgs:
-            - "-config.expand-env=true"
-          extraEnvFrom:
-            - secretRef:
-                name: loki-chunks
-            - configMapRef:
-                name: loki-chunks
+          minio:
+            enabled: false
+          deploymentMode: SingleBinary
+          singleBinary:
+            replicas: 3
+            persistence:
+              enabled: true
+              size: 10Gi
+              storageClass: ceph-rbd
+            extraArgs:
+              - "-config.expand-env=true"
+            extraEnvFrom:
+              - secretRef:
+                  name: loki-chunks
+              - configMapRef:
+                  name: loki-chunks
             resources:
               requests:
                 cpu: 100m
