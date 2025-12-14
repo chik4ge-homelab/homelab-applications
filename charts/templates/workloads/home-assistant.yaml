@@ -32,7 +32,7 @@ spec:
                   - home.chik4ge.me
           persistence:
             enabled: true
-            storageClass: mayastor-3-replica
+            storageClass: ceph-rbd
             size: 20Gi
           configuration:
             enabled: true
@@ -74,7 +74,7 @@ spec:
             limits:
               memory: 512Mi
           persistence:
-            storageClassName: mayastor-3-replica
+            storageClassName: ceph-rbd
             size: 2Gi
   destination:
     namespace: home-assistant
