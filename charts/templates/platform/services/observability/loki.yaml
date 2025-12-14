@@ -64,8 +64,8 @@ spec:
           extraEnvFrom:
             - secretRef:
                 name: loki-chunks
-              - configMapRef:
-                  name: loki-chunks
+            - configMapRef:
+                name: loki-chunks
             resources:
               requests:
                 cpu: 100m
