@@ -1,0 +1,8 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStoreUser
+metadata:
+  name: loki-user
+spec:
+  store: default
+  clusterNamespace: rook-ceph
+  displayName: loki-user

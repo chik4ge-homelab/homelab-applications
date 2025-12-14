@@ -5,120 +5,106 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: loki
-    targetRevision: 6.48.0
-    helm:
-      valuesObject:
-        extraObjects:
-          - apiVersion: external-secrets.io/v1
-            kind: ExternalSecret
-            metadata:
-              name: loki-bucket-secret
-              labels:
-                app.kubernetes.io/part-of: argocd
-            spec:
-              refreshInterval: 1h
-              secretStoreRef:
-                name: 1password-connect
-                kind: ClusterSecretStore
-              data:
-                - secretKey: AWS_ACCESS_KEY_ID
-                  remoteRef:
-                    key: "Loki Minio Credentials"
-                    property: accessKey
-                - secretKey: AWS_SECRET_ACCESS_KEY
-                  remoteRef:
-                    key: "Loki Minio Credentials"
-                    property: secretKey
-        loki:
-          auth_enabled: false
-          commonConfig:
-            replication_factor: 3
-          schemaConfig:
-            configs:
-              - from: "2025-05-01"
-                store: tsdb
-                object_store: s3
-                schema: v13
-                index:
-                  prefix: loki_index_
-                  period: 24h
-          compactor:
-            retention_enabled: true
-            delete_request_store: s3
-          pattern_ingester:
-            enabled: true
-          limits_config:
-            allow_structured_metadata: true
-            volume_enabled: true
-            retention_period: 168h
-          ruler:
-            enable_api: true
-          storage:
-            type: s3
-            bucketNames:
-              chunks: loki-chunks
-              ruler: loki-ruler
-              admin: loki-admin
-            s3:
-              endpoint: https://myminio-hl.minio.svc.cluster.local:9000
-              accessKeyId: "${AWS_ACCESS_KEY_ID}"
-              secretAccessKey: "${AWS_SECRET_ACCESS_KEY}"
-              insecure: false
-              s3ForcePathStyle: true
-              http_config:
-                insecure_skip_verify: true
-        minio:
-          enabled: false
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/platform/services/observability/loki
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: loki
+      targetRevision: 6.48.0
+      helm:
+        valuesObject:
+          loki:
+            auth_enabled: false
+            commonConfig:
+              replication_factor: 3
+            schemaConfig:
+              configs:
+                - from: "2025-05-01"
+                  store: tsdb
+                  object_store: s3
+                  schema: v13
+                  index:
+                    prefix: loki_index_
+                    period: 24h
+            compactor:
+              retention_enabled: true
+              delete_request_store: s3
+            pattern_ingester:
+              enabled: true
+            limits_config:
+              allow_structured_metadata: true
+              volume_enabled: true
+              retention_period: 168h
+            ruler:
+              enable_api: true
+            storage:
+              type: s3
+              bucketNames:
+                chunks: loki-chunks
+                ruler: loki-ruler
+                admin: loki-admin
+              s3:
+                endpoint: "http://${BUCKET_HOST}:${BUCKET_PORT}"
+                accessKeyId: "${AWS_ACCESS_KEY_ID}"
+                secretAccessKey: "${AWS_SECRET_ACCESS_KEY}"
+                insecure: true
+                s3ForcePathStyle: true
+            minio:
+              enabled: false
         deploymentMode: SingleBinary
         singleBinary:
           replicas: 3
+          persistence:
+            enabled: true
+            size: 10Gi
+            storageClass: ceph-rbd
           extraArgs:
             - "-config.expand-env=true"
           extraEnvFrom:
             - secretRef:
-                name: loki-bucket-secret
-          resources:
-            requests:
-              cpu: 100m
-              memory: 800Mi
-        chunksCache:
-          allocatedMemory: 512
-        resultsCache:
-          allocatedMemory: 64
-        lokiCanary:
-          resources:
-            requests:
-              cpu: 5m
-              memory: 32Mi
-            limits:
-              memory: 64Mi
-        backend:
-          replicas: 0
-        read:
-          replicas: 0
-        write:
-          replicas: 0
-        ingester:
-          replicas: 0
-        querier:
-          replicas: 0
-        queryFrontend:
-          replicas: 0
-        queryScheduler:
-          replicas: 0
-        distributor:
-          replicas: 0
-        compactor:
-          replicas: 0
-        indexGateway:
-          replicas: 0
-        bloomCompactor:
-          replicas: 0
-        bloomGateway:
-          replicas: 0
+                name: loki-chunks
+              - configMapRef:
+                  name: loki-chunks
+            resources:
+              requests:
+                cpu: 100m
+                memory: 800Mi
+          chunksCache:
+            allocatedMemory: 512
+          resultsCache:
+            allocatedMemory: 64
+          lokiCanary:
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
+          backend:
+            replicas: 0
+          read:
+            replicas: 0
+          write:
+            replicas: 0
+          ingester:
+            replicas: 0
+          querier:
+            replicas: 0
+          queryFrontend:
+            replicas: 0
+          queryScheduler:
+            replicas: 0
+          distributor:
+            replicas: 0
+          compactor:
+            replicas: 0
+          indexGateway:
+            replicas: 0
+          bloomCompactor:
+            replicas: 0
+          bloomGateway:
+            replicas: 0
   destination:
     namespace: loki
     server: {{ .Values.spec.destination.server }}

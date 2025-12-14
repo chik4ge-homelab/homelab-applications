@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: loki-chunks
+spec:
+  bucketName: loki-chunks
+  storageClassName: ceph-bucket
+  additionalConfig:
+    maxSize: 120Gi
+    bucketOwner: loki-user
