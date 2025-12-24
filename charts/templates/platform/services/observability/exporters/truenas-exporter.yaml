@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: tccr.io/truecharts
     chart: truenas-exporter
-    targetRevision: 4.13.2
+    targetRevision: 4.13.5
     helm:
       valuesObject:
         service:
