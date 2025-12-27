@@ -17,6 +17,56 @@ spec:
               enabled: true
             enableGrpcMetrics: true
             enableLiveness: true
+            csiRBDPluginResource: |
+              - name: csi-rbdplugin
+                resources:
+                  requests:
+                    cpu: 250m
+                    memory: 160Mi
+                  limits:
+                    memory: 1Gi
+              - name: driver-registrar
+                resources:
+                  requests:
+                    cpu: 50m
+                    memory: 32Mi
+                  limits:
+                    memory: 256Mi
+            csiRBDProvisionerResource: |
+              - name: csi-rbdplugin
+                resources:
+                  requests:
+                    memory: 160Mi
+                  limits:
+                    memory: 1Gi
+              - name: csi-provisioner
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 40Mi
+                  limits:
+                    memory: 256Mi
+              - name: csi-resizer
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 40Mi
+                  limits:
+                    memory: 256Mi
+              - name: csi-attacher
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 40Mi
+                  limits:
+                    memory: 256Mi
+              - name: csi-snapshotter
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 40Mi
+                  limits:
+                    memory: 256Mi
           monitoring:
             enabled: true
             createPrometheusRules: true
