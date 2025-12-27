@@ -9,9 +9,12 @@ spec:
       name: external-ceph-dashboard-route
   healthCheck:
     active:
-      type: TCP
+      type: HTTP
       interval: 5s
       timeout: 2s
       unhealthyThreshold: 3
       healthyThreshold: 1
-      tcp: {}
+      http:
+        path: /
+        expectedStatuses:
+          - 200
