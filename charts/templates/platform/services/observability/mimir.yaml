@@ -21,7 +21,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 100Mi
+                memory: 64Mi
               limits:
                 memory: 1Gi
 
@@ -32,7 +32,7 @@ spec:
                 memory: 6Gi
               requests:
                 cpu: 100m
-                memory: 4Gi
+                memory: 192Mi
 
           kafka:
             enabled: false
@@ -78,7 +78,7 @@ spec:
             resources:
               requests:
                 cpu: 150m
-                memory: 1Gi
+                memory: 1920Mi
               limits:
                 memory: 5Gi
                     
@@ -116,13 +116,16 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 512Mi
+                memory: 320Mi
               limits:
                 memory: 4Gi
 
           alertmanager:
             persistentVolume:
               storageClass: ceph-rbd
+            resources:
+              requests:
+                memory: 64Mi
 
           metaMonitoring:
             serviceMonitor:
@@ -134,7 +137,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 50Mi
+                memory: 64Mi
               limits:
                 memory: 200Mi
 
@@ -144,7 +147,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 10Mi
+                memory: 64Mi
               limits:
                 memory: 50Mi
 
@@ -154,6 +157,7 @@ spec:
             resources:
               requests:
                 cpu: 100m
+                memory: 64Mi
           
           ruler:
             resources:
