@@ -8,6 +8,7 @@ spec:
       kind: HTTPRoute
       name: external-ceph-dashboard-route
   healthCheck:
+    panicThreshold: 0
     active:
       type: HTTP
       interval: 5s
