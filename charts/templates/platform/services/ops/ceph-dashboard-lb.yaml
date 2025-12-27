@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ceph-dashboard-lb
+  namespace: argocd
+spec:
+  project: default
+  source:
+    path: manifests/platform/services/ops/ceph-dashboard-lb
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    targetRevision: main
+  destination:
+    namespace: ceph-dashboard-lb
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

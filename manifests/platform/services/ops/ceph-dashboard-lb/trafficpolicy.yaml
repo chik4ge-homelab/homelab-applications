@@ -1,0 +1,17 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: external-ceph-dashboard-route-policy
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: external-ceph-dashboard-route
+  healthCheck:
+    active:
+      type: TCP
+      interval: 5s
+      timeout: 2s
+      unhealthyThreshold: 3
+      healthyThreshold: 1
+      tcp: {}
