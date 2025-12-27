@@ -19,14 +19,14 @@ spec:
             enableLiveness: true
             csiRBDPluginResource: |
               - name: csi-rbdplugin
-                resources:
+                resource:
                   requests:
                     cpu: 250m
                     memory: 160Mi
                   limits:
                     memory: 1Gi
               - name: driver-registrar
-                resources:
+                resource:
                   requests:
                     cpu: 50m
                     memory: 32Mi
@@ -34,34 +34,34 @@ spec:
                     memory: 256Mi
             csiRBDProvisionerResource: |
               - name: csi-rbdplugin
-                resources:
+                resource:
                   requests:
                     memory: 160Mi
                   limits:
                     memory: 1Gi
               - name: csi-provisioner
-                resources:
+                resource:
                   requests:
                     cpu: 100m
                     memory: 40Mi
                   limits:
                     memory: 256Mi
               - name: csi-resizer
-                resources:
+                resource:
                   requests:
                     cpu: 100m
                     memory: 40Mi
                   limits:
                     memory: 256Mi
               - name: csi-attacher
-                resources:
+                resource:
                   requests:
                     cpu: 100m
                     memory: 40Mi
                   limits:
                     memory: 256Mi
               - name: csi-snapshotter
-                resources:
+                resource:
                   requests:
                     cpu: 100m
                     memory: 40Mi
