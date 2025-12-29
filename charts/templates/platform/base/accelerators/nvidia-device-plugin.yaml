@@ -14,6 +14,8 @@ spec:
       targetRevision: 0.18.0
       valuesObject:
         runtimeClassName: "nvidia"
+        gfd:
+          enabled: true
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: nvidia-device-plugin
@@ -22,3 +24,6 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: "privileged"
