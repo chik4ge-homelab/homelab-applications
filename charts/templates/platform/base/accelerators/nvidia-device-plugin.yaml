@@ -12,10 +12,11 @@ spec:
     - repoURL: https://nvidia.github.io/k8s-device-plugin
       chart: nvidia-device-plugin
       targetRevision: 0.18.0
-      valuesObject:
-        runtimeClassName: "nvidia"
-        gfd:
-          enabled: true
+      helm:
+        valuesObject:
+          runtimeClassName: "nvidia"
+          gfd:
+            enabled: true
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: nvidia-device-plugin
