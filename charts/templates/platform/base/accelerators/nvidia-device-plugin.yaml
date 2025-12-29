@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nvidia-device-plugin
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/platform/base/accelerators/nvidia-device-plugin
+    - repoURL: https://nvidia.github.io/k8s-device-plugin
+      chart: nvidia-device-plugin
+      targetRevision: 0.18.0
+      valuesObject:
+        runtimeClassName: "nvidia"
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: nvidia-device-plugin
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
