@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tradukisto-client
+  namespace: tradukisto
+  labels:
+    app.kubernetes.io/name: tradukisto-client
+    app.kubernetes.io/part-of: tradukisto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tradukisto-client
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tradukisto-client
+        app.kubernetes.io/part-of: tradukisto
+    spec:
+      containers:
+        - name: client
+          image: ghcr.io/chik4ge-homelab/tradukisto-client:v0.1.0
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
