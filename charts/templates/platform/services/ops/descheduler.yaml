@@ -26,6 +26,10 @@ spec:
                   #     nodeAffinityType: preferredDuringSchedulingIgnoredDuringExecution
                   - name: RemovePodsViolatingInterPodAntiAffinity
                   - name: RemovePodsViolatingTopologySpreadConstraint
+                    args:
+                      constraints:
+                        - DoNotSchedule
+                        - ScheduleAnyway
                 plugins:
                   deschedule:
                     enabled:
