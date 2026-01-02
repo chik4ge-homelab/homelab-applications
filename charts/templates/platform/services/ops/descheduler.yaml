@@ -18,41 +18,20 @@ spec:
                   - name: DefaultEvictor
                     args:
                       nodeFit: true
-                      ignorePvcPods: true
-                      evictLocalStoragePods: true
-                      # noEvictionPolicy: Mandatory
-                  # - name: RemoveDuplicates
-                  - name: RemovePodsHavingTooManyRestarts
-                    args:
-                      podRestartThreshold: 50
-                      includingInitContainers: true
-                  - name: RemovePodsViolatingNodeAffinity
-                    args:
-                      nodeAffinityType:
-                        - requiredDuringSchedulingIgnoredDuringExecution
+                      ignorePvcPods: false
                   - name: RemovePodsViolatingNodeTaints
+                  - name: RemovePodsViolatingNodeAffinity
                   - name: RemovePodsViolatingInterPodAntiAffinity
                   - name: RemovePodsViolatingTopologySpreadConstraint
-                  - name: LowNodeUtilization
-                    args:
-                      thresholds:
-                        cpu: 60
-                        memory: 60
-                      targetThresholds:
-                        cpu: 80
-                        memory: 80
                 plugins:
-                  balance:
-                    enabled:
-                      - RemoveDuplicates
-                      - RemovePodsViolatingTopologySpreadConstraint
-                      - LowNodeUtilization
                   deschedule:
                     enabled:
-                      - RemovePodsHavingTooManyRestarts
                       - RemovePodsViolatingNodeTaints
                       - RemovePodsViolatingNodeAffinity
                       - RemovePodsViolatingInterPodAntiAffinity
+                  balance:
+                    enabled:
+                      - RemovePodsViolatingTopologySpreadConstraint
 
   destination:
     namespace: kube-system
