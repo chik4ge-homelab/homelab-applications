@@ -16,3 +16,13 @@ spec:
         size: 5Gi
         class: ceph-rbd
         deleteClaim: true
+  template:
+    pod:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  strimzi.io/cluster: kafka-cluster
+                  strimzi.io/controller-role: "true"
+              topologyKey: kubernetes.io/hostname
