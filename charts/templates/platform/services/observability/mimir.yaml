@@ -132,7 +132,7 @@ spec:
                 cpu: 10m
                 memory: 64Mi
               limits:
-                memory: 200Mi
+                memory: 256Mi
 
           metadata-cache:
             enabled: true
@@ -142,7 +142,7 @@ spec:
                 cpu: 10m
                 memory: 64Mi
               limits:
-                memory: 50Mi
+                memory: 256Mi
 
           results-cache:
             enabled: true
@@ -151,6 +151,8 @@ spec:
               requests:
                 cpu: 100m
                 memory: 64Mi
+              limits:
+                memory: 256Mi
           
           ruler:
             resources:
