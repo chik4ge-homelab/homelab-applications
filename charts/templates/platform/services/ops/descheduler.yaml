@@ -30,7 +30,7 @@ spec:
                   deschedule:
                     enabled:
                       - RemovePodsViolatingNodeTaints
-                      - RemovePodsViolatingNodeAffinity
+                      # - RemovePodsViolatingNodeAffinity
                       - RemovePodsViolatingInterPodAntiAffinity
                   balance:
                     enabled:
