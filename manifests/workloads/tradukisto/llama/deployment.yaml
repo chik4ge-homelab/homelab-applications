@@ -13,6 +13,8 @@ spec:
       app.kubernetes.io/name: llama
   template:
     metadata:
+      annotations:
+        descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
       labels:
         app.kubernetes.io/name: llama
         app.kubernetes.io/part-of: tradukisto

@@ -17,6 +17,8 @@ spec:
               memory: 512Mi
             limits:
               memory: 1Gi
+          podAnnotations:
+            descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
           ingress:
             enabled: true
             className: nginx
@@ -73,6 +75,8 @@ spec:
               memory: 256Mi
             limits:
               memory: 512Mi
+          podAnnotations:
+            descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
           persistence:
             storageClassName: ceph-rbd
             size: 2Gi

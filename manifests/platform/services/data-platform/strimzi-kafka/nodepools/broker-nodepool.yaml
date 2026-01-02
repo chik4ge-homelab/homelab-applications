@@ -20,7 +20,7 @@ spec:
     pod:
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
+          preferredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchLabels:
                   strimzi.io/cluster: kafka-cluster

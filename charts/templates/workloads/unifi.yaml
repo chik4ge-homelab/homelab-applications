@@ -36,6 +36,8 @@ spec:
             limits:
              memory: 1536Mi
           jvmMaxHeapSize: 1024M
+          podAnnotations:
+            descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
 
           controllerService:
             type: LoadBalancer

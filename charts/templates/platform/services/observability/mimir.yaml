@@ -76,23 +76,6 @@ spec:
             replicas: 3
             persistentVolume:
               storageClass: ceph-rbd
-            affinity:
-              podAntiAffinity:
-                requiredDuringSchedulingIgnoredDuringExecution:
-                  - labelSelector:
-                      matchExpressions:
-                        - key: target
-                          operator: In
-                          values:
-                            - store-gateway
-                    topologyKey: "kubernetes.io/hostname"
-                  - labelSelector:
-                      matchExpressions:
-                        - key: app.kubernetes.io/component
-                          operator: In
-                          values:
-                            - store-gateway
-                    topologyKey: "kubernetes.io/hostname"
             resources:
               requests:
                 cpu: 100m
