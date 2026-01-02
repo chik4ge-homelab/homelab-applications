@@ -20,7 +20,10 @@ spec:
                       nodeFit: true
                       ignorePvcPods: false
                   - name: RemovePodsViolatingNodeTaints
-                  - name: RemovePodsViolatingNodeAffinity
+                  # TODO: 必要なpodに対し、descheduler.alpha.kubernetes.io/prefer-no-eviction アノテーションを付与したあとに有効化する
+                  # - name: RemovePodsViolatingNodeAffinity
+                  #   args:
+                  #     nodeAffinityType: preferredDuringSchedulingIgnoredDuringExecution
                   - name: RemovePodsViolatingInterPodAntiAffinity
                   - name: RemovePodsViolatingTopologySpreadConstraint
                 plugins:
