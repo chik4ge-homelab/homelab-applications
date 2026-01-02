@@ -30,6 +30,10 @@ spec:
                       constraints:
                         - DoNotSchedule
                         - ScheduleAnyway
+                  - name: "RemoveDuplicates"
+                    args:
+                      excludeOwnerKinds:
+                        - "ReplicaSet"
                 plugins:
                   deschedule:
                     enabled:
@@ -39,6 +43,7 @@ spec:
                   balance:
                     enabled:
                       - RemovePodsViolatingTopologySpreadConstraint
+                      - RemoveDuplicates
 
   destination:
     namespace: kube-system
