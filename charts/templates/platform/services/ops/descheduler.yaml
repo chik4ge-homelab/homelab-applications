@@ -30,10 +30,10 @@ spec:
                       constraints:
                         - DoNotSchedule
                         - ScheduleAnyway
-                  - name: "RemoveDuplicates"
+                  - name: RemoveDuplicates
                     args:
                       excludeOwnerKinds:
-                        - "ReplicaSet"
+                        - ReplicaSet
                 plugins:
                   deschedule:
                     enabled:
