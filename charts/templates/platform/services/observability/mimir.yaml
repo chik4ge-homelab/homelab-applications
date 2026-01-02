@@ -24,6 +24,8 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 1Gi
+            podAnnotations:
+              descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
 
           distributor:
             replicas: 2
@@ -55,26 +57,12 @@ spec:
                     - mimir.chik4ge.me
 
           ingester:
+            zoneAwareReplication:
+              enabled: false
+            replicas: 3
             persistentVolume:
               size: 25Gi
               storageClass: ceph-rbd
-            affinity:
-              podAntiAffinity:
-                requiredDuringSchedulingIgnoredDuringExecution:
-                  - labelSelector:
-                      matchExpressions:
-                        - key: target
-                          operator: In
-                          values:
-                            - ingester
-                    topologyKey: "kubernetes.io/hostname"
-                  - labelSelector:
-                      matchExpressions:
-                        - key: app.kubernetes.io/component
-                          operator: In
-                          values:
-                            - ingester
-                    topologyKey: "kubernetes.io/hostname"
             resources:
               requests:
                 cpu: 150m
@@ -83,6 +71,9 @@ spec:
                 memory: 5Gi
                     
           store_gateway:
+            zoneAwareReplication:
+              enabled: false
+            replicas: 3
             persistentVolume:
               storageClass: ceph-rbd
             affinity:
@@ -126,6 +117,8 @@ spec:
             resources:
               requests:
                 memory: 64Mi
+            podAnnotations:
+              descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
 
           metaMonitoring:
             serviceMonitor:
