@@ -79,14 +79,15 @@ spec:
 
           headlessService: true
 
-          ingress:
-            enabled: true
-            tls:
-              - hosts:
-                  - grafana.chik4ge.me
-            hosts:
-              - grafana.chik4ge.me
-            ingressClassName: nginx
+          route:
+            main:
+              enabled: true
+              hostnames:
+                - grafana.chik4ge.me
+              parentRefs:
+                - name: envoy-gateway
+                  namespace: envoy-gateway
+                  sectionName: https
 
           extraObjects:
             - apiVersion: external-secrets.io/v1
