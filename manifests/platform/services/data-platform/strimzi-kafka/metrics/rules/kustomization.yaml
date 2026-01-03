@@ -2,11 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - prometheus-kafka-bridge-rules.yaml
+  # - prometheus-kafka-bridge-rules.yaml # unused
   - prometheus-kafka-certificate-rules.yaml
-  - prometheus-kafka-connect-rules.yaml
+  # - prometheus-kafka-connect-rules.yaml # unused
   - prometheus-kafka-exporter-topic-rules-group.yaml
   - prometheus-kafka-rules.yaml
-  - prometheus-mirrormaker2-rules.yaml
+  # - prometheus-mirrormaker2-rules.yaml # unused
   - prometheus-strimzi-cluster-operator-rules.yaml
   - prometheus-strimzi-entity-operator-rules.yaml
