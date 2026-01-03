@@ -21,8 +21,10 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  strimzi.io/cluster: kafka-cluster
-                  strimzi.io/broker-role: "true"
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    strimzi.io/cluster: kafka-cluster
+                    strimzi.io/broker-role: "true"
+                topologyKey: kubernetes.io/hostname
