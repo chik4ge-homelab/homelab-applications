@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://cloudnative-pg.github.io/charts
     chart: cloudnative-pg
-    targetRevision: 1.28.0
+    targetRevision: 0.27.0
   destination:
     namespace: cnpg-system
     server: {{ .Values.spec.destination.server }}
