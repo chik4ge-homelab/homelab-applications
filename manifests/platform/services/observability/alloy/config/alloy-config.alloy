@@ -235,34 +235,6 @@ prometheus.scrape "network_devices" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
-discovery.relabel "nodes" {
-  targets = discovery.kubernetes.nodes.targets
-
-  rule {
-    source_labels = ["__meta_kubernetes_node_label_kubernetes_io_hostname"]
-    action = "replace"
-    target_label = "hostname"
-  }
-
-  rule {
-    replacement   = "talos-k8s"
-    target_label  = "homelab_cluster"
-  }
-}
-
-prometheus.scrape "nodes" {
-  targets = discovery.relabel.nodes.output
-  scrape_interval = "60s"
-  clustering { enabled = true }
-  scheme     = "https"
-  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-  tls_config {
-    insecure_skip_verify = true
-  }
-  forward_to = [prometheus.remote_write.default.receiver]
-  job_name = "node-exporter"
-}
-
 prometheus.operator.podmonitors "podmonitors" {
   rule {
     replacement   = "talos-k8s"
