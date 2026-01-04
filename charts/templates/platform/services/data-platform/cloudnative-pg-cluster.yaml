@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
-      targetRevision: main
-      path: manifests/platform/services/data-platform/cloudnative-pg-cluster
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    targetRevision: main
+    path: manifests/platform/services/data-platform/cloudnative-pg-cluster
   destination:
     namespace: cnpg-database
     server: {{ .Values.spec.destination.server }}
