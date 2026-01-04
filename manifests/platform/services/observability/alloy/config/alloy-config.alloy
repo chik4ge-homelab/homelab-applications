@@ -246,7 +246,7 @@ discovery.relabel "nodes" {
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
@@ -266,7 +266,7 @@ prometheus.scrape "nodes" {
 prometheus.operator.podmonitors "podmonitors" {
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
   clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
@@ -276,7 +276,7 @@ prometheus.operator.servicemonitors "servicemonitors" {
   kubernetes_role = "endpointslice"
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
   clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
@@ -285,7 +285,7 @@ prometheus.operator.servicemonitors "servicemonitors" {
 prometheus.operator.scrapeconfigs "scrapeconfigs" {
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
   clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
@@ -319,7 +319,7 @@ discovery.relabel "kube_apiserver" {
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
@@ -363,7 +363,7 @@ discovery.relabel "kube_scheduler" {
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
@@ -394,7 +394,7 @@ discovery.relabel "cadvisor" {
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
@@ -425,7 +425,7 @@ discovery.relabel "kubelet" {
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
