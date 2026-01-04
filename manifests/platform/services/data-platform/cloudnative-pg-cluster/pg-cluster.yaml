@@ -1,0 +1,16 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cloudnative-pg-cluster
+spec:
+  instances: 3
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.1
+  postgresql:
+    shared_preload_libraries:
+      - "vchord.so"
+  bootstrap:
+    initdb:
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+  storage:
+    size: 20Gi
