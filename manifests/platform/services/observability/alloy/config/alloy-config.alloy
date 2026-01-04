@@ -45,30 +45,30 @@ discovery.relabel "pods" {
   rule {
     source_labels = ["__meta_kubernetes_namespace"]
     action = "replace"
-    target_label = "namespace"
+    target_label = "kubernetes_namespace"
   }
 
   rule {
     source_labels = ["__meta_kubernetes_pod_name"]
     action = "replace"
-    target_label = "pod"
+    target_label = "kubernetes_pod_name"
   }
 
   rule {
     source_labels = ["__meta_kubernetes_pod_container_name"]
     action = "replace"
-    target_label = "job"
+    target_label = "kubernetes_pod_container_name"
   }
 
   rule {
     source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
     action = "replace"
-    target_label = "app"
+    target_label = "kubernetes_pod_label_app_kubernetes_io_name"
   }
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
@@ -103,18 +103,18 @@ discovery.relabel "services" {
   rule {
     source_labels = ["__meta_kubernetes_namespace"]
     action = "replace"
-    target_label = "namespace"
+    target_label = "kubernetes_namespace"
   }
 
   rule {
     source_labels = ["__meta_kubernetes_service_name"]
     action = "replace"
-    target_label = "service"
+    target_label = "kubernetes_service_name"
   }
 
   rule {
     replacement   = "talos-k8s"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 }
 
@@ -133,7 +133,7 @@ discovery.relabel "proxmox_hosts" {
 
   rule {
     replacement   = "proxmox"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 
   rule {
@@ -156,7 +156,7 @@ discovery.relabel "garage_truenas_metrics" {
 
   rule {
     replacement   = "truenas"
-    target_label  = "cluster"
+    target_label  = "homelab_cluster"
   }
 
   rule {
@@ -183,6 +183,11 @@ discovery.relabel "network_devices" {
   rule {
     replacement   = "snmp-exporter"
     target_label  = "job"
+  }
+
+  rule {
+    replacement   = "network_devices"
+    target_label  = "homelab_cluster"
   }
 
   rule {
