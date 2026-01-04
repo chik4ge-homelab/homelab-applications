@@ -25,11 +25,3 @@ spec:
       annotations:
         summary: 'Consumer group lag is too big'
         description: 'Consumer group {{ $labels.consumergroup}} lag is too big ({{ $value }}) on topic {{ $labels.topic }}/partition {{ $labels.partition }}'
-    - alert: NoMessageForTooLong
-      expr: changes(kafka_topic_partition_current_offset[10m]) == 0
-      for: 10s
-      labels:
-        severity: warning
-      annotations:
-        summary: 'No message for 10 minutes'
-        description: 'There is no messages in topic {{ $labels.topic}}/partition {{ $labels.partition }} for 10 minutes'
