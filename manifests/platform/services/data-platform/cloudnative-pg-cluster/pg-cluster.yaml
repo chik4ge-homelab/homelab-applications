@@ -12,5 +12,10 @@ spec:
     initdb:
       postInitSQL:
         - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+  managed:
+    roles:
+      - name: immich_app
+        passwordSecret:
+          name: immich-db-credentials
   storage:
     size: 20Gi
