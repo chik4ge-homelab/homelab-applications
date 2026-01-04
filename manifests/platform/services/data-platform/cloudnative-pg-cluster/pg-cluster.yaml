@@ -18,4 +18,5 @@ spec:
         passwordSecret:
           name: immich-db-credentials
   storage:
+    storageClass: ceph-rbd
     size: 20Gi
