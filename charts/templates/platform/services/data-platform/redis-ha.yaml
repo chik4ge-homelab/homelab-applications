@@ -10,15 +10,14 @@ spec:
       chart: redis-ha
       targetRevision: 4.35.5
       helm:
-        releaseName: redis-ha
         valuesObject:
           replicas: 3
           auth: true
-          existingSecret: valkey-auth
+          existingSecret: redis-auth
           authKey: password
           sentinel:
             auth: true
-            existingSecret: valkey-auth
+            existingSecret: redis-auth
             authKey: password
           haproxy:
             enabled: true
@@ -26,7 +25,7 @@ spec:
       targetRevision: main
       path: manifests/platform/services/data-platform/redis-ha
   destination:
-    namespace: valkey-cluster
+    namespace: redis
     server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:

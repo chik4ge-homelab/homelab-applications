@@ -29,12 +29,12 @@ spec:
                           name: immich-db-credentials
                           key: password
                     DB_DATABASE_NAME: immich
-                    REDIS_HOSTNAME: redis-ha-haproxy.valkey-cluster.svc.cluster.local
+                    REDIS_HOSTNAME: redis-ha-haproxy.redis.svc.cluster.local
                     REDIS_PORT: "6379"
                     REDIS_PASSWORD:
                       valueFrom:
                         secretKeyRef:
-                          name: valkey-auth
+                          name: redis-auth
                           key: password
           immich:
             metrics:
