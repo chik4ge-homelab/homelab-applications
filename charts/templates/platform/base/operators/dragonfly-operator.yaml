@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dragonfly-operator
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: oci://ghcr.io/dragonflydb/dragonfly-operator/helm
+    chart: dragonfly-operator
+    targetRevision: v1.3.1
+    helm:
+      valuesObject:
+        serviceMonitor:
+          enabled: true
+  destination:
+    namespace: dragonfly-operator-system
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
