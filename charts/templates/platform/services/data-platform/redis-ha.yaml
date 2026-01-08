@@ -21,6 +21,8 @@ spec:
             authKey: password
           haproxy:
             enabled: true
+          persistentVolume:
+            storageClass: ceph-rbd
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: manifests/platform/services/data-platform/redis-ha
