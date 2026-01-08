@@ -29,12 +29,12 @@ spec:
                           name: immich-db-credentials
                           key: password
                     DB_DATABASE_NAME: immich
-                    REDIS_HOSTNAME: dragonfly.dragonfly-cluster.svc.cluster.local
+                    REDIS_HOSTNAME: redis-ha-haproxy.valkey-cluster.svc.cluster.local
                     REDIS_PORT: "6379"
                     REDIS_PASSWORD:
                       valueFrom:
                         secretKeyRef:
-                          name: immich-redis-credentials
+                          name: valkey-auth
                           key: password
           immich:
             metrics:

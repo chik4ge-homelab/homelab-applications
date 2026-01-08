@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis-ha
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://dandydeveloper.github.io/charts
+      chart: redis-ha
+      targetRevision: 4.35.5
+      helm:
+        releaseName: redis-ha
+        valuesObject:
+          replicas: 3
+          auth: true
+          existingSecret: valkey-auth
+          authKey: password
+          sentinel:
+            auth: true
+            existingSecret: valkey-auth
+            authKey: password
+          haproxy:
+            enabled: true
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/platform/services/data-platform/redis-ha
+  destination:
+    namespace: valkey-cluster
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
