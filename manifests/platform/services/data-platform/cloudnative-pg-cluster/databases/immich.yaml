@@ -7,3 +7,6 @@ spec:
   owner: immich_app
   cluster:
     name: cloudnative-pg-cluster
+  extensions:
+    - name: vchord
+      version: "0.4.3"
