@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dragonfly-cluster
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chik4ge-homelab/homelab-applications
+    targetRevision: main
+    path: manifests/platform/services/data-platform/dragonfly-cluster
+  destination:
+    namespace: dragonfly-cluster
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
