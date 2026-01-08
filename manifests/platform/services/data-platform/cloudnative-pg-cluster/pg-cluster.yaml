@@ -15,6 +15,7 @@ spec:
   managed:
     roles:
       - name: immich_app
+        login: true
         passwordSecret:
           name: immich-db-credentials
   storage:
