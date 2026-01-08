@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: immich
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/immich-app/immich-charts/immich
+      chart: immich
+      targetRevision: 0.10.3
+      helm:
+        valuesObject:
+          controllers:
+            main:
+              containers:
+                main:
+                  env:
+                    DB_HOSTNAME: cloudnative-pg-cluster-rw.cnpg-database.svc.cluster.local
+                    DB_PORT: "5432"
+                    DB_USERNAME:
+                      valueFrom:
+                        secretKeyRef:
+                          name: immich-db-credentials
+                          key: username
+                    DB_PASSWORD:
+                      valueFrom:
+                        secretKeyRef:
+                          name: immich-db-credentials
+                          key: password
+                    DB_DATABASE_NAME: immich
+                    REDIS_HOSTNAME: dragonfly.dragonfly-cluster.svc.cluster.local
+                    REDIS_PORT: "6379"
+                    REDIS_PASSWORD:
+                      valueFrom:
+                        secretKeyRef:
+                          name: immich-redis-credentials
+                          key: password
+          immich:
+            metrics:
+              enabled: true
+            persistence:
+              library:
+                existingClaim: immich-library
+          server:
+            ingress:
+              main:
+                enabled: false
+          valkey:
+            enabled: false
+
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/workloads/immich
+
+  destination:
+    namespace: immich
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: "privileged"
