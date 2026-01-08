@@ -9,5 +9,7 @@ spec:
     name: cloudnative-pg-cluster
   extensions:
     - name: vector
+    - name: cube
+    - name: earthdistance
     - name: vchord
       version: "0.4.3"
