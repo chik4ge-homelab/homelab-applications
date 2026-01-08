@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: oci://ghcr.io/dragonflydb/dragonfly-operator/helm
+    repoURL: oci://ghcr.io/dragonflydb/dragonfly-operator/helm/dragonfly-operator
     chart: dragonfly-operator
     targetRevision: v1.3.1
     helm:
