@@ -4,7 +4,7 @@ metadata:
   name: external-ceph-dashboard-route
 spec:
   parentRefs:
-    - name: envoy-gateway
+    - name: envoy-gateway-internal
       namespace: envoy-gateway
       sectionName: https
   hostnames:

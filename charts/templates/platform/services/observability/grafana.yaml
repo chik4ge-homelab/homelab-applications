@@ -85,7 +85,7 @@ spec:
               hostnames:
                 - grafana.chik4ge.me
               parentRefs:
-                - name: envoy-gateway
+                - name: envoy-gateway-internal
                   namespace: envoy-gateway
                   sectionName: https
 

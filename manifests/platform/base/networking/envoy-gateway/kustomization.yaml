@@ -2,7 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - gatewayclass.yaml
-  - gateway.yaml
   - certificate-chik4ge-me.yaml
-  - envoyproxy.yaml
+  - gatewayclass.yaml
+  - envoy-gateway-internal

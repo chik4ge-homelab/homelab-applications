@@ -108,7 +108,7 @@ spec:
             httproute:
               enabled: true
               parentRefs:
-                - name: envoy-gateway
+                - name: envoy-gateway-internal
                   namespace: envoy-gateway
                   sectionName: https
               hostnames:
@@ -116,7 +116,7 @@ spec:
             # grpcroute:
             #   enabled: true
             #   parentRefs:
-            #     - name: envoy-gateway
+            #     - name: envoy-gateway-internal
             #       namespace: envoy-gateway
             #       sectionName: https
             #   hostnames:

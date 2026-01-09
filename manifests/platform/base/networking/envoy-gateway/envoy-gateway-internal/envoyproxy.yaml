@@ -1,13 +1,14 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
 metadata:
-  name: envoy-gateway
+  name: envoy-gateway-internal
   namespace: envoy-gateway
 spec:
   provider:
     type: Kubernetes
     kubernetes:
       envoyService:
+        name: envoy-gateway-internal
         type: LoadBalancer
         loadBalancerClass: tailscale
         externalTrafficPolicy: Local
