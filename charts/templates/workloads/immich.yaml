@@ -45,13 +45,7 @@ spec:
           server:
             ingress:
               main:
-                enabled: true
-                className: cloudflare-tunnel
-                hosts:
-                  - host: immich.chik4ge.me
-                    paths:
-                      - path: /
-                        pathType: Prefix
+                enabled: false
           valkey:
             enabled: false
 
