@@ -5,3 +5,4 @@ resources:
   - certificate-chik4ge-me.yaml
   - gatewayclass.yaml
   - envoy-gateway-internal
+  - envoy-gateway-external
