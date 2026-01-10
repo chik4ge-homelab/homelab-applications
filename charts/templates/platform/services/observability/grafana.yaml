@@ -148,12 +148,11 @@ spec:
                 memory: 128Mi
                 cpu: 100m
           pxc:
-            volumeSpec:
-              persistentVolumeClaim:
-                storageClassName: ceph-rbd
             resources:
               requests:
                 cpu: 100m
+            persistence:
+              storageClass: ceph-rbd
           logcollector:
             resources:
               requests:
