@@ -11,7 +11,7 @@ spec:
       path: manifests/platform/services/observability/exporters/proxmox-exporter
     - repoURL: https://starttoaster.github.io/proxmox-exporter
       chart: proxmox-exporter
-      targetRevision: 0.2.11
+      targetRevision: 0.2.12
       helm:
         valuesObject:
           # High Availability configuration
