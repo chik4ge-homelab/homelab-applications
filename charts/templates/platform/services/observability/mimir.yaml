@@ -95,6 +95,7 @@ spec:
                 memory: 4Gi
 
           alertmanager:
+            replicas: 2
             persistentVolume:
               storageClass: ceph-rbd
             resources:
@@ -102,6 +103,16 @@ spec:
                 memory: 64Mi
             podAnnotations:
               descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
+            extraEnvFrom:
+              - secretRef:
+                  name: mimir-alertmanager-discord-webhook
+            fallbackConfig: |
+              route:
+                receiver: discord
+              receivers:
+                - name: discord
+                  discord_configs:
+                    - webhook_url: "${DISCORD_WEBHOOK_URL}"
 
           metaMonitoring:
             serviceMonitor:
