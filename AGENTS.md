@@ -10,6 +10,7 @@
 - After any apply, confirm the system reaches the intended state using live command output.
 - You may proceed with commit/push without prior confirmation, but after completing work request user review before running `git commit` and `git push`.
 - Confirmation prompts are handled by the system; proceed with commands as needed without extra user checks unless explicitly instructed otherwise.
+- Before running `git push`, explain what was changed.
 
 # Helm and Kustomize
 

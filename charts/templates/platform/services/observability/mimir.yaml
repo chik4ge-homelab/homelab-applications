@@ -103,9 +103,12 @@ spec:
                 memory: 64Mi
             podAnnotations:
               descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
-            extraEnvFrom:
-              - secretRef:
-                  name: mimir-alertmanager-discord-webhook
+            env:
+              - name: DISCORD_WEBHOOK_URL
+                valueFrom:
+                  secretKeyRef:
+                    name: mimir-alertmanager-discord-webhook
+                    key: DISCORD_WEBHOOK_URL
             fallbackConfig: |
               route:
                 receiver: discord
