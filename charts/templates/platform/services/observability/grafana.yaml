@@ -81,7 +81,7 @@ spec:
                   access: proxy
                   url: http://mimir-gateway.mimir.svc.cluster.local/alertmanager
                   jsonData:
-                    implementation: mimir
+                    implementation: prometheus
                     handleGrafanaManagedAlerts: true
 
           headlessService: true
