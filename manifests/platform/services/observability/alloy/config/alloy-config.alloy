@@ -195,6 +195,16 @@ mimir.rules.kubernetes "default" {
   address = "http://mimir-gateway.mimir.svc.cluster.local"
 }
 
+remote.kubernetes.secret "mimir_alertmanager_global_config" {
+  namespace = "alloy"
+  name = "mimir-alertmanager-global-config"
+}
+
+mimir.alerts.kubernetes "default" {
+  address = "http://mimir-gateway.mimir.svc.cluster.local"
+  global_config = remote.kubernetes.secret.mimir_alertmanager_global_config.data["alertmanager.yaml"]
+}
+
 prometheus.scrape "pods" {
   targets = discovery.relabel.pods.output
   scrape_interval = "60s"
