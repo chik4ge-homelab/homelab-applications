@@ -5,7 +5,7 @@ namespace: alloy
 
 resources:
   - rules/k8s-mixin-rules.yaml
-  - rules/mimir-mixin-rules.yaml
+  - rules/k8s-mixin-alerts.yaml
   - secrets/alertmanager-discord-webhook.yaml
 
 configMapGenerator:
