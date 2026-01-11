@@ -1,6 +1,7 @@
 # Operational Rules
 
 - Always review existing functionality and current logs/state before making changes.
+- Act autonomously to discover deployment methods and relevant configuration before asking the user.
 - If a change is destructive or risky, explain the impact scope and obtain explicit user approval via the `question` tool before proceeding.
 - GitOps is the default delivery path, even when the user requests direct application. Use Helm/Kustomize sources and let ArgoCD apply changes.
 - When testing with `kubectl apply`, first render or export the manifest to a local YAML file, then apply that file.
@@ -11,3 +12,7 @@
 # Helm and Kustomize
 
 - For Helm charts or Kustomize updates, confirm the values schema and related documentation before editing.
+
+# Agent Skills
+
+- Use the `kubectl-namespace-order` skill whenever using `kubectl`.
