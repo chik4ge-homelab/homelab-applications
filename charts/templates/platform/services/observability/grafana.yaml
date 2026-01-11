@@ -76,6 +76,13 @@ spec:
                   isDefault: false
                   jsonData:
                     maxLines: 1000
+                - name: Mimir Alertmanager
+                  type: alertmanager
+                  access: proxy
+                  url: http://mimir-gateway.mimir.svc.cluster.local
+                  jsonData:
+                    implementation: mimir
+                    handleGrafanaManagedAlerts: true
 
           headlessService: true
 
