@@ -8,6 +8,7 @@
 - Do not trust or rely on configuration files, comments, manifests, or documentation alone. Always prioritize live command output when determining the real state of the system.
 - During investigations, compare the committed configuration to the live cluster state and report any divergence to the user.
 - After any apply, confirm the system reaches the intended state using live command output.
+- You may proceed with commit/push without prior confirmation, but after completing work request user review before running `git commit` and `git push`.
 
 # Helm and Kustomize
 
