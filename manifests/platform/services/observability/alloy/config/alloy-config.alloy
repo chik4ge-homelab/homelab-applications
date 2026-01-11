@@ -355,6 +355,89 @@ prometheus.scrape "kube_scheduler" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
+discovery.relabel "kube_controller_manager" {
+  targets = discovery.kubernetes.pods.targets
+
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    regex = "kube-system"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_component"]
+    regex = "kube-controller-manager"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    replacement = "$1:10257"
+    target_label = "__address__"
+  }
+
+  rule {
+    replacement   = "kube-controller-manager"
+    target_label  = "job"
+  }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "homelab_cluster"
+  }
+}
+
+prometheus.scrape "kube_controller_manager" {
+  targets = discovery.relabel.kube_controller_manager.output
+  scheme     = "https"
+  scrape_interval = "60s"
+  clustering { enabled = true }
+  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  tls_config {
+    insecure_skip_verify = true
+  }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+discovery.relabel "kube_proxy" {
+  targets = discovery.kubernetes.pods.targets
+
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    regex = "kube-system"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_k8s_app"]
+    regex = "kube-proxy"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    replacement = "$1:10249"
+    target_label = "__address__"
+  }
+
+  rule {
+    replacement   = "kube-proxy"
+    target_label  = "job"
+  }
+
+  rule {
+    replacement   = "talos-k8s"
+    target_label  = "homelab_cluster"
+  }
+}
+
+prometheus.scrape "kube_proxy" {
+  targets = discovery.relabel.kube_proxy.output
+  scrape_interval = "60s"
+  clustering { enabled = true }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
 discovery.relabel "cadvisor" {
   targets = discovery.kubernetes.nodes.targets
 
