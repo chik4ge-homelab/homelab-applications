@@ -1,0 +1,13 @@
+entries:
+  - name: k8s-mixin-rules
+    entrypoint: mixins/build/k8s-mixin/rules.jsonnet
+    destination: manifests/platform/services/observability/alloy/rules
+  - name: k8s-mixin-alerts
+    entrypoint: mixins/build/k8s-mixin/alerts.jsonnet
+    destination: manifests/platform/services/observability/alloy/rules
+  - name: mimir-mixin-rules
+    entrypoint: mixins/build/mimir-mixin/rules.jsonnet
+    destination: manifests/platform/services/observability/mimir/rules
+  - name: mimir-mixin-alerts
+    entrypoint: mixins/build/mimir-mixin/alerts.jsonnet
+    destination: manifests/platform/services/observability/mimir/rules

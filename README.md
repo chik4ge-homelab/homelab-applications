@@ -103,3 +103,11 @@ core → platform/base → platform/services → workloads
 - platform/base は他レイヤの前提となる “基礎 API” として扱う。
 - operator（CRD・controller）は base、実体（クラスタ・テナント）は services。
 - workloads は platform の上で動く“最終価値の提供者”。
+
+---
+
+### mixins 運用
+
+- mixin 生成定義は `mixins/build/config.yaml` で管理する
+- `entrypoint` は jsonnet の入口、`destination` は出力先ディレクトリ
+- 生成は `scripts/generate-mixin-rules.sh` を実行する
