@@ -79,7 +79,7 @@ spec:
                 - name: Mimir Alertmanager
                   type: alertmanager
                   access: proxy
-                  url: http://mimir-gateway.mimir.svc.cluster.local
+                  url: http://mimir-gateway.mimir.svc.cluster.local/alertmanager
                   jsonData:
                     implementation: mimir
                     handleGrafanaManagedAlerts: true
