@@ -62,6 +62,7 @@ spec:
               apiVersion: 1
               datasources:
                 - name: Mimir
+                  uid: PAE45454D0EDB9216
                   type: prometheus
                   access: proxy
                   url: http://mimir-gateway.mimir.svc.cluster.local/prometheus
