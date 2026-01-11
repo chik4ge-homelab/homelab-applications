@@ -36,9 +36,6 @@ spec:
             pathType: Prefix
             hosts:
               - alloy.chik4ge.me
-    - repoURL: https://prometheus-community.github.io/helm-charts
-      chart: prometheus-operator-crds
-      targetRevision: 26.0.0
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: manifests/platform/services/observability/alloy
@@ -50,4 +47,3 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true

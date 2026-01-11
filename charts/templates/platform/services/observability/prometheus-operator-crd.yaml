@@ -1,0 +1,19 @@
+kind: Application
+metadata:
+  name: prometheus-operator-crd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus-operator-crds
+    targetRevision: 26.0.0
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: alloy
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
