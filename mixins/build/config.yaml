@@ -8,10 +8,10 @@ entries:
 
   - name: cert-manager-mixin-rules
     entrypoint: mixins/build/cert-manager-mixin/rules.jsonnet
-    destination: manifests/platform/services/observability/alloy/rules
+    destination: manifests/platform/services/platform/cert-manager/metrics/rules
   - name: cert-manager-mixin-alerts
     entrypoint: mixins/build/cert-manager-mixin/alerts.jsonnet
-    destination: manifests/platform/services/observability/alloy/rules
+    destination: manifests/platform/services/platform/cert-manager/metrics/rules
 
   - name: mimir-mixin-rules
     entrypoint: mixins/build/mimir-mixin/rules.jsonnet
