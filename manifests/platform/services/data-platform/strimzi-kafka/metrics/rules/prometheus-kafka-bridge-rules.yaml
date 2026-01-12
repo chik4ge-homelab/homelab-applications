@@ -2,58 +2,58 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   labels:
-    role: alert-rules
     app: strimzi
+    role: alert-rules
   name: kafka-bridge
 spec:
   groups:
-  - name: kafka-bridge
-    rules:
-    - alert: BridgeContainersDown
-      expr: absent(container_last_seen{container=~".+-bridge",pod=~".+-bridge-.+"})
-      for: 3m
-      labels:
-        severity: major
-      annotations:
-        summary: 'All Kafka Bridge containers down or in CrashLookBackOff status'
-        description: 'All Kafka Bridge containers have been down or in CrashLookBackOff status for 3 minutes'
-    - alert: AvgProducerLatency
-      expr: strimzi_bridge_kafka_producer_request_latency_avg > 10
-      for: 10s
-      labels:
-        severity: warning
-      annotations:
-        summary: 'Kafka Bridge producer average request latency'
-        description: 'The average producer request latency is {{ $value }} on {{ $labels.clientId }}'
-    - alert: AvgConsumerFetchLatency
-      expr: strimzi_bridge_kafka_consumer_fetch_latency_avg > 500
-      for: 10s
-      labels:
-        severity: warning
-      annotations:
-        summary: 'Kafka Bridge consumer average fetch latency'
-        description: 'The average consumer fetch latency is {{ $value }} on {{ $labels.clientId }}'
-    - alert: AvgConsumerCommitLatency
-      expr: strimzi_bridge_kafka_consumer_commit_latency_avg > 200
-      for: 10s
-      labels:
-        severity: warning
-      annotations:
-        summary: 'Kafka Bridge consumer average commit latency'
-        description: 'The average consumer commit latency is {{ $value }} on {{ $labels.clientId }}'
-    - alert: Http4xxErrorRate
-      expr: strimzi_bridge_http_server_requests_total{code=~"^4..$", container=~"^.+-bridge", path !="/favicon.ico"} > 10
-      for: 1m
-      labels:
-        severity: warning
-      annotations:
-        summary: 'Kafka Bridge returns code 4xx too often'
-        description: 'Kafka Bridge returns code 4xx too much ({{ $value }}) for the path {{ $labels.path }}'
-    - alert: Http5xxErrorRate
-      expr: strimzi_bridge_http_server_requests_total{code=~"^5..$", container=~"^.+-bridge", path !="/favicon.ico"} > 10
-      for: 1m
-      labels:
-        severity: warning
-      annotations:
-        summary: 'Kafka Bridge returns code 5xx too often'
-        description: 'Kafka Bridge returns code 5xx too much ({{ $value }}) for the path {{ $labels.path }}'
+    - name: kafka-bridge
+      rules:
+        - alert: BridgeContainersDown
+          annotations:
+            description: All Kafka Bridge containers have been down or in CrashLookBackOff status for 3 minutes
+            summary: All Kafka Bridge containers down or in CrashLookBackOff status
+          expr: absent(container_last_seen{container=~".+-bridge",pod=~".+-bridge-.+"})
+          for: 3m
+          labels:
+            severity: major
+        - alert: AvgProducerLatency
+          annotations:
+            description: The average producer request latency is {{ $value }} on {{ $labels.clientId }}
+            summary: Kafka Bridge producer average request latency
+          expr: strimzi_bridge_kafka_producer_request_latency_avg > 10
+          for: 10s
+          labels:
+            severity: warning
+        - alert: AvgConsumerFetchLatency
+          annotations:
+            description: The average consumer fetch latency is {{ $value }} on {{ $labels.clientId }}
+            summary: Kafka Bridge consumer average fetch latency
+          expr: strimzi_bridge_kafka_consumer_fetch_latency_avg > 500
+          for: 10s
+          labels:
+            severity: warning
+        - alert: AvgConsumerCommitLatency
+          annotations:
+            description: The average consumer commit latency is {{ $value }} on {{ $labels.clientId }}
+            summary: Kafka Bridge consumer average commit latency
+          expr: strimzi_bridge_kafka_consumer_commit_latency_avg > 200
+          for: 10s
+          labels:
+            severity: warning
+        - alert: Http4xxErrorRate
+          annotations:
+            description: Kafka Bridge returns code 4xx too much ({{ $value }}) for the path {{ $labels.path }}
+            summary: Kafka Bridge returns code 4xx too often
+          expr: strimzi_bridge_http_server_requests_total{code=~"^4..$", container=~"^.+-bridge", path !="/favicon.ico"} > 10
+          for: 1m
+          labels:
+            severity: warning
+        - alert: Http5xxErrorRate
+          annotations:
+            description: Kafka Bridge returns code 5xx too much ({{ $value }}) for the path {{ $labels.path }}
+            summary: Kafka Bridge returns code 5xx too often
+          expr: strimzi_bridge_http_server_requests_total{code=~"^5..$", container=~"^.+-bridge", path !="/favicon.ico"} > 10
+          for: 1m
+          labels:
+            severity: warning
