@@ -5,9 +5,35 @@ entries:
   - name: k8s-mixin-alerts
     entrypoint: mixins/build/k8s-mixin/alerts.jsonnet
     destination: manifests/platform/services/observability/alloy/rules
+
   - name: mimir-mixin-rules
     entrypoint: mixins/build/mimir-mixin/rules.jsonnet
     destination: manifests/platform/services/observability/mimir/rules
   - name: mimir-mixin-alerts
     entrypoint: mixins/build/mimir-mixin/alerts.jsonnet
     destination: manifests/platform/services/observability/mimir/rules
+
+  - name: prometheus-kafka-bridge-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-bridge-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-kafka-certificate-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-certificate-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-kafka-connect-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-connect-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-kafka-exporter-topic-rules-group
+    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-exporter-topic-rules-group.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-kafka-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-mirrormaker2-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-mirrormaker2-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-strimzi-cluster-operator-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-strimzi-cluster-operator-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - name: prometheus-strimzi-entity-operator-rules
+    entrypoint: mixins/build/strimzi-kafka/prometheus-strimzi-entity-operator-rules.jsonnet
+    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules

@@ -130,6 +130,16 @@
       },
       "version": "457f93dd02a366ebb4ae9e09a0797fc97094e468",
       "sum": "t5lGWjS4xUmXbOaMg8BddbJrIJeglTIi8HkT3UBWtP4="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/strimzi/strimzi-kafka-operator.git",
+          "subdir": "examples/metrics"
+        }
+      },
+      "version": "eb359e808dee4f00230ed031bd381cd2a2f94b9c",
+      "sum": "pv/N1vksafZbgIUmCk6fcDSOtiD+9fSufhh/xmDH3SM="
     }
   ],
   "legacyImports": false

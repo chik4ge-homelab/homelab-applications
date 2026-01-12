@@ -1,3 +1,4 @@
+# This manifest is auto-generated. Do not edit.
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -30,7 +31,7 @@ spec:
             description: Kafka instance {{ $labels.strimzi_io_name }} on namespace {{ $labels.namespace }} has {{ $value }} active controllers
             summary: Kafka abnormal controller state
           expr: sum(kafka_controller_kafkacontroller_activecontrollercount) by (strimzi_io_name, namespace) != 1
-          for: 10s
+          for: 3m
           labels:
             severity: warning
         - alert: OfflinePartitions
@@ -73,14 +74,6 @@ spec:
           for: 3m
           labels:
             severity: major
-        - alert: KafkaControllerContainersDown
-          annotations:
-            description: All Kafka controller containers have been down or in CrashLookBackOff status for 3 minutes
-            summary: All Kafka controller containers down or in CrashLookBackOff status
-          expr: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
-          for: 3m
-          labels:
-            severity: major
         - alert: KafkaContainerRestartedInTheLast5Minutes
           annotations:
             description: One or more Kafka containers were restarted too often within the last 5 minutes
@@ -89,3 +82,11 @@ spec:
           for: 5m
           labels:
             severity: warning
+        - alert: KafkaControllerContainersDown
+          annotations:
+            description: All Kafka controller containers have been down or in CrashLookBackOff status for 3 minutes
+            summary: All Kafka controller containers down or in CrashLookBackOff status
+          expr: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
+          for: 3m
+          labels:
+            severity: major
