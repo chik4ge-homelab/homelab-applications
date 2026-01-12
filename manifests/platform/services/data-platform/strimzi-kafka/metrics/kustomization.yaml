@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - kafka-metrics.yaml
   - podmonitors
-  - rules
+  - rules/mixin-generated

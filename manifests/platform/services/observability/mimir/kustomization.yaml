@@ -4,5 +4,5 @@ kind: Kustomization
 resources:
   - ./object-store
   - ./secrets
-  - rules/mimir-mixin-rules.yaml
-  - rules/mimir-mixin-alerts.yaml
+  - rules/mixin-generated/mimir-mixin-rules.yaml
+  - rules/mixin-generated/mimir-mixin-alerts.yaml

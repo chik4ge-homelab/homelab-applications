@@ -3,18 +3,8 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 vendor_dir="$repo_root/mixins/vendor"
-
-if ! command -v jsonnet >/dev/null 2>&1; then
-  echo "jsonnet is required." >&2
-  exit 1
-fi
-
-if ! command -v yq >/dev/null 2>&1; then
-  echo "yq is required." >&2
-  exit 1
-fi
-
 config_path="$repo_root/mixins/build/config.yaml"
+mixin_subdir="mixin-generated"
 
 render_rule() {
   local name="$1"
@@ -28,20 +18,58 @@ render_rule() {
 
   {
     printf '%s\n' "$header_comment"
-    jsonnet -J "$vendor_dir" "$repo_root/$source_path" \
-      | yq -P -N -oy -p json
+    if [[ "$source_path" = /* ]]; then
+      jsonnet -J "$vendor_dir" "$source_path"
+    else
+      jsonnet -J "$vendor_dir" "$repo_root/$source_path"
+    fi | yq -P -N -oy -p json
   } > "$output_file"
 
   echo "Generated: $output_file"
 }
 
-if [[ ! -f "$config_path" ]]; then
-  echo "Config not found: $config_path" >&2
-  exit 1
+[[ -f "$config_path" ]] || { echo "Config not found: $config_path" >&2; exit 1; }
+
+mapfile -t destinations < <(
+  yq -r '
+    .entries[]
+    | select(.destination != null and .destination != "")
+    | .destination
+  ' "$config_path"
+)
+
+declare -A uniq_dirs
+for d in "${destinations[@]}"; do
+  d_trimmed="${d%/}"
+  resolved="$(realpath -m -- "$repo_root/$d_trimmed/$mixin_subdir")"
+  case "$resolved" in
+    "$repo_root"/manifests/*)
+      uniq_dirs["$resolved"]=1
+      ;;
+    *)
+      echo "Skipping unsafe destination: $resolved" >&2
+      ;;
+  esac
+done
+
+if [[ ${#uniq_dirs[@]} -gt 0 ]]; then
+  shopt -s dotglob nullglob
+  for td in "${!uniq_dirs[@]}"; do
+    [[ -d "$td" ]] && rm -rf "$td"/*
+  done
+  shopt -u dotglob nullglob
 fi
 
 while IFS=$'\t' read -r name entrypoint destination; do
-  render_rule "$name" "$repo_root/$destination" "$entrypoint"
+  destination_trimmed="${destination%/}"
+  resolved="$(realpath -m -- "$repo_root/$destination_trimmed/$mixin_subdir")"
+  render_rule "$name" "$resolved" "$entrypoint"
 done < <(
-  yq -r '.entries[] | [.name, .entrypoint, .destination] | @tsv' "$config_path"
+  yq -r '
+    .entries[]
+    | select(.name != null and .entrypoint != null and .destination != null)
+    | select(.name != "" and .entrypoint != "" and .destination != "")
+    | [.name, .entrypoint, .destination]
+    | @tsv
+  ' "$config_path"
 )
