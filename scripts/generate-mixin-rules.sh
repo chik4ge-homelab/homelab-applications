@@ -24,10 +24,13 @@ render_rule() {
   mkdir -p "$output_dir"
 
   local output_file="$output_dir/${name}.yaml"
+  local header_comment="# This manifest is auto-generated. Do not edit."
 
-  jsonnet -J "$vendor_dir" "$repo_root/$source_path" \
-    | yq -P -N -oy -p json \
-    > "$output_file"
+  {
+    printf '%s\n' "$header_comment"
+    jsonnet -J "$vendor_dir" "$repo_root/$source_path" \
+      | yq -P -N -oy -p json
+  } > "$output_file"
 
   echo "Generated: $output_file"
 }
