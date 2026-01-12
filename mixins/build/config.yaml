@@ -6,6 +6,13 @@ entries:
     entrypoint: mixins/build/k8s-mixin/alerts.jsonnet
     destination: manifests/platform/services/observability/alloy/rules
 
+  - name: cert-manager-mixin-rules
+    entrypoint: mixins/build/cert-manager-mixin/rules.jsonnet
+    destination: manifests/platform/services/observability/alloy/rules
+  - name: cert-manager-mixin-alerts
+    entrypoint: mixins/build/cert-manager-mixin/alerts.jsonnet
+    destination: manifests/platform/services/observability/alloy/rules
+
   - name: mimir-mixin-rules
     entrypoint: mixins/build/mimir-mixin/rules.jsonnet
     destination: manifests/platform/services/observability/mimir/rules
