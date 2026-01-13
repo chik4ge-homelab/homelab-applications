@@ -179,6 +179,7 @@ spec:
                 out_of_order_time_window: 24h
                 compactor_blocks_retention_period: 30d
                 max_global_series_per_user: 0
+                ruler_max_rules_per_rule_group: 100
               distributor:
                 remote_timeout: 30m
               server:
