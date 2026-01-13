@@ -1,9 +1,5 @@
-kind: ConfigMap
+# This manifest is auto-generated. Do not edit.
 apiVersion: v1
-metadata:
-  name: kafka-metrics
-  labels:
-    app: strimzi
 data:
   kafka-metrics-config.yaml: |
     # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
@@ -167,3 +163,8 @@ data:
     - pattern: "kafka.server<type=broker-metadata-metrics><>(.+):"
       name: kafka_server_brokermetadatametrics_$1
       type: GAUGE
+kind: ConfigMap
+metadata:
+  labels:
+    app: strimzi
+  name: kafka-metrics

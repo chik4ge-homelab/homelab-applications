@@ -29,3 +29,16 @@ entries:
           - prometheus-kafka-bridge-rules.yaml
           - prometheus-kafka-connect-rules.yaml
           - prometheus-mirrormaker2-rules.yaml
+
+  - destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/configmaps
+    mixins:
+      - name: kafka-metrics
+        entrypoint: mixins/build/strimzi-kafka/kafka-metrics-configmap.jsonnet
+
+  - destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/podmonitors
+    mixins:
+      - name: strimzi-kafka-podmonitors
+        source_glob: mixins/vendor/github.com/strimzi/strimzi-kafka-operator/examples/metrics/prometheus-install/pod-monitors/*.yaml
+        patch_dir: mixins/build/strimzi-kafka/podmonitors
+        exclude_files:
+          - bridge-metrics.yaml

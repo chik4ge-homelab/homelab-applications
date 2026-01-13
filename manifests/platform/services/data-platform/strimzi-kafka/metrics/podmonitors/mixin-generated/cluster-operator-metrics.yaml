@@ -1,14 +1,17 @@
+# This manifest is auto-generated. Do not edit.
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
+  labels:
+    app: strimzi
   name: cluster-operator-metrics
 spec:
-  selector:
-    matchLabels:
-      strimzi.io/kind: cluster-operator
   namespaceSelector:
     matchNames:
       - strimzi-kafka
   podMetricsEndpoints:
     - path: /metrics
       port: http
+  selector:
+    matchLabels:
+      strimzi.io/kind: cluster-operator
