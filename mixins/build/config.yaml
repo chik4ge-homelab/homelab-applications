@@ -10,6 +10,16 @@ entries:
         type: prometheus-rule
         mixin_import: github.com/kubernetes-monitoring/kubernetes-mixin/mixin.libsonnet
         groups_key: prometheusAlerts
+      - name: node-mixin-rules
+        type: prometheus-rule
+        mixin_import: github.com/prometheus/node_exporter/docs/node-mixin/mixin.libsonnet
+        config_import: mixins/build/node-mixin/config.libsonnet
+        groups_key: prometheusRules
+      - name: node-mixin-alerts
+        type: prometheus-rule
+        mixin_import: github.com/prometheus/node_exporter/docs/node-mixin/mixin.libsonnet
+        config_import: mixins/build/node-mixin/config.libsonnet
+        groups_key: prometheusAlerts
 
   - destination: manifests/platform/base/secrets/cert-manager/rules
     mixins:

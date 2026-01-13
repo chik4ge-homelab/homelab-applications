@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
   - k8s-mixin-alerts.yaml
   - k8s-mixin-rules.yaml
+  - node-mixin-alerts.yaml
+  - node-mixin-rules.yaml
