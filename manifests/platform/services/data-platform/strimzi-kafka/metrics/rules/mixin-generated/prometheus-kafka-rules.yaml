@@ -31,7 +31,7 @@ spec:
             description: Kafka instance {{ $labels.strimzi_io_name }} on namespace {{ $labels.namespace }} has {{ $value }} active controllers
             summary: Kafka abnormal controller state
           expr: sum(kafka_controller_kafkacontroller_activecontrollercount) by (strimzi_io_name, namespace) != 1
-          for: 3m
+          for: 10s
           labels:
             severity: warning
         - alert: OfflinePartitions
@@ -68,9 +68,9 @@ spec:
             severity: major
         - alert: KafkaBrokerContainersDown
           annotations:
-            description: All Kafka broker containers have been down or in CrashLookBackOff status for 3 minutes
-            summary: All Kafka broker containers down or in CrashLookBackOff status
-          expr: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-broker-nodepool-[0-9]+"})
+            description: All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes
+            summary: All `kafka` containers down or in CrashLookBackOff status
+          expr: absent(container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
           for: 3m
           labels:
             severity: major
@@ -82,11 +82,3 @@ spec:
           for: 5m
           labels:
             severity: warning
-        - alert: KafkaControllerContainersDown
-          annotations:
-            description: All Kafka controller containers have been down or in CrashLookBackOff status for 3 minutes
-            summary: All Kafka controller containers down or in CrashLookBackOff status
-          expr: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
-          for: 3m
-          labels:
-            severity: major

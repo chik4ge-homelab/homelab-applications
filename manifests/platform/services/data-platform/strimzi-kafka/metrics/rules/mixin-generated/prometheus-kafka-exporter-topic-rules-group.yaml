@@ -26,3 +26,11 @@ spec:
           for: 10s
           labels:
             severity: warning
+        - alert: NoMessageForTooLong
+          annotations:
+            description: There is no messages in topic {{ $labels.topic}}/partition {{ $labels.partition }} for 10 minutes
+            summary: No message for 10 minutes
+          expr: changes(kafka_topic_partition_current_offset[10m]) == 0
+          for: 10s
+          labels:
+            severity: warning

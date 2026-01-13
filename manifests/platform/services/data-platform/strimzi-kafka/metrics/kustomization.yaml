@@ -3,5 +3,5 @@ kind: Kustomization
 
 resources:
   - configmaps/mixin-generated
-  - podmonitors/mixin-generated
-  - rules/mixin-generated
+  - podmonitors
+  - rules

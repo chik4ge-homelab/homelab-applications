@@ -43,6 +43,38 @@ render_rule() {
   echo "Generated: $output_file"
 }
 
+render_prometheus_rule() {
+  local name="$1"
+  local output_dir="$2"
+  local mixin_import="$3"
+  local config_import="${4:-}"
+  local groups_key="${5:-prometheusRules}"
+
+  mkdir -p "$output_dir"
+
+  local output_file="$output_dir/${name}.yaml"
+  local mixin_code="import '$mixin_import'"
+  local config_code="{}"
+
+  if [[ -n "$config_import" ]]; then
+    local resolved_config
+    resolved_config="$(resolve_source_path "$config_import")"
+    config_code="import '$resolved_config'"
+  fi
+
+  {
+    printf '%s\n' "$header_comment"
+    jsonnet -J "$vendor_dir" "$repo_root/mixins/build/common/prometheus-rule.jsonnet" \
+      --ext-str name="$name" \
+      --ext-code mixin="$mixin_code" \
+      --ext-code config="$config_code" \
+      --ext-str groups_key="$groups_key" \
+      | yq -P -N -oy -p json
+  } > "$output_file"
+
+  echo "Generated: $output_file"
+}
+
 render_yaml() {
   local name="$1"
   local output_dir="$2"
@@ -95,7 +127,7 @@ fi
 
 declare -A destination_resources
 
-while IFS='|' read -r destination name entrypoint entrypoint_glob source_glob patch_dir exclude_files; do
+while IFS='|' read -r destination name type entrypoint entrypoint_glob source_glob mixin_import config_import groups_key exclude_files; do
   destination_trimmed="${destination%/}"
   output_dir="$repo_root/$destination_trimmed/$mixin_subdir"
 
@@ -106,98 +138,110 @@ while IFS='|' read -r destination name entrypoint entrypoint_glob source_glob pa
 
   destination_resources["$output_dir"]+=""
 
-  if [[ -n "$source_glob" ]]; then
-    if [[ "$source_glob" = /* ]]; then
-      glob_pattern="$source_glob"
+  if [[ -z "$type" ]]; then
+    if [[ -n "$source_glob" ]]; then
+      type="yaml"
     else
-      glob_pattern="$repo_root/$source_glob"
+      type="jsonnet"
     fi
+  fi
 
-    collect_glob_matches "$glob_pattern" glob_matches
-
-    if [[ ${#glob_matches[@]} -eq 0 ]]; then
-      echo "No files matched glob: $source_glob" >&2
-      exit 1
-    fi
-
-    patch_dir_abs=""
-    if [[ -n "$patch_dir" ]]; then
-      if [[ "$patch_dir" = /* ]]; then
-        patch_dir_abs="$patch_dir"
-      else
-        patch_dir_abs="$repo_root/$patch_dir"
-      fi
-
-      if [[ ! -d "$patch_dir_abs" ]]; then
-        echo "Patch dir not found: $patch_dir" >&2
+  case "$type" in
+    yaml)
+      if [[ -z "$source_glob" ]]; then
+        echo "Missing source_glob for destination: $destination" >&2
         exit 1
       fi
-    fi
 
-    exclude_list=()
-    if [[ -n "$exclude_files" ]]; then
-      IFS=',' read -r -a exclude_list <<< "$exclude_files"
-    fi
-
-    for source_path in "${glob_matches[@]}"; do
-      file_name="$(basename "$source_path")"
-      case "$file_name" in
-        *.yaml) file_name="${file_name%.yaml}" ;;
-        *.yml) file_name="${file_name%.yml}" ;;
-      esac
-
-      for excluded in "${exclude_list[@]}"; do
-        if [[ "$excluded" == "$file_name" || "$excluded" == "$file_name.yaml" || "$excluded" == "$file_name.yml" ]]; then
-          continue 2
-        fi
-      done
-
-      if [[ -n "$patch_dir_abs" ]]; then
-        patch_path="$patch_dir_abs/$file_name.jsonnet"
-        if [[ -f "$patch_path" ]]; then
-          render_rule "$file_name" "$output_dir" "$patch_path"
-          destination_resources["$output_dir"]+="$file_name.yaml"$'\n'
-          continue
-        fi
+      if [[ "$source_glob" = /* ]]; then
+        glob_pattern="$source_glob"
+      else
+        glob_pattern="$repo_root/$source_glob"
       fi
 
-      render_yaml "$file_name" "$output_dir" "$source_path"
-      destination_resources["$output_dir"]+="$file_name.yaml"$'\n'
-    done
-    continue
-  fi
+      collect_glob_matches "$glob_pattern" glob_matches
 
-  if [[ -n "$entrypoint_glob" ]]; then
-    if [[ "$entrypoint_glob" = /* ]]; then
-      glob_pattern="$entrypoint_glob"
-    else
-      glob_pattern="$repo_root/$entrypoint_glob"
-    fi
+      if [[ ${#glob_matches[@]} -eq 0 ]]; then
+        echo "No files matched glob: $source_glob" >&2
+        exit 1
+      fi
 
-    collect_glob_matches "$glob_pattern" glob_matches
+      exclude_list=()
+      if [[ -n "$exclude_files" ]]; then
+        IFS=',' read -r -a exclude_list <<< "$exclude_files"
+      fi
 
-    if [[ ${#glob_matches[@]} -eq 0 ]]; then
-      echo "No files matched glob: $entrypoint_glob" >&2
+      for source_path in "${glob_matches[@]}"; do
+        file_name="$(basename "$source_path")"
+        case "$file_name" in
+          *.yaml) file_name="${file_name%.yaml}" ;;
+          *.yml) file_name="${file_name%.yml}" ;;
+        esac
+
+        for excluded in "${exclude_list[@]}"; do
+          if [[ "$excluded" == "$file_name" || "$excluded" == "$file_name.yaml" || "$excluded" == "$file_name.yml" ]]; then
+            continue 2
+          fi
+        done
+
+        render_yaml "$file_name" "$output_dir" "$source_path"
+        destination_resources["$output_dir"]+="$file_name.yaml"$'\n'
+      done
+      continue
+      ;;
+    jsonnet)
+      if [[ -n "$entrypoint_glob" ]]; then
+        if [[ "$entrypoint_glob" = /* ]]; then
+          glob_pattern="$entrypoint_glob"
+        else
+          glob_pattern="$repo_root/$entrypoint_glob"
+        fi
+
+        collect_glob_matches "$glob_pattern" glob_matches
+
+        if [[ ${#glob_matches[@]} -eq 0 ]]; then
+          echo "No files matched glob: $entrypoint_glob" >&2
+          exit 1
+        fi
+
+        for source_path in "${glob_matches[@]}"; do
+          file_name="$(basename "$source_path")"
+          file_name="${file_name%.jsonnet}"
+          render_rule "$file_name" "$output_dir" "$source_path"
+          destination_resources["$output_dir"]+="$file_name.yaml"$'\n'
+        done
+        continue
+      fi
+
+      if [[ -z "$entrypoint" || -z "$name" ]]; then
+        echo "Missing entrypoint or name for destination: $destination" >&2
+        exit 1
+      fi
+
+      render_rule "$name" "$output_dir" "$entrypoint"
+      destination_resources["$output_dir"]+="$name.yaml"$'\n'
+      continue
+      ;;
+    prometheus-rule)
+      if [[ -z "$mixin_import" || -z "$name" ]]; then
+        echo "Missing mixin_import or name for destination: $destination" >&2
+        exit 1
+      fi
+
+      if [[ -z "$groups_key" ]]; then
+        groups_key="prometheusRules"
+      fi
+
+      render_prometheus_rule "$name" "$output_dir" "$mixin_import" "$config_import" "$groups_key"
+      destination_resources["$output_dir"]+="$name.yaml"$'\n'
+      continue
+      ;;
+    *)
+      echo "Unknown mixin type: $type for destination: $destination" >&2
       exit 1
-    fi
-
-    for source_path in "${glob_matches[@]}"; do
-      file_name="$(basename "$source_path")"
-      file_name="${file_name%.jsonnet}"
-      render_rule "$file_name" "$output_dir" "$source_path"
-      destination_resources["$output_dir"]+="$file_name.yaml"$'\n'
-    done
-    continue
-  fi
-
-  if [[ -z "$entrypoint" || -z "$name" ]]; then
-    echo "Missing entrypoint or name for destination: $destination" >&2
-    exit 1
-  fi
-
-  render_rule "$name" "$output_dir" "$entrypoint"
-  destination_resources["$output_dir"]+="$name.yaml"$'\n'
-done < <(
+      ;;
+  esac
+ done < <(
   yq -r '
     .entries[]
     | select(.destination != null and .destination != "")
@@ -206,10 +250,13 @@ done < <(
     | [
         $destination,
         .name // "",
+        .type // "",
         .entrypoint // "",
         .entrypoint_glob // "",
         .source_glob // "",
-        .patch_dir // "",
+        .mixin_import // "",
+        .config_import // "",
+        .groups_key // "",
         (.exclude_files // []) | join(",")
       ]
     | join("|")

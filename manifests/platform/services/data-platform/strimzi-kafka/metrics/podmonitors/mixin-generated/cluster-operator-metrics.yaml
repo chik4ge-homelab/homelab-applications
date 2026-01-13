@@ -8,7 +8,7 @@ metadata:
 spec:
   namespaceSelector:
     matchNames:
-      - strimzi-kafka
+      - myproject
   podMetricsEndpoints:
     - path: /metrics
       port: http

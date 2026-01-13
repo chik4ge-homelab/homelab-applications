@@ -1,0 +1,23 @@
+- op: replace
+  path: /spec/groups/0/rules/2/for
+  value: 3m
+- op: replace
+  path: /spec/groups/0/rules/7/annotations/description
+  value: All Kafka broker containers have been down or in CrashLookBackOff status for 3 minutes
+- op: replace
+  path: /spec/groups/0/rules/7/annotations/summary
+  value: All Kafka broker containers down or in CrashLookBackOff status
+- op: replace
+  path: /spec/groups/0/rules/7/expr
+  value: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-broker-nodepool-[0-9]+"})
+- op: add
+  path: /spec/groups/0/rules/-
+  value:
+    alert: KafkaControllerContainersDown
+    annotations:
+      description: All Kafka controller containers have been down or in CrashLookBackOff status for 3 minutes
+      summary: All Kafka controller containers down or in CrashLookBackOff status
+    expr: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
+    for: 3m
+    labels:
+      severity: major

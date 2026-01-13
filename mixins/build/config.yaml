@@ -1,30 +1,45 @@
+# yaml-language-server: $schema=./config.schema.json
 entries:
   - destination: manifests/platform/services/observability/alloy/rules
     mixins:
       - name: k8s-mixin-rules
-        entrypoint: mixins/build/k8s-mixin/rules.jsonnet
+        type: prometheus-rule
+        mixin_import: github.com/kubernetes-monitoring/kubernetes-mixin/mixin.libsonnet
+        groups_key: prometheusRules
       - name: k8s-mixin-alerts
-        entrypoint: mixins/build/k8s-mixin/alerts.jsonnet
+        type: prometheus-rule
+        mixin_import: github.com/kubernetes-monitoring/kubernetes-mixin/mixin.libsonnet
+        groups_key: prometheusAlerts
 
   - destination: manifests/platform/base/secrets/cert-manager/rules
     mixins:
       - name: cert-manager-mixin-rules
-        entrypoint: mixins/build/cert-manager-mixin/rules.jsonnet
+        type: prometheus-rule
+        mixin_import: github.com/imusmanmalik/cert-manager-mixin/mixin.libsonnet
+        config_import: mixins/build/cert-manager-mixin/config.libsonnet
+        groups_key: prometheusRules
       - name: cert-manager-mixin-alerts
-        entrypoint: mixins/build/cert-manager-mixin/alerts.jsonnet
+        type: prometheus-rule
+        mixin_import: github.com/imusmanmalik/cert-manager-mixin/mixin.libsonnet
+        config_import: mixins/build/cert-manager-mixin/config.libsonnet
+        groups_key: prometheusAlerts
 
   - destination: manifests/platform/services/observability/mimir/rules
     mixins:
       - name: mimir-mixin-rules
-        entrypoint: mixins/build/mimir-mixin/rules.jsonnet
+        type: prometheus-rule
+        mixin_import: github.com/grafana/mimir/operations/mimir-mixin/mixin.libsonnet
+        groups_key: prometheusRules
       - name: mimir-mixin-alerts
-        entrypoint: mixins/build/mimir-mixin/alerts.jsonnet
+        type: prometheus-rule
+        mixin_import: github.com/grafana/mimir/operations/mimir-mixin/mixin.libsonnet
+        groups_key: prometheusAlerts
 
   - destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
     mixins:
       - name: strimzi-kafka-mixin-rules
+        type: yaml
         source_glob: mixins/vendor/metrics/prometheus-install/prometheus-rules/*.yaml
-        patch_dir: mixins/build/strimzi-kafka
         exclude_files:
           - prometheus-kafka-bridge-rules.yaml
           - prometheus-kafka-connect-rules.yaml
@@ -33,12 +48,13 @@ entries:
   - destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/configmaps
     mixins:
       - name: kafka-metrics
+        type: jsonnet
         entrypoint: mixins/build/strimzi-kafka/kafka-metrics-configmap.jsonnet
 
   - destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/podmonitors
     mixins:
       - name: strimzi-kafka-podmonitors
+        type: yaml
         source_glob: mixins/vendor/github.com/strimzi/strimzi-kafka-operator/examples/metrics/prometheus-install/pod-monitors/*.yaml
-        patch_dir: mixins/build/strimzi-kafka/podmonitors
         exclude_files:
           - bridge-metrics.yaml

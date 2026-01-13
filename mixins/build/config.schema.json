@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mixins config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entries"],
+  "properties": {
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["destination", "mixins"],
+        "properties": {
+          "destination": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mixins": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "type"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["yaml", "jsonnet", "prometheus-rule"]
+                },
+                "entrypoint": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "entrypoint_glob": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source_glob": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "mixin_import": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "config_import": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "groups_key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "exclude_files": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {"type": {"const": "yaml"}}
+                  },
+                  "then": {
+                    "required": ["source_glob"]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {"type": {"const": "jsonnet"}}
+                  },
+                  "then": {
+                    "anyOf": [
+                      {"required": ["entrypoint"]},
+                      {"required": ["entrypoint_glob"]}
+                    ]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {"type": {"const": "prometheus-rule"}}
+                  },
+                  "then": {
+                    "required": ["mixin_import", "groups_key"]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
