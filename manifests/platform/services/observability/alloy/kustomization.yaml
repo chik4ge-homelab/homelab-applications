@@ -4,8 +4,7 @@ kind: Kustomization
 namespace: alloy
 
 resources:
-  - rules/mixin-generated/k8s-mixin-rules.yaml
-  - rules/mixin-generated/k8s-mixin-alerts.yaml
+  - rules/mixin-generated
   - secrets/alertmanager-discord-webhook.yaml
 
 configMapGenerator:

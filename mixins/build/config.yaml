@@ -1,46 +1,31 @@
 entries:
-  - name: k8s-mixin-rules
-    entrypoint: mixins/build/k8s-mixin/rules.jsonnet
-    destination: manifests/platform/services/observability/alloy/rules
-  - name: k8s-mixin-alerts
-    entrypoint: mixins/build/k8s-mixin/alerts.jsonnet
-    destination: manifests/platform/services/observability/alloy/rules
+  - destination: manifests/platform/services/observability/alloy/rules
+    mixins:
+      - name: k8s-mixin-rules
+        entrypoint: mixins/build/k8s-mixin/rules.jsonnet
+      - name: k8s-mixin-alerts
+        entrypoint: mixins/build/k8s-mixin/alerts.jsonnet
 
-  - name: cert-manager-mixin-rules
-    entrypoint: mixins/build/cert-manager-mixin/rules.jsonnet
-    destination: manifests/platform/services/platform/cert-manager/metrics/rules
-  - name: cert-manager-mixin-alerts
-    entrypoint: mixins/build/cert-manager-mixin/alerts.jsonnet
-    destination: manifests/platform/services/platform/cert-manager/metrics/rules
+  - destination: manifests/platform/base/secrets/cert-manager/rules
+    mixins:
+      - name: cert-manager-mixin-rules
+        entrypoint: mixins/build/cert-manager-mixin/rules.jsonnet
+      - name: cert-manager-mixin-alerts
+        entrypoint: mixins/build/cert-manager-mixin/alerts.jsonnet
 
-  - name: mimir-mixin-rules
-    entrypoint: mixins/build/mimir-mixin/rules.jsonnet
-    destination: manifests/platform/services/observability/mimir/rules
-  - name: mimir-mixin-alerts
-    entrypoint: mixins/build/mimir-mixin/alerts.jsonnet
-    destination: manifests/platform/services/observability/mimir/rules
+  - destination: manifests/platform/services/observability/mimir/rules
+    mixins:
+      - name: mimir-mixin-rules
+        entrypoint: mixins/build/mimir-mixin/rules.jsonnet
+      - name: mimir-mixin-alerts
+        entrypoint: mixins/build/mimir-mixin/alerts.jsonnet
 
-  - name: prometheus-kafka-bridge-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-bridge-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-kafka-certificate-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-certificate-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-kafka-connect-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-connect-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-kafka-exporter-topic-rules-group
-    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-exporter-topic-rules-group.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-kafka-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-kafka-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-mirrormaker2-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-mirrormaker2-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-strimzi-cluster-operator-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-strimzi-cluster-operator-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
-  - name: prometheus-strimzi-entity-operator-rules
-    entrypoint: mixins/build/strimzi-kafka/prometheus-strimzi-entity-operator-rules.jsonnet
-    destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+  - destination: manifests/platform/services/data-platform/strimzi-kafka/metrics/rules
+    mixins:
+      - name: strimzi-kafka-mixin-rules
+        source_glob: mixins/vendor/metrics/prometheus-install/prometheus-rules/*.yaml
+        patch_dir: mixins/build/strimzi-kafka
+        exclude_files:
+          - prometheus-kafka-bridge-rules.yaml
+          - prometheus-kafka-connect-rules.yaml
+          - prometheus-mirrormaker2-rules.yaml

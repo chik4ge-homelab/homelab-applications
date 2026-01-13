@@ -1,0 +1,6 @@
+# This manifest is auto-generated. Do not edit.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - k8s-mixin-alerts.yaml
+  - k8s-mixin-rules.yaml
