@@ -183,7 +183,7 @@ spec:
               distributor:
                 remote_timeout: 30m
               ingester:
-                partition_ring:
+                kvstore:
                   prefix: partition-v2/
               server:
                 http_server_read_timeout: 30m
