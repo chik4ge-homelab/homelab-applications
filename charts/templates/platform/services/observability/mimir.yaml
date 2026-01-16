@@ -195,7 +195,7 @@ spec:
               ingest_storage:
                 kafka:
                   address: kafka-cluster-kafka-bootstrap.strimzi-kafka.svc.cluster.local:9092
-                  topic: mimir-ingest
+                  topic: mimir-ingest-v2
                   auto_create_topic_enabled: false
                   # strimzi-kafkaがSASL/PLAINに対応していないため、mimir側でSASL/SCRAMを指定できるようになるまでコメントアウト
                   # sasl_username: mimir
