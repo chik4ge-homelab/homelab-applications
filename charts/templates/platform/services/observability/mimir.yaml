@@ -59,7 +59,6 @@ spec:
           ingester:
             zoneAwareReplication:
               enabled: false
-            podManagementPolicy: OrderedReady
             replicas: 3
             persistentVolume:
               size: 25Gi
@@ -74,7 +73,6 @@ spec:
           store_gateway:
             zoneAwareReplication:
               enabled: false
-            podManagementPolicy: OrderedReady
             replicas: 3
             persistentVolume:
               storageClass: ceph-rbd
