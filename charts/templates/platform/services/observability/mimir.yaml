@@ -58,8 +58,18 @@ spec:
 
           ingester:
             zoneAwareReplication:
-              enabled: false
+              enabled: true
             replicas: 3
+            affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app.kubernetes.io/component
+                        operator: In
+                        values:
+                          - ingester
+                  topologyKey: "kubernetes.io/hostname"
             persistentVolume:
               size: 25Gi
               storageClass: ceph-rbd
