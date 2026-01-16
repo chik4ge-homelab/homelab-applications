@@ -182,10 +182,6 @@ spec:
                 ruler_max_rules_per_rule_group: 100
               distributor:
                 remote_timeout: 30m
-              ingester:
-                ring:
-                  kvstore:
-                    prefix: partition-v2/
               server:
                 http_server_read_timeout: 30m
                 http_server_write_timeout: 30m
