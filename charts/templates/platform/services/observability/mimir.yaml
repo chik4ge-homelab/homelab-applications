@@ -59,6 +59,7 @@ spec:
           ingester:
             zoneAwareReplication:
               enabled: false
+            podManagementPolicy: OrderedReady
             replicas: 3
             persistentVolume:
               size: 25Gi
@@ -73,6 +74,7 @@ spec:
           store_gateway:
             zoneAwareReplication:
               enabled: false
+            podManagementPolicy: OrderedReady
             replicas: 3
             persistentVolume:
               storageClass: ceph-rbd
@@ -137,8 +139,21 @@ spec:
                 memory: 64Mi
               limits:
                 memory: 256Mi
-          
+
+          query_frontend:
+            replicas: 2
+            podDisruptionBudget:
+              maxUnavailable: 0
+
+          query_scheduler:
+            replicas: 2
+            podDisruptionBudget:
+              maxUnavailable: 0
+
           ruler:
+            replicas: 2
+            podDisruptionBudget:
+              maxUnavailable: 0
             resources:
               requests:
                 cpu: 100m
@@ -180,8 +195,25 @@ spec:
                 compactor_blocks_retention_period: 30d
                 max_global_series_per_user: 0
                 ruler_max_rules_per_rule_group: 100
+              ingester:
+                ring:
+                  replication_factor: 2
               distributor:
+                ring:
+                  replication_factor: 2
                 remote_timeout: 30m
+              querier:
+                ring:
+                  replication_factor: 2
+              ruler:
+                ring:
+                  replication_factor: 2
+              alertmanager:
+                sharding_ring:
+                  replication_factor: 2
+              store_gateway:
+                sharding_ring:
+                  replication_factor: 2
               server:
                 http_server_read_timeout: 30m
                 http_server_write_timeout: 30m

@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - mimir-ingest.yaml
+  - mimir-ingest-v2.yaml

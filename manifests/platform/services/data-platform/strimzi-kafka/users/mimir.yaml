@@ -24,6 +24,14 @@ spec:
           - Read
           - Write
       - resource:
+          type: topic
+          name: mimir-ingest-v2
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+          - Write
+      - resource:
           type: group
           name: "*"
         operations:
