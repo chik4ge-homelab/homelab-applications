@@ -70,8 +70,8 @@ spec:
           serviceMonitor:
             enabled: true
             relabelings:
-              - source_labels: [__param_target]
-                target_label: instance
+              - sourceLabels: [__param_target]
+                targetLabel: instance
                 regex: (.+)
                 replacement: $1
                 action: replace
