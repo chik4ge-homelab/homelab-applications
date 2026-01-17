@@ -66,7 +66,7 @@ spec:
             pveAuthType: token
             pveExistingSecretName: prometheus-pve-exporter-secret
             pveUser: prometheus@pve
-            pveVerifySsl: true
+            pveVerifySsl: false
           serviceMonitor:
             enabled: true
             relabelings:
@@ -76,7 +76,10 @@ spec:
                 replacement: $1
                 action: replace
             pveTargets:
-              - pve.chik4ge.me
+              - 192.168.0.150
+              - 192.168.0.151
+              - 192.168.0.152
+              - 192.168.0.153
             additionalLabels:
               app.kubernetes.io/instance: proxmox-exporter
               app.kubernetes.io/name: proxmox-exporter
