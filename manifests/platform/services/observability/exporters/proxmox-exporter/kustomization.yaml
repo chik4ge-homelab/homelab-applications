@@ -5,4 +5,5 @@ namespace: proxmox-exporter
 
 resources:
   - secrets/proxmox-secret.yaml
+  - secrets/prometheus-pve-exporter-secret.yaml
   - scrapeconfig/proxmox-exporter.yaml

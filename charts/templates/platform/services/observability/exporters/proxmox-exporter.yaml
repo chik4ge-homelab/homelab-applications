@@ -49,6 +49,37 @@ spec:
               name: proxmox-secret
           serviceMonitor:
             enabled: false
+    - repoURL: https://charts.christianhuth.de
+      chart: prometheus-pve-exporter
+      targetRevision: 2.6.1
+      helm:
+        releaseName: prometheus-pve-exporter
+        valuesObject:
+          replicaCount: 1
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+          env:
+            pveAuthType: token
+            pveExistingSecretName: prometheus-pve-exporter-secret
+            pveUser: prometheus@pve
+            pveVerifySsl: true
+          serviceMonitor:
+            enabled: true
+            relabelings:
+              - source_labels: [__param_target]
+                target_label: instance
+                regex: (.+)
+                replacement: $1
+                action: replace
+            pveTargets:
+              - pve.chik4ge.me
+            additionalLabels:
+              app.kubernetes.io/instance: proxmox-exporter
+              app.kubernetes.io/name: proxmox-exporter
 
   destination:
     namespace: proxmox-exporter
