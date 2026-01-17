@@ -258,10 +258,10 @@ spec:
         - alert: NodeMemoryHighUtilization
           annotations:
             description: |
-              Memory is filling up at {{ $labels.instance }}, has been above 90% for the last 15 minutes, is currently at {{ printf "%.2f" $value }}%.
+              Memory is filling up at {{ $labels.instance }}, has been above 101% for the last 15 minutes, is currently at {{ printf "%.2f" $value }}%.
             summary: Host is running out of memory.
           expr: |
-            100 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"} * 100) > 90
+            100 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"} * 100) > 101
           for: 15m
           labels:
             severity: warning
