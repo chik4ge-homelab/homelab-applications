@@ -19,15 +19,7 @@ spec:
           timezone: Asia/Tokyo
 
           ingress:
-            enabled: true
-            ingressClassName: nginx
-            annotations:
-              nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-            hosts:
-              - unifi.chik4ge.me
-            tls:
-              - hosts:
-                  - unifi.chik4ge.me
+            enabled: false
 
           resources:
             requests:
@@ -54,6 +46,10 @@ spec:
             loadBalancerIP: 192.168.1.99
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
+
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/workloads/unifi
 
   destination:
     namespace: unifi
