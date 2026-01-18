@@ -29,13 +29,7 @@ spec:
               limits:
                 memory: "4Gi"
           ingress:
-            enabled: true
-            ingressClassName: nginx
-            path: /
-            faroPort: 12345 # Ingress backend port (12347=Faro, 12345=UI)
-            pathType: Prefix
-            hosts:
-              - alloy.chik4ge.me
+            enabled: false
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: manifests/platform/services/observability/alloy

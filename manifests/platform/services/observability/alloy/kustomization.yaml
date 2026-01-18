@@ -6,6 +6,7 @@ namespace: alloy
 resources:
   - rules/mixin-generated
   - secrets/alertmanager-discord-webhook.yaml
+  - gateway/httproute.yaml
 
 configMapGenerator:
   - name: alloy-config
