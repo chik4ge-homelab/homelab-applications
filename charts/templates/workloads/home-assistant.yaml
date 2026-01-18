@@ -20,18 +20,7 @@ spec:
           podAnnotations:
             descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
           ingress:
-            enabled: true
-            className: nginx
-            annotations:
-              nginx.ingress.kubernetes.io/proxy-body-size: "64m"
-            hosts:
-              - host: home.chik4ge.me
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - hosts:
-                  - home.chik4ge.me
+            enabled: false
           persistence:
             enabled: true
             storageClass: ceph-rbd
@@ -80,6 +69,10 @@ spec:
           persistence:
             storageClassName: ceph-rbd
             size: 2Gi
+
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/workloads/home-assistant
   destination:
     namespace: home-assistant
     server: {{ .Values.spec.destination.server }}
