@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: docker.io/envoyproxy
       chart: gateway-helm
-      targetRevision: v1.6.0
+      targetRevision: 1.6.2
       helm:
         skipCrds: true
         releaseName: eg
