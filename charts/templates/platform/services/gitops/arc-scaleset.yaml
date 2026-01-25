@@ -9,7 +9,7 @@ spec:
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
       path: manifests/platform/services/gitops/arc
-    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts
+    - repoURL: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
       chart: gha-runner-scale-set
       targetRevision: 0.13.0
       helm:
