@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: oci://oci.trueforge.org/truecharts
+    repoURL: oci.trueforge.org/truecharts
     chart: truenas-exporter
     targetRevision: 4.13.5
     helm:
