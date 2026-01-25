@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   generate-mixins:
-    if: github.actor == 'renovate[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    if: startsWith(github.head_ref, 'renovate/') && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
