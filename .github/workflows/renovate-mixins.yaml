@@ -23,7 +23,6 @@ jobs:
           fetch-depth: 0
       - name: Install jsonnet and yq
         run: |
-          sudo apt-get update
           sudo wget -qO /usr/local/bin/jsonnet "https://github.com/google/go-jsonnet/releases/download/v0.21.0/go-jsonnet_0.21.0_Linux_x86_64"
           sudo chmod +x /usr/local/bin/jsonnet
           sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64"
