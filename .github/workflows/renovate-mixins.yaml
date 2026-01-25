@@ -23,10 +23,25 @@ jobs:
           fetch-depth: 0
       - name: Install jsonnet and yq
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jsonnet
-          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64"
+          tmpdir=$(mktemp -d)
+          sudo curl -fL --retry 5 --retry-connrefused --retry-delay 2 \
+            -o "$tmpdir/go-jsonnet.tar.gz" \
+            "https://github.com/google/go-jsonnet/releases/download/v0.21.0/go-jsonnet_Linux_x86_64.tar.gz"
+          tar -xzf "$tmpdir/go-jsonnet.tar.gz" -C "$tmpdir"
+          sudo mv "$tmpdir/jsonnet" /usr/local/bin/jsonnet
+          sudo chmod +x /usr/local/bin/jsonnet
+          sudo curl -fL --retry 5 --retry-connrefused --retry-delay 2 -o /usr/local/bin/yq \
+            "https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64"
           sudo chmod +x /usr/local/bin/yq
+      - name: Install jsonnet-bundler
+        run: |
+          sudo curl -fL --retry 5 --retry-connrefused --retry-delay 2 -o /usr/local/bin/jb \
+            "https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v0.6.0/jb-linux-amd64"
+          sudo chmod +x /usr/local/bin/jb
+      - name: Vendor jsonnet dependencies
+        run: |
+          cd mixins
+          jb install
       - name: Generate mixin rules
         run: ./scripts/generate-mixin-rules.sh
       - name: Commit changes if needed
