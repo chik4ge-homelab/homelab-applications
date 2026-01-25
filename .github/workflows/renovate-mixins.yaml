@@ -11,13 +11,15 @@ permissions:
 
 jobs:
   generate-mixins:
-    if: startsWith(github.head_ref, 'renovate/') && github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      startsWith(github.event_name == 'pull_request' && github.head_ref || github.ref_name, 'renovate/')
+      && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.head_ref }}
           fetch-depth: 0
       - name: Install jsonnet and yq
         run: |
