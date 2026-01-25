@@ -1,0 +1,41 @@
+name: Renovate Mixins Generation
+on:
+  pull_request:
+    paths:
+      - "mixins/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-mixins:
+    if: github.actor == 'renovate[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Install jsonnet and yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jsonnet
+          sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64"
+          sudo chmod +x /usr/local/bin/yq
+      - name: Generate mixin rules
+        run: ./scripts/generate-mixin-rules.sh
+      - name: Commit changes if needed
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git status --short
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(mixins): regenerate mixin rules"
+          git push origin HEAD:${{ github.head_ref }}
