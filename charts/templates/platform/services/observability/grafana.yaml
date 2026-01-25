@@ -8,7 +8,7 @@ spec:
   sources:
     - chart: grafana
       repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 10.5.5
+      targetRevision: 10.5.12
       helm:
         valuesObject:
           replicas: 2
@@ -134,7 +134,7 @@ spec:
 
     - chart: pxc-db
       repoURL: https://percona.github.io/percona-helm-charts/
-      targetRevision: 1.18.0
+      targetRevision: 1.19.0
       helm:
         parameters:
           - name: pxc.certManager

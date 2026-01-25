@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://dandydeveloper.github.io/charts
       chart: redis-ha
-      targetRevision: 4.35.5
+      targetRevision: 4.35.6
       helm:
         valuesObject:
           replicas: 3
