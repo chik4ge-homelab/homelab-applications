@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "mixins/**"
+      - ".github/workflows/renovate-mixins.yaml"
   workflow_dispatch:
 
 permissions:
