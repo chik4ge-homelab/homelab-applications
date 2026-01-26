@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
     - repoURL: https://github.com/envoyproxy/gateway
-      targetRevision: v1.6.2
+      targetRevision: v1.6.3
       path: charts/gateway-crds-helm
       helm:
         releaseName: gateway-api-crds
