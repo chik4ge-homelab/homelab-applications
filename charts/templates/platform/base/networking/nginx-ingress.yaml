@@ -11,7 +11,7 @@ spec:
     path: manifests/platform/base/networking/ingress-nginx
   - repoURL: https://kubernetes.github.io/ingress-nginx
     chart: ingress-nginx
-    targetRevision: 4.14.2
+    targetRevision: 4.14.3
     helm:
       valuesObject:
         controller:
