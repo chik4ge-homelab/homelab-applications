@@ -48,20 +48,18 @@ spec:
                           - minecraft-cube
                       useDeviationThresholds: true
                       thresholds:
-                        MetricResource: 10
+                        MetricResource: 7
                       targetThresholds:
-                        MetricResource: 10
+                        MetricResource: 7
                       metricsUtilization:
                         source: Prometheus
                         prometheus:
                           query: |
                             label_replace(
-                              (
-                                1 - (
-                                  node_memory_MemAvailable_bytes{job="node-exporter"}
-                                  /
-                                  node_memory_MemTotal_bytes{job="node-exporter"}
-                                )
+                              1 - (
+                                node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"}
+                                /
+                                scalar(sum(node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"}))
                               )
                               * on(instance, job) group_left(nodename)
                                 node_uname_info{job="node-exporter", nodename=~"k8s-.*"},
