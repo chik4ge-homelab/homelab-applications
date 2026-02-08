@@ -58,7 +58,7 @@ spec:
                                 )
                               )
                               * on(instance, job) group_left(nodename)
-                                node_uname_info{job="node-exporter", nodename=~"k8s-w-.*"},
+                                node_uname_info{job="node-exporter", nodename=~"k8s-.*"},
                               "instance", "$1", "nodename", "(.+)"
                             )
                 plugins:
