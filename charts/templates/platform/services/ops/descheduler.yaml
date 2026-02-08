@@ -46,6 +46,7 @@ spec:
                       evictableNamespaces:
                         exclude:
                           - minecraft-cube
+                          - strimzi-kafka
                       useDeviationThresholds: true
                       thresholds:
                         MetricResource: 7
