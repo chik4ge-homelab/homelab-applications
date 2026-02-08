@@ -12,6 +12,10 @@ spec:
       helm:
         valuesObject:
           deschedulerPolicy:
+            metricsProviders:
+              - source: Prometheus
+                prometheus:
+                  url: http://mimir-gateway.mimir.svc.cluster.local/prometheus
             profiles:
               - name: homelab-policy
                 pluginConfig:
@@ -34,6 +38,29 @@ spec:
                     args:
                       excludeOwnerKinds:
                         - ReplicaSet
+                  - name: LowNodeUtilization
+                    args:
+                      useDeviationThresholds: true
+                      thresholds:
+                        MetricResource: 10
+                      targetThresholds:
+                        MetricResource: 10
+                      metricsUtilization:
+                        source: Prometheus
+                        prometheus:
+                          query: |
+                            label_replace(
+                              (
+                                1 - (
+                                  node_memory_MemAvailable_bytes{job="node-exporter"}
+                                  /
+                                  node_memory_MemTotal_bytes{job="node-exporter"}
+                                )
+                              )
+                              * on(instance, job) group_left(nodename)
+                                node_uname_info{job="node-exporter", nodename=~"k8s-w-.*"},
+                              "instance", "$1", "nodename", "(.+)"
+                            )
                 plugins:
                   deschedule:
                     enabled:
@@ -44,6 +71,7 @@ spec:
                     enabled:
                       - RemovePodsViolatingTopologySpreadConstraint
                       - RemoveDuplicates
+                      - LowNodeUtilization
 
   destination:
     namespace: kube-system
