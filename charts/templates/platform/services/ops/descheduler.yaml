@@ -49,7 +49,7 @@ spec:
                           - strimzi-kafka
                       useDeviationThresholds: true
                       thresholds:
-                        MetricResource: 7
+                        MetricResource: 5
                       targetThresholds:
                         MetricResource: 7
                       metricsUtilization:
