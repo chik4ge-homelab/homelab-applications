@@ -23,6 +23,9 @@ spec:
                     args:
                       nodeFit: true
                       ignorePvcPods: false
+                      podProtections:
+                        defaultDisabled:
+                          - PodsWithLocalStorage
                   - name: RemovePodsViolatingNodeTaints
                   # TODO: 必要なpodに対し、descheduler.alpha.kubernetes.io/prefer-no-eviction アノテーションを付与したあとに有効化する
                   # - name: RemovePodsViolatingNodeAffinity
