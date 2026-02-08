@@ -40,6 +40,9 @@ spec:
                         - ReplicaSet
                   - name: LowNodeUtilization
                     args:
+                      evictableNamespaces:
+                        exclude:
+                          - minecraft-cube
                       useDeviationThresholds: true
                       thresholds:
                         MetricResource: 10
