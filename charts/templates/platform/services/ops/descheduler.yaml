@@ -58,12 +58,12 @@ spec:
                           query: |
                             label_replace(
                               1 - (
-                                node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"}
+                                max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})
                                 /
-                                scalar(sum(node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"}))
+                                scalar(sum(max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})))
                               )
                               * on(instance, job) group_left(nodename)
-                                node_uname_info{job="node-exporter", nodename=~"k8s-.*"},
+                                max by(instance, job, nodename) (node_uname_info{job="node-exporter", nodename=~"k8s-.*"}),
                               "instance", "$1", "nodename", "(.+)"
                             )
                 plugins:
