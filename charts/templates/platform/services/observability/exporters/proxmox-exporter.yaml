@@ -51,7 +51,7 @@ spec:
             enabled: false
     - repoURL: https://charts.christianhuth.de
       chart: prometheus-pve-exporter
-      targetRevision: 2.6.1
+      targetRevision: 2.6.2
       helm:
         releaseName: prometheus-pve-exporter
         valuesObject:
