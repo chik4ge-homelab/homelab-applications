@@ -44,7 +44,7 @@
           "subdir": "monitoring/ceph-mixin"
         }
       },
-      "version": "v19.2.3"
+      "version": "v20.3.0"
     },
     {
       "source": {
