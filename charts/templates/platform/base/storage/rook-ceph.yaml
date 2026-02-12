@@ -11,7 +11,7 @@ spec:
       path: manifests/platform/base/storage/rook-ceph
     - repoURL: https://charts.rook.io/release
       chart: rook-ceph-cluster
-      targetRevision: 1.18.8
+      targetRevision: v1.19.1
       helm:
         valuesObject:
           operatorNamespace: rook-ceph-operator
