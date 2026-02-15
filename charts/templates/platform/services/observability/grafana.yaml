@@ -156,6 +156,17 @@ spec:
                 memory: 128Mi
                 cpu: 100m
           pxc:
+            affinity:
+              antiAffinityTopologyKey: kubernetes.io/hostname
+              advanced:
+                nodeAffinity:
+                  requiredDuringSchedulingIgnoredDuringExecution:
+                    nodeSelectorTerms:
+                      - matchExpressions:
+                          - key: chik4ge.me/node-tier
+                            operator: NotIn
+                            values:
+                              - small
             resources:
               requests:
                 cpu: 100m
