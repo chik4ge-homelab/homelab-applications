@@ -47,31 +47,32 @@ spec:
                     args:
                       excludeOwnerKinds:
                         - ReplicaSet
-                  - name: LowNodeUtilization
-                    args:
-                      evictableNamespaces:
-                        exclude:
-                          - minecraft-cube
-                          - strimzi-kafka
-                      useDeviationThresholds: true
-                      thresholds:
-                        MetricResource: 5
-                      targetThresholds:
-                        MetricResource: 7
-                      metricsUtilization:
-                        source: Prometheus
-                        prometheus:
-                          query: |
-                            label_replace(
-                              1 - (
-                                max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})
-                                /
-                                scalar(sum(max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})))
-                              )
-                              * on(instance, job) group_left(nodename)
-                                max by(instance, job, nodename) (node_uname_info{job="node-exporter", nodename=~"k8s-.*"}),
-                              "instance", "$1", "nodename", "(.+)"
-                            )
+                  # schedulerのスコアリングとの乖離があるのでnode戻りが発生する、一旦無効化
+                  # - name: LowNodeUtilization
+                  #   args:
+                  #     evictableNamespaces:
+                  #       exclude:
+                  #         - minecraft-cube
+                  #         - strimzi-kafka
+                  #     useDeviationThresholds: true
+                  #     thresholds:
+                  #       MetricResource: 5
+                  #     targetThresholds:
+                  #       MetricResource: 7
+                  #     metricsUtilization:
+                  #       source: Prometheus
+                  #       prometheus:
+                  #         query: |
+                  #           label_replace(
+                  #             1 - (
+                  #               max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})
+                  #               /
+                  #               scalar(sum(max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})))
+                  #             )
+                  #             * on(instance, job) group_left(nodename)
+                  #               max by(instance, job, nodename) (node_uname_info{job="node-exporter", nodename=~"k8s-.*"}),
+                  #             "instance", "$1", "nodename", "(.+)"
+                  #           )
                 plugins:
                   deschedule:
                     enabled:
@@ -82,7 +83,7 @@ spec:
                     enabled:
                       - RemovePodsViolatingTopologySpreadConstraint
                       - RemoveDuplicates
-                      - LowNodeUtilization
+                      # - LowNodeUtilization
 
   destination:
     namespace: kube-system
