@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: oci.trueforge.org/truecharts
     chart: truenas-exporter
-    targetRevision: 4.13.17
+    targetRevision: 4.14.0
     helm:
       valuesObject:
         service:
