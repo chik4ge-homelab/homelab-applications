@@ -15,6 +15,8 @@ spec:
           main:
             type: LoadBalancer
             loadBalancerIP: 192.168.2.1
+            labels:
+              l2announce.cilium.io/enabled: "true"
   destination:
     namespace: truenas-exporter
     server: {{ .Values.spec.destination.server }}

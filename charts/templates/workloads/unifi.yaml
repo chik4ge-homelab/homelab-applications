@@ -36,16 +36,22 @@ spec:
             loadBalancerIP: 192.168.1.99
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
+            labels:
+              l2announce.cilium.io/enabled: "true"
           stunService:
             type: LoadBalancer
             loadBalancerIP: 192.168.1.99
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
+            labels:
+              l2announce.cilium.io/enabled: "true"
           discoveryService:
             type: LoadBalancer
             loadBalancerIP: 192.168.1.99
             annotations:
               lbipam.cilium.io/sharing-key: "unifi-shared"
+            labels:
+              l2announce.cilium.io/enabled: "true"
 
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main

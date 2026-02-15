@@ -7,6 +7,9 @@ spec:
     matchExpressions:
       - key: node-role.kubernetes.io/control-plane
         operator: DoesNotExist
+  serviceSelector:
+    matchLabels:
+      l2announce.cilium.io/enabled: "true"
   interfaces:
     - ^eth[0-9]+
   externalIPs: true
