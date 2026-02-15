@@ -11,6 +11,10 @@ spec:
       chart: descheduler
       helm:
         valuesObject:
+          service:
+            enabled: true
+          serviceMonitor:
+            enabled: true
           deschedulerPolicy:
             metricsProviders:
               - source: Prometheus
