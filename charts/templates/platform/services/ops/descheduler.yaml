@@ -11,6 +11,8 @@ spec:
       chart: descheduler
       helm:
         valuesObject:
+          kind: Deployment
+          deschedulingInterval: 2m
           service:
             enabled: true
           serviceMonitor:
