@@ -8,6 +8,12 @@ spec:
   replicas: 3
   roles:
     - broker
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 3Gi
   storage:
     type: jbod
     volumes:
@@ -19,6 +25,17 @@ spec:
   template:
     pod:
       affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: chik4ge.me/node-tier
+                    operator: DoesNotExist
+              - matchExpressions:
+                  - key: chik4ge.me/node-tier
+                    operator: NotIn
+                    values:
+                      - small
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
