@@ -60,7 +60,7 @@ spec:
             - name: llama-cache
               mountPath: /root/.cache/llama.cpp
         - name: gpu-monitor
-          image: nvidia/cuda:12.6.2-runtime-ubuntu22.04
+          image: nvidia/cuda:12.9.1-runtime-ubuntu22.04
           command: ["/bin/bash", "-lc", "sleep infinity"]
           resources:
             requests:
