@@ -20,7 +20,37 @@
       "/manifests/.+\\.yaml$/"
     ]
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/mixins/build/grafana/github-dashboards\\.yaml$/"
+      ],
+      "matchStrings": [
+        "version:\\s*(?<currentValue>\\S+)\\s*#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)"
+      ]
+    }
+  ],
   "packageRules": [
+    {
+      "description": "disable patch automerge for ceph and cuda related deps",
+      "matchPackageNames": [
+        "/.*ceph.*/",
+        "/.*cuda.*/"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": false
+    },
+    {
+      "description": "automerge patch updates",
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true,
+      "automergeType": "pr"
+    },
     {
       "matchPackageNames": [
         "loki"
