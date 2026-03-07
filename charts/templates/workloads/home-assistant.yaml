@@ -54,7 +54,7 @@ spec:
 
     - repoURL: https://charts.derwitt.dev
       chart: home-assistant-matter-server 
-      targetRevision: 3.2.0
+      targetRevision: 4.0.4
       helm:
         valuesObject:
           networkInterface: net0
