@@ -11,7 +11,7 @@ spec:
       path: manifests/platform/services/observability/mimir
     - repoURL: https://grafana.github.io/helm-charts
       chart: mimir-distributed
-      targetRevision: 6.0.5
+      targetRevision: 6.0.6
       helm:
         valuesObject:
           compactor:
