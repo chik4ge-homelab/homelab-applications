@@ -16,7 +16,8 @@ data:
       triggers:
         - on-created
         - on-deleted
-        - on-health-degraded
+        - on-health-degraded-sustained
+        - on-health-restored
         - on-sync-failed
         - on-sync-status-unknown
   template.app-created: |
@@ -63,6 +64,43 @@ data:
               "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
               "description": ":exclamation: Application **{{.app.metadata.name}}** has degraded.",
               "color": 15949872,
+              "fields": [
+                {
+                  "name": "Health Status",
+                  "value": "{{.app.status.health.status}}",
+                  "inline": true
+                },
+                {
+                  "name": {{- if .app.spec.source }} "Repository" {{- else if .app.spec.sources }} "Repositories" {{- end }},
+                  "value": {{- if .app.spec.source }} ":link: {{ .app.spec.source.repoURL }}" {{- else if .app.spec.sources }} "{{- range $index, $source := .app.spec.sources }}{{ if $index }}\n{{ end }}:link: {{ $source.repoURL }}{{- end }}" {{- end }},
+                  "inline": true
+                }
+                {{range $index, $c := .app.status.conditions}}
+                ,
+                {
+                  "name": "{{$c.type}}",
+                  "value": "{{$c.message}}",
+                  "inline": true
+                }
+                {{end}}
+              ],
+              "timestamp": "{{ (call .time.Now).Format .time.RFC3339 }}"
+            }]
+          }
+  template.app-health-restored: |
+    message: |
+      :white_check_mark: Application {{.app.metadata.name}} health has restored.
+      Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "embeds": [{
+              "title": "{{ .app.metadata.name }} - Health Restored",
+              "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+              "description": ":white_check_mark: Application **{{.app.metadata.name}}** health has restored.",
+              "color": 3066993,
               "fields": [
                 {
                   "name": "Health Status",
@@ -177,12 +215,18 @@ data:
       send:
       - app-deleted
       when: app.metadata.deletionTimestamp != nil
-  trigger.on-health-degraded: |
-    - description: Application has degraded
-      oncePer: app.status.operationState?.syncResult?.revision
+  trigger.on-health-degraded-sustained: |
+    - description: Application has been degraded for at least 5 minutes
+      oncePer: app.status.health.lastTransitionTime
       send:
       - app-health-degraded
-      when: app.status.health.status == 'Degraded'
+      when: app.status.health.status == 'Degraded' and app.status.health.lastTransitionTime != nil and time.Now().Sub(time.Parse(app.status.health.lastTransitionTime)).Minutes() >= 5
+  trigger.on-health-restored: |
+    - description: Application health has restored after sustained degradation
+      oncePer: app.status.health.lastTransitionTime
+      send:
+      - app-health-restored
+      when: app.status.health.status == 'Healthy' and app.metadata.annotations['notified.notifications.argoproj.io'] != nil and app.metadata.annotations['notified.notifications.argoproj.io'] contains ':on-health-degraded-sustained:'
   trigger.on-sync-failed: |
     - description: Application syncing has failed
       oncePer: app.status.operationState?.syncResult?.revision
