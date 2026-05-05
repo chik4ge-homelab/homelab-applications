@@ -50,6 +50,9 @@ spec:
         - -n
         - "-1"
 
+        - --cache-ram
+        - "512"
+
         ports:
         - containerPort: 8000
 
