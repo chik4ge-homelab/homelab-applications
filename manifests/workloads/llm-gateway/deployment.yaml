@@ -67,7 +67,7 @@ spec:
             nvidia.com/gpu: "1"
 
         volumeMounts:
-        - name: llama-cache
+        - name: llama-cpp-cache
           mountPath: /root/.cache/huggingface
 
         readinessProbe:
