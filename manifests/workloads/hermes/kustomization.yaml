@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - serviceaccount.yaml
   - configmap.yaml
+  - discord-admin-roles-patch.yaml
   - externalsecrets.yaml
   - networkpolicy.yaml
   - pvc.yaml

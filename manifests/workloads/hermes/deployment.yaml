@@ -36,6 +36,7 @@ spec:
           DISCORD_ALLOWED_USERS=0
           DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
           DISCORD_ALLOWED_ROLES=${DISCORD_ALLOWED_ROLES}
+          DISCORD_ADMIN_ROLES=${DISCORD_ADMIN_ROLES}
           LLM_GATEWAY_API_KEY=${LLM_GATEWAY_API_KEY}
           EOF
         volumeMounts:
@@ -59,10 +60,19 @@ spec:
             secretKeyRef:
               name: hermes-discord
               key: DISCORD_ALLOWED_ROLES
+        - name: DISCORD_ADMIN_ROLES
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_ADMIN_ROLES
 
       containers:
       - name: hermes
         image: nousresearch/hermes-agent:latest
+        command:
+        - sh
+        - -c
+        - python3 /patch/patch.py && exec hermes "$0" "$@"
         args:
         - gateway
         - run
@@ -96,6 +106,11 @@ spec:
             secretKeyRef:
               name: hermes-discord
               key: DISCORD_ALLOWED_ROLES
+        - name: DISCORD_ADMIN_ROLES
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_ADMIN_ROLES
 
         resources:
           requests:
@@ -105,10 +120,16 @@ spec:
             memory: 2Gi
 
         volumeMounts:
+        - name: discord-admin-roles-patch
+          mountPath: /patch
+          readOnly: true
         - name: hermes-data
           mountPath: /opt/data
 
       volumes:
+      - name: discord-admin-roles-patch
+        configMap:
+          name: hermes-discord-admin-roles-patch
       - name: hermes-config
         configMap:
           name: hermes-config
