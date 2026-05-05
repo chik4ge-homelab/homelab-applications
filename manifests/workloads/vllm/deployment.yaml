@@ -21,39 +21,41 @@ spec:
     spec:
       runtimeClassName: nvidia
       containers:
-        - name: vllm
-          image: vllm/vllm-openai:v0.20.1-cu129
-          args:
-            - --model
-            - cyankiwi/Qwen3.5-9B-AWQ-4bit
-            - --served-model-name
-            - Qwen/Qwen3.5-9B
-            - --host
-            - 0.0.0.0
-            - --port
-            - "8000"
-            - --max-model-len
-            - "131072"
-            - --reasoning-parser
-            - qwen3
-            - --language-model-only
-          ports:
-            - containerPort: 8000
-          env:
-            - name: HF_HOME
-              value: /root/.cache/huggingface
-          resources:
-            requests:
-              cpu: "2"
-              memory: 1Gi
-              nvidia.com/gpu: "1"
-            limits:
-              memory: 8Gi
-              nvidia.com/gpu: "1"
-          volumeMounts:
-            - name: vllm-cache
-              mountPath: /root/.cache/huggingface
-      volumes:
+      - name: vllm
+        image: vllm/vllm-openai:v0.20.1-cu129
+        args:
+        - --model
+        - cyankiwi/Qwen3.5-9B-AWQ-4bit
+        - --served-model-name
+        - Qwen/Qwen3.5-9B
+        - --host
+        - 0.0.0.0
+        - --port
+        - "8000"
+        - --max-model-len
+        - "131072"
+        - --kv-cache-dtype
+        - fp8
+        - --reasoning-parser
+        - qwen3
+        - --language-model-only
+        ports:
+        - containerPort: 8000
+        env:
+        - name: HF_HOME
+          value: /root/.cache/huggingface
+        resources:
+          requests:
+            cpu: "2"
+            memory: 1Gi
+            nvidia.com/gpu: "1"
+          limits:
+            memory: 8Gi
+            nvidia.com/gpu: "1"
+        volumeMounts:
         - name: vllm-cache
-          persistentVolumeClaim:
-            claimName: vllm-cache
+          mountPath: /root/.cache/huggingface
+      volumes:
+      - name: vllm-cache
+        persistentVolumeClaim:
+          claimName: vllm-cache
