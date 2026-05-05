@@ -50,9 +50,6 @@ spec:
         - -n
         - "-1"
 
-        - --cache-ram
-        - "512"
-
         - --api-key-file
         - /run/secrets/llm-gateway/api-key
 
