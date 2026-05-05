@@ -27,13 +27,16 @@ spec:
             - --model
             - cyankiwi/Qwen3.5-9B-AWQ-4bit
             - --served-model-name
-            - cyankiwi/Qwen3.5-9B-AWQ-4bit
+            - Qwen/Qwen3.5-9B
             - --host
             - 0.0.0.0
             - --port
             - "8000"
             - --max-model-len
             - "131072"
+            - --reasoning-parser
+            - qwen3
+            - --language-model-only
           ports:
             - containerPort: 8000
           env:
