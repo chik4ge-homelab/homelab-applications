@@ -72,7 +72,7 @@ spec:
         command:
         - sh
         - -c
-        - python3 /patch/patch.py && exec hermes "$0" "$@"
+        - python3 /patch/patch.py && exec /opt/hermes/.venv/bin/hermes "$0" "$@"
         args:
         - gateway
         - run
