@@ -18,5 +18,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: vllm
+        - name: vllm-api
           port: 8000
