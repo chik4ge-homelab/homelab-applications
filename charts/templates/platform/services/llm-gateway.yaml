@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
-    path: manifests/workloads/llm-gateway
+    path: manifests/platform/services/llm-gateway
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: llm-gateway

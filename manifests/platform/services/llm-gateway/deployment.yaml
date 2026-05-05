@@ -53,6 +53,9 @@ spec:
         - --cache-ram
         - "512"
 
+        - --api-key-file
+        - /run/secrets/llm-gateway/api-key
+
         ports:
         - containerPort: 8000
 
@@ -72,6 +75,9 @@ spec:
         volumeMounts:
         - name: llama-cpp-cache
           mountPath: /root/.cache/huggingface
+        - name: llm-gateway-api-key
+          mountPath: /run/secrets/llm-gateway
+          readOnly: true
 
         readinessProbe:
           httpGet:
@@ -93,3 +99,6 @@ spec:
       - name: llama-cpp-cache
         persistentVolumeClaim:
           claimName: llama-cpp-cache
+      - name: llm-gateway-api-key
+        secret:
+          secretName: llm-gateway-api-key
