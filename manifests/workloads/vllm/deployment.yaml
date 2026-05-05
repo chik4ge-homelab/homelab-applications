@@ -22,7 +22,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vllm
-          image: vllm/vllm-openai:v0.20.1
+          image: vllm/vllm-openai:v0.20.1-cu129
           args:
             - --model
             - cyankiwi/Qwen3.5-9B-AWQ-4bit
