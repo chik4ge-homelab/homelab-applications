@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: tradukisto
+  name: vllm
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/chik4ge-homelab/homelab-applications
     targetRevision: main
-    path: manifests/workloads/tradukisto
+    path: manifests/workloads/vllm
   destination:
     server: {{ .Values.spec.destination.server }}
-    namespace: tradukisto
+    namespace: vllm
   syncPolicy:
     automated:
       prune: true
