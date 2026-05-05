@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-cpp
+  labels:
+    app.kubernetes.io/name: llm-gateway
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: llm-gateway
+  template:
+    metadata:
+      annotations:
+        descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
+      labels:
+        app.kubernetes.io/name: llm-gateway
+    spec:
+      runtimeClassName: nvidia
+      containers:
+      - name: llama-cpp
+        image: ghcr.io/ggml-org/llama.cpp:server-cuda
+        args:
+        - -hf
+        - unsloth/Qwen3.5-9B-GGUF:Q4_K_S
+        - --alias
+        - Qwen/Qwen3.5-9B
+
+        - --host
+        - 0.0.0.0
+        - --port
+        - "8000"
+
+        - -c
+        - "32768"
+
+        - -ngl
+        - all
+
+        - -ctk
+        - q8_0
+        - -ctv
+        - q8_0
+
+        - -np
+        - "1"
+
+        - -n
+        - "-1"
+
+        ports:
+        - containerPort: 8000
+
+        env:
+        - name: HF_HOME
+          value: /root/.cache/huggingface
+
+        resources:
+          requests:
+            cpu: "2"
+            memory: 3Gi
+            nvidia.com/gpu: "1"
+          limits:
+            memory: 3Gi
+            nvidia.com/gpu: "1"
+
+        volumeMounts:
+        - name: llama-cache
+          mountPath: /root/.cache/huggingface
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 18
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 6
+
+      volumes:
+      - name: llama-cpp-cache
+        persistentVolumeClaim:
+          claimName: llama-cpp-cache
