@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes
+  labels:
+    app.kubernetes.io/name: hermes
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hermes
+  template:
+    metadata:
+      annotations:
+        descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
+      labels:
+        app.kubernetes.io/name: hermes
+    spec:
+      initContainers:
+      - name: install-config
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - cp /config/config.yaml /opt/data/config.yaml
+        volumeMounts:
+        - name: hermes-config
+          mountPath: /config
+        - name: hermes-data
+          mountPath: /opt/data
+
+      containers:
+      - name: hermes
+        image: nousresearch/hermes-agent:latest
+        args:
+        - gateway
+        - run
+        ports:
+        - name: gateway
+          containerPort: 8642
+
+        env:
+        - name: HERMES_HOME
+          value: /opt/data
+        - name: HERMES_INFERENCE_PROVIDER
+          value: custom
+        - name: HERMES_TIMEZONE
+          value: Asia/Tokyo
+        - name: DISCORD_COMMAND_SYNC_POLICY
+          value: safe
+        - name: LLM_GATEWAY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hermes-llm-gateway
+              key: LLM_GATEWAY_API_KEY
+        - name: DISCORD_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_BOT_TOKEN
+        - name: DISCORD_ALLOWED_ROLES
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_ALLOWED_ROLES
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            memory: 2Gi
+
+        volumeMounts:
+        - name: hermes-data
+          mountPath: /opt/data
+
+      volumes:
+      - name: hermes-config
+        configMap:
+          name: hermes-config
+      - name: hermes-data
+        persistentVolumeClaim:
+          claimName: hermes-data
