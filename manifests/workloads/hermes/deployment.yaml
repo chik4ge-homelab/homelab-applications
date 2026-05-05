@@ -24,12 +24,37 @@ spec:
         command:
         - sh
         - -c
-        - cp /config/config.yaml /opt/data/config.yaml
+        - |
+          cp /config/config.yaml /opt/data/config.yaml
+          cat > /opt/data/.env <<EOF
+          HERMES_INFERENCE_PROVIDER=custom
+          HERMES_TIMEZONE=Asia/Tokyo
+          DISCORD_COMMAND_SYNC_POLICY=safe
+          DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+          DISCORD_ALLOWED_ROLES=${DISCORD_ALLOWED_ROLES}
+          LLM_GATEWAY_API_KEY=${LLM_GATEWAY_API_KEY}
+          EOF
         volumeMounts:
         - name: hermes-config
           mountPath: /config
         - name: hermes-data
           mountPath: /opt/data
+        env:
+        - name: LLM_GATEWAY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hermes-llm-gateway
+              key: LLM_GATEWAY_API_KEY
+        - name: DISCORD_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_BOT_TOKEN
+        - name: DISCORD_ALLOWED_ROLES
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_ALLOWED_ROLES
 
       containers:
       - name: hermes
