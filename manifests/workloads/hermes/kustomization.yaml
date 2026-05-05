@@ -4,6 +4,7 @@ resources:
   - serviceaccount.yaml
   - configmap.yaml
   - externalsecrets.yaml
+  - networkpolicy.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
