@@ -30,6 +30,7 @@ spec:
           HERMES_INFERENCE_PROVIDER=custom
           HERMES_TIMEZONE=Asia/Tokyo
           DISCORD_COMMAND_SYNC_POLICY=safe
+          DISCORD_ALLOWED_USERS=0
           DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
           DISCORD_ALLOWED_ROLES=${DISCORD_ALLOWED_ROLES}
           LLM_GATEWAY_API_KEY=${LLM_GATEWAY_API_KEY}
@@ -75,6 +76,8 @@ spec:
           value: Asia/Tokyo
         - name: DISCORD_COMMAND_SYNC_POLICY
           value: safe
+        - name: DISCORD_ALLOWED_USERS
+          value: "0"
         - name: LLM_GATEWAY_API_KEY
           valueFrom:
             secretKeyRef:
