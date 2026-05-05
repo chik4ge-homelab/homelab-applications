@@ -44,10 +44,10 @@ spec:
           resources:
             requests:
               cpu: "2"
-              memory: 16Gi
+              memory: 1Gi
               nvidia.com/gpu: "1"
             limits:
-              memory: 24Gi
+              memory: 8Gi
               nvidia.com/gpu: "1"
           volumeMounts:
             - name: vllm-cache
