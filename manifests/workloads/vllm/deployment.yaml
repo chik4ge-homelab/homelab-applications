@@ -34,8 +34,6 @@ spec:
             - "8000"
             - --max-model-len
             - "131072"
-            - --kv-cache-dtype
-            - turboquant_4bit_nc
           ports:
             - containerPort: 8000
           env:
