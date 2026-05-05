@@ -18,6 +18,9 @@ spec:
       labels:
         app.kubernetes.io/name: hermes
     spec:
+      serviceAccountName: hermes
+      automountServiceAccountToken: false
+      enableServiceLinks: false
       initContainers:
       - name: install-config
         image: busybox:1.37
