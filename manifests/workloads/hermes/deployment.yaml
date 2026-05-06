@@ -215,6 +215,15 @@ spec:
         - name: terminal-ssh-key
           mountPath: /terminal-ssh
           readOnly: true
+        - name: hermes-data
+          mountPath: /opt/data/cache/documents
+          subPath: cache/documents
+        - name: hermes-data
+          mountPath: /opt/data/cache/images
+          subPath: cache/images
+        - name: hermes-data
+          mountPath: /opt/data/cache/screenshots
+          subPath: cache/screenshots
         - name: terminal-config
           mountPath: /config
         - name: terminal-workspace
