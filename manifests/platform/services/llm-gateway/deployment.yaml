@@ -39,6 +39,8 @@ spec:
         - -ngl
         - all
 
+        - --flash-attn
+
         - -ctk
         - q8_0
         - -ctv
