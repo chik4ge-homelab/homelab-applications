@@ -34,6 +34,7 @@ spec:
           HERMES_TIMEZONE=Asia/Tokyo
           DISCORD_COMMAND_SYNC_POLICY=safe
           DISCORD_ALLOWED_USERS=0
+          DISCORD_HOME_CHANNEL=${DISCORD_HOME_CHANNEL}
           DISCORD_ALLOWED_ROLES=${DISCORD_ALLOWED_ROLES}
           DISCORD_ADMIN_ROLES=${DISCORD_ADMIN_ROLES}
           EOF
@@ -53,6 +54,11 @@ spec:
             secretKeyRef:
               name: hermes-discord
               key: DISCORD_ADMIN_ROLES
+        - name: DISCORD_HOME_CHANNEL
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_HOME_CHANNEL
 
       containers:
       - name: hermes
@@ -79,6 +85,11 @@ spec:
           value: safe
         - name: DISCORD_ALLOWED_USERS
           value: "0"
+        - name: DISCORD_HOME_CHANNEL
+          valueFrom:
+            secretKeyRef:
+              name: hermes-discord
+              key: DISCORD_HOME_CHANNEL
         - name: DISCORD_BOT_TOKEN
           valueFrom:
             secretKeyRef:
