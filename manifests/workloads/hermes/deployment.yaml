@@ -220,8 +220,6 @@ spec:
         image: chromedp/headless-shell:latest
         args:
         - --headless=new
-        - --remote-debugging-address=127.0.0.1
-        - --remote-debugging-port=9222
         - --user-data-dir=/tmp/chrome-profile
         - --no-first-run
         - --no-default-browser-check
