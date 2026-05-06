@@ -19,6 +19,95 @@ data:
     display:
       language: ja
 
+    agent:
+      disabled_toolsets:
+        - browser
+        - image_gen
+        - tts
+
+    skills:
+      disabled:
+        - airtable
+        - architecture-diagram
+        - arxiv
+        - ascii-art
+        - ascii-video
+        - audiocraft-audio-generation
+        - axolotl
+        - baoyu-comic
+        - baoyu-infographic
+        - blogwatcher
+        - claude-code
+        - claude-design
+        - codebase-inspection
+        - codex
+        - comfyui
+        - debugging-hermes-tui-commands
+        - design-md
+        - dogfood
+        - dspy
+        - evaluating-llms-harness
+        - excalidraw
+        - fine-tuning-with-trl
+        - heartmula
+        - github-auth
+        - github-code-review
+        - github-issues
+        - github-pr-workflow
+        - github-repo-management
+        - godmode
+        - google-workspace
+        - hermes-agent-skill-authoring
+        - himalaya
+        - huggingface-hub
+        - humanizer
+        - ideation
+        - jupyter-live-kernel
+        - kanban-orchestrator
+        - kanban-worker
+        - linear
+        - llama-cpp
+        - llm-wiki
+        - manim-video
+        - maps
+        - minecraft-modpack-server
+        - nano-pdf
+        - native-mcp
+        - node-inspect-debugger
+        - notion
+        - obliteratus
+        - obsidian
+        - ocr-and-documents
+        - opencode
+        - openhue
+        - outlines
+        - p5js
+        - pixel-art
+        - pokemon-player
+        - polymarket
+        - popular-web-designs
+        - powerpoint
+        - pretext
+        - python-debugpy
+        - requesting-code-review
+        - research-paper-writing
+        - segment-anything-model
+        - serving-llms-vllm
+        - sketch
+        - songsee
+        - songwriting-and-ai-music
+        - spike
+        - spotify
+        - subagent-driven-development
+        - test-driven-development
+        - touchdesigner-mcp
+        - unsloth
+        - webhook-subscriptions
+        - weights-and-biases
+        - writing-plans
+        - xurl
+        - yuanbao
+
     group_sessions_per_user: true
 
   Caddyfile: |
