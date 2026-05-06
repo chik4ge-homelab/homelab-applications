@@ -39,7 +39,8 @@ spec:
         - -ngl
         - all
 
-        - --flash-attn on
+        - --flash-attn
+        - "on"
 
         - -ctk
         - q8_0
