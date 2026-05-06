@@ -16,6 +16,9 @@ spec:
     - path:
         type: PathPrefix
         value: /
+    timeouts:
+      request: 10m
+      backendRequest: 10m
     backendRefs:
     - name: llama-cpp-api
       port: 8000
