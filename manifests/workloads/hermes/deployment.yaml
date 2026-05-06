@@ -224,6 +224,9 @@ spec:
         - --no-first-run
         - --no-default-browser-check
         - --no-sandbox
+        - --disable-gpu
+        - --disable-software-rasterizer
+        - --disable-dev-shm-usage
         ports:
         - name: browser-cdp
           containerPort: 9222
