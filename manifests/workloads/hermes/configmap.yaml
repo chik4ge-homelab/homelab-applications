@@ -14,14 +14,17 @@ data:
       api_mode: openai
 
     terminal:
-      backend: local
+      backend: ssh
+      cwd: /workspace
+
+    browser:
+      cdp_url: http://127.0.0.1:9222
 
     display:
       language: ja
 
     agent:
       disabled_toolsets:
-        - browser
         - image_gen
         - tts
 

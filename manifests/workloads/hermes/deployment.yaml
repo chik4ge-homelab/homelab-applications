@@ -22,6 +22,22 @@ spec:
       automountServiceAccountToken: false
       enableServiceLinks: false
       initContainers:
+      - name: generate-terminal-ssh-key
+        image: lscr.io/linuxserver/openssh-server:latest
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /ssh
+          if [ ! -s /ssh/id_ed25519 ]; then
+            ssh-keygen -t ed25519 -N "" -f /ssh/id_ed25519
+          fi
+          chmod 600 /ssh/id_ed25519
+          chmod 644 /ssh/id_ed25519.pub
+        volumeMounts:
+        - name: terminal-ssh-key
+          mountPath: /ssh
+
       - name: install-config
         image: busybox:1.37
         command:
@@ -81,6 +97,20 @@ spec:
           value: custom
         - name: HERMES_TIMEZONE
           value: Asia/Tokyo
+        - name: TERMINAL_ENV
+          value: ssh
+        - name: TERMINAL_CWD
+          value: /workspace
+        - name: TERMINAL_SSH_HOST
+          value: 127.0.0.1
+        - name: TERMINAL_SSH_USER
+          value: hermes-terminal
+        - name: TERMINAL_SSH_PORT
+          value: "2222"
+        - name: TERMINAL_SSH_KEY
+          value: /terminal-ssh/id_ed25519
+        - name: BROWSER_CDP_URL
+          value: http://127.0.0.1:9222
         - name: DISCORD_COMMAND_SYNC_POLICY
           value: safe
         - name: DISCORD_ALLOWED_USERS
@@ -119,6 +149,9 @@ spec:
           readOnly: true
         - name: hermes-data
           mountPath: /opt/data
+        - name: terminal-ssh-key
+          mountPath: /terminal-ssh
+          readOnly: true
 
       - name: llm-gateway-proxy
         image: caddy:2.10.2-alpine
@@ -148,6 +181,61 @@ spec:
           mountPath: /etc/caddy
           readOnly: true
 
+      - name: terminal
+        image: lscr.io/linuxserver/openssh-server:latest
+        ports:
+        - name: terminal-ssh
+          containerPort: 2222
+        env:
+        - name: TZ
+          value: Asia/Tokyo
+        - name: USER_NAME
+          value: hermes-terminal
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: PASSWORD_ACCESS
+          value: "false"
+        - name: SUDO_ACCESS
+          value: "false"
+        - name: PUBLIC_KEY_FILE
+          value: /terminal-ssh/id_ed25519.pub
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            memory: 512Mi
+        volumeMounts:
+        - name: terminal-ssh-key
+          mountPath: /terminal-ssh
+          readOnly: true
+        - name: terminal-config
+          mountPath: /config
+        - name: terminal-workspace
+          mountPath: /workspace
+
+      - name: browser
+        image: chromedp/headless-shell:latest
+        args:
+        - --headless=new
+        - --remote-debugging-address=127.0.0.1
+        - --remote-debugging-port=9222
+        - --user-data-dir=/tmp/chrome-profile
+        - --no-first-run
+        - --no-default-browser-check
+        - --no-sandbox
+        ports:
+        - name: browser-cdp
+          containerPort: 9222
+        resources:
+          requests:
+            cpu: 25m
+            memory: 128Mi
+          limits:
+            memory: 1Gi
+
       volumes:
       - name: discord-admin-roles-patch
         configMap:
@@ -158,3 +246,9 @@ spec:
       - name: hermes-data
         persistentVolumeClaim:
           claimName: hermes-data
+      - name: terminal-ssh-key
+        emptyDir: {}
+      - name: terminal-config
+        emptyDir: {}
+      - name: terminal-workspace
+        emptyDir: {}
