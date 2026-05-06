@@ -57,7 +57,9 @@ data:
         - github-repo-management
         - godmode
         - google-workspace
+        - gaming-reference
         - hermes-agent-skill-authoring
+        - hermes-tool-verification
         - himalaya
         - huggingface-hub
         - humanizer
