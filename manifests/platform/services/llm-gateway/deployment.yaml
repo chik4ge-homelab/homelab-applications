@@ -50,7 +50,12 @@ spec:
         - --image-min-tokens
         - "1024"
         - --image-max-tokens
-        - "3072"
+        - "2048"
+
+        - -b
+        - "1024"
+        - -ub
+        - "256"
 
         - -np
         - "1"
