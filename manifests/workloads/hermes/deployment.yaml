@@ -117,6 +117,8 @@ spec:
 
       - name: llm-gateway-proxy
         image: caddy:2.10.2-alpine
+        command:
+        - caddy
         args:
         - run
         - --config
