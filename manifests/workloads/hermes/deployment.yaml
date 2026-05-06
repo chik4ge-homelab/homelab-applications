@@ -37,7 +37,6 @@ spec:
           DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
           DISCORD_ALLOWED_ROLES=${DISCORD_ALLOWED_ROLES}
           DISCORD_ADMIN_ROLES=${DISCORD_ADMIN_ROLES}
-          LLM_GATEWAY_API_KEY=${LLM_GATEWAY_API_KEY}
           EOF
         volumeMounts:
         - name: hermes-config
@@ -45,11 +44,6 @@ spec:
         - name: hermes-data
           mountPath: /opt/data
         env:
-        - name: LLM_GATEWAY_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hermes-llm-gateway
-              key: LLM_GATEWAY_API_KEY
         - name: DISCORD_BOT_TOKEN
           valueFrom:
             secretKeyRef:
@@ -91,11 +85,6 @@ spec:
           value: safe
         - name: DISCORD_ALLOWED_USERS
           value: "0"
-        - name: LLM_GATEWAY_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hermes-llm-gateway
-              key: LLM_GATEWAY_API_KEY
         - name: DISCORD_BOT_TOKEN
           valueFrom:
             secretKeyRef:
@@ -125,6 +114,32 @@ spec:
           readOnly: true
         - name: hermes-data
           mountPath: /opt/data
+
+      - name: llm-gateway-proxy
+        image: caddy:2.10.2-alpine
+        args:
+        - run
+        - --config
+        - /etc/caddy/Caddyfile
+        ports:
+        - name: llm-proxy
+          containerPort: 8000
+        env:
+        - name: LLM_GATEWAY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hermes-llm-gateway
+              key: LLM_GATEWAY_API_KEY
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        volumeMounts:
+        - name: hermes-config
+          mountPath: /etc/caddy
+          readOnly: true
 
       volumes:
       - name: discord-admin-roles-patch

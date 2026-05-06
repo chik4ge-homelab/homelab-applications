@@ -9,11 +9,22 @@ data:
     model:
       provider: custom
       default: Qwen/Qwen3.5-9B
-      base_url: http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1
-      api_key: ${LLM_GATEWAY_API_KEY}
+      base_url: http://127.0.0.1:8000/v1
+      api_key: hermes-proxy
       api_mode: openai
 
     terminal:
       backend: local
 
     group_sessions_per_user: true
+
+  Caddyfile: |
+    {
+      admin off
+    }
+
+    http://127.0.0.1:8000 {
+      reverse_proxy http://llama-cpp-api.llm-gateway.svc.cluster.local:8000 {
+        header_up Authorization "Bearer {$LLM_GATEWAY_API_KEY}"
+      }
+    }
