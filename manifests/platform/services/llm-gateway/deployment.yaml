@@ -43,9 +43,9 @@ spec:
         - "on"
 
         - -ctk
-        - f16
+        - q8_0
         - -ctv
-        - f16
+        - q8_0
 
         - --image-min-tokens
         - "1024"
