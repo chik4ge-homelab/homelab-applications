@@ -48,9 +48,9 @@ spec:
         - q8_0
 
         - --image-min-tokens
-        - "1024"
+        - "1120"
         - --image-max-tokens
-        - "1024"
+        - "1120"
 
         - -b
         - "512"
