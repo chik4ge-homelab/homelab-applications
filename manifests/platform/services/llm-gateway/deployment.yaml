@@ -24,9 +24,11 @@ spec:
         image: ghcr.io/ggml-org/llama.cpp:server-cuda
         args:
         - -hf
-        - unsloth/Qwen3.5-9B-GGUF:Q4_K_S
+        - unsloth/gemma-4-E4B-it-GGUF
+        - --hf-file
+        - gemma-4-E4B-it-Q4_K_M.gguf
         - --alias
-        - Qwen/Qwen3.5-9B
+        - google/gemma-4-E4B-it
 
         - --host
         - 0.0.0.0
@@ -34,7 +36,7 @@ spec:
         - "8000"
 
         - -c
-        - "65536"
+        - "131072"
 
         - -ngl
         - all
@@ -43,9 +45,9 @@ spec:
         - "on"
 
         - -ctk
-        - q8_0
+        - f16
         - -ctv
-        - q8_0
+        - f16
 
         - --image-min-tokens
         - "1024"
