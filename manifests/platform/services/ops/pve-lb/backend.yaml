@@ -17,5 +17,8 @@ spec:
     - ip:
         address: 192.168.0.153
         port: 8006
+    - ip:
+        address: 192.168.0.154
+        port: 8006
   tls:
     insecureSkipVerify: true

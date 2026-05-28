@@ -80,6 +80,7 @@ spec:
               - 192.168.0.151
               - 192.168.0.152
               - 192.168.0.153
+              - 192.168.0.154
             additionalLabels:
               app.kubernetes.io/instance: proxmox-exporter
               app.kubernetes.io/name: proxmox-exporter
