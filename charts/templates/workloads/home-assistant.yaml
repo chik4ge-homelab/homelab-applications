@@ -57,7 +57,9 @@ spec:
       targetRevision: 3.3.0
       helm:
         valuesObject:
-          networkInterface: net0
+          networkInterface: eth1
+          nodeSelector:
+            chik4ge.me/iot-vlan: "true"
           resources:
             requests:
               cpu: 100m
