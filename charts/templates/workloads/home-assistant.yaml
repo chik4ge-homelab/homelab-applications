@@ -59,7 +59,7 @@ spec:
         valuesObject:
           networkInterface: eth1
           nodeSelector:
-            chik4ge.me/iot-vlan: "true"
+            chik4ge.me/iot-access: "true"
           resources:
             requests:
               cpu: 100m
