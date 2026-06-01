@@ -18,7 +18,10 @@ spec:
               mkdir -p /run/dbus
               dbus-daemon --system --nofork --nopidfile --address=unix:path=/run/dbus/system_bus_socket &
               until [ -S /run/dbus/system_bus_socket ]; do sleep 0.2; done
-              exec /usr/lib/bluetooth/bluetoothd --experimental --nodetach
+              while true; do
+                /usr/lib/bluetooth/bluetoothd --experimental --nodetach || true
+                sleep 30
+              done
           securityContext:
             privileged: true
             capabilities:
