@@ -27,7 +27,6 @@ spec:
               "server.insecure": "true"
             cm:
               url: https://argocd.chik4ge.me
-              kustomize.buildOptions: --enable-helm
               dex.config: |
                 connectors:
                   - type: github
