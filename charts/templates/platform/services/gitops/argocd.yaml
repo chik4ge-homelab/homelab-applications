@@ -53,6 +53,7 @@ spec:
                 g, chik4ge-homelab:admin, role:admin
           redis-ha:
             enabled: true
+            podManagementPolicy: Parallel
             haproxy:
               metrics:
                 enabled: true
