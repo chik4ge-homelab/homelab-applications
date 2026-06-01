@@ -1,6 +1,9 @@
 nodeSelector:
   chik4ge.me/iot-access: "true"
 
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+
 securityContext:
   capabilities:
     add:
