@@ -154,7 +154,7 @@ spec:
           readOnly: true
 
       - name: llm-gateway-proxy
-        image: caddy:2.10.2-alpine
+        image: caddy:2.11.4-alpine
         command:
         - caddy
         args:
