@@ -42,6 +42,10 @@ spec:
                 debug: false
                 instance_name: SearXNG
                 enable_metrics: true
+              search:
+                formats:
+                  - html
+                  - json
               server:
                 base_url: http://searxng.searxng.svc.cluster.local/
                 limiter: false
