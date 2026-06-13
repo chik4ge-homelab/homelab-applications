@@ -58,6 +58,8 @@ spec:
               enabled: false
             cache:
               enabled: false
+          valkey:
+            enabled: false
 
   destination:
     namespace: searxng
