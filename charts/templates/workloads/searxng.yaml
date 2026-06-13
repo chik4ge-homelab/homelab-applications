@@ -59,9 +59,6 @@ spec:
             cache:
               enabled: false
 
-    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
-      targetRevision: main
-      path: manifests/workloads/searxng
   destination:
     namespace: searxng
     server: {{ .Values.spec.destination.server }}
