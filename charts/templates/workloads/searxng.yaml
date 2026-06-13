@@ -1,0 +1,81 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: searxng
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://techpipe-io.github.io/searxng-helm-chart
+      chart: searxng
+      targetRevision: 0.1.6
+      helm:
+        valuesObject:
+          replicaCount: 2
+          image:
+            pullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+          podAnnotations:
+            descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
+          service:
+            type: ClusterIP
+            port: 8080
+          ingress:
+            enabled: false
+          gateway:
+            enabled: true
+            parentRefs:
+              - name: envoy-gateway-internal
+                namespace: envoy-gateway
+                sectionName: https
+            hostnames:
+              - searx.chik4ge.me
+          config:
+            useDefaultSettings: true
+            settings:
+              general:
+                debug: false
+                instance_name: SearXNG
+                enable_metrics: true
+              server:
+                base_url: http://searxng.searxng.svc.cluster.local/
+                limiter: true
+                public_instance: false
+                image_proxy: true
+                method: GET
+              engines:
+                - name: wikidata
+                  disabled: true
+                - name: ahmia
+                  disabled: true
+          persistence:
+            config:
+              enabled: false
+            cache:
+              enabled: false
+          valkey:
+            enabled: false
+            externalUrl: ""
+            externalUrlSecret:
+              name: searxng-redis-url
+              key: SEARXNG_VALKEY_URL
+
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/workloads/searxng
+  destination:
+    namespace: searxng
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: "baseline"
