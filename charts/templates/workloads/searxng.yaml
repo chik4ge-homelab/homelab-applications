@@ -44,7 +44,7 @@ spec:
                 enable_metrics: true
               server:
                 base_url: http://searxng.searxng.svc.cluster.local/
-                limiter: true
+                limiter: false
                 public_instance: false
                 image_proxy: true
                 method: GET
@@ -58,12 +58,6 @@ spec:
               enabled: false
             cache:
               enabled: false
-          valkey:
-            enabled: false
-            externalUrl: ""
-            externalUrlSecret:
-              name: searxng-redis-url
-              key: SEARXNG_VALKEY_URL
 
     - repoURL: https://github.com/chik4ge-homelab/homelab-applications
       targetRevision: main
