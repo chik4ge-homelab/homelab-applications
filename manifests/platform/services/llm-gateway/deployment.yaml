@@ -32,6 +32,10 @@ spec:
         - https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF/resolve/main/mmproj-gemma-4-12B-it-bf16.gguf
         - --alias
         - google/gemma-4-12b-it
+        - --chat-template-file
+        - /etc/llama/chat_template.jinja
+        - --chat-template-kwargs
+        - '{"preserve_thinking":true}'
 
         - --host
         - 0.0.0.0
@@ -93,6 +97,9 @@ spec:
         - name: llm-gateway-api-key
           mountPath: /run/secrets/llm-gateway
           readOnly: true
+        - name: llama-cpp-chat-template
+          mountPath: /etc/llama
+          readOnly: true
 
         readinessProbe:
           httpGet:
@@ -117,3 +124,6 @@ spec:
       - name: llm-gateway-api-key
         secret:
           secretName: llm-gateway-api-key
+      - name: llama-cpp-chat-template
+        configMap:
+          name: llama-cpp-chat-template
