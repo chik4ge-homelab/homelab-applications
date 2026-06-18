@@ -69,6 +69,9 @@ spec:
         - -n
         - "-1"
 
+        - --repeat-penalty
+        - "1.15"
+
         - --cache-ram
         - "0"
 
