@@ -24,9 +24,9 @@ spec:
         image: ghcr.io/ggml-org/llama.cpp:server-cuda
         args:
         - -hf
-        - Jackrong/Qwopus3.5-9B-v3-GGUF:Q4_K_M
+        - w-ahmad/Gemma-4-12B-it-qat-GGUF-MoQ:MoQ-3.25.gguf
         - --alias
-        - Qwen/Qwen3.5-9B
+        - google/gemma-4-12b-it
 
         - --host
         - 0.0.0.0
@@ -34,7 +34,7 @@ spec:
         - "8000"
 
         - -c
-        - "65536"
+        - "131072"
 
         - -ngl
         - all
@@ -45,20 +45,17 @@ spec:
         - -ctk
         - q8_0
         - -ctv
-        - q8_0
-
-        - --image-min-tokens
-        - "1024"
-        - --image-max-tokens
-        - "2048"
+        - q4_0
 
         - -b
-        - "1024"
+        - "512"
         - -ub
-        - "256"
+        - "128"
 
         - -np
         - "1"
+
+        - --no-warmup
 
         - -n
         - "-1"
@@ -74,7 +71,7 @@ spec:
 
         env:
         - name: HF_HOME
-          value: /root/.cache/huggingface
+          value: /models
 
         resources:
           requests:
@@ -87,7 +84,7 @@ spec:
 
         volumeMounts:
         - name: llama-cpp-cache
-          mountPath: /root/.cache/huggingface
+          mountPath: /models
         - name: llm-gateway-api-key
           mountPath: /run/secrets/llm-gateway
           readOnly: true
