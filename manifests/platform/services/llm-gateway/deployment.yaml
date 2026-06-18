@@ -72,6 +72,8 @@ spec:
         - containerPort: 8000
 
         env:
+        - name: GGML_SCHED_DEBUG
+          value: "2"
         - name: HF_HOME
           value: /root/.cache/huggingface
 
