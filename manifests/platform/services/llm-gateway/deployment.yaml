@@ -71,7 +71,7 @@ spec:
 
         env:
         - name: HF_HOME
-          value: /models
+          value: /root/.cache/huggingface
 
         resources:
           requests:
@@ -84,7 +84,7 @@ spec:
 
         volumeMounts:
         - name: llama-cpp-cache
-          mountPath: /models
+          mountPath: /root/.cache/huggingface
         - name: llm-gateway-api-key
           mountPath: /run/secrets/llm-gateway
           readOnly: true
