@@ -24,7 +24,9 @@ spec:
         image: ghcr.io/ggml-org/llama.cpp:server-cuda
         args:
         - -hf
-        - w-ahmad/Gemma-4-12B-it-qat-GGUF-MoQ:MoQ-Quants/MoQ-3.25.gguf
+        - w-ahmad/Gemma-4-12B-it-qat-GGUF-MoQ
+        - --hf-file
+        - MoQ-Quants/MoQ-3.25.gguf
         - --alias
         - google/gemma-4-12b-it
 
