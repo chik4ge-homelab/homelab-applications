@@ -27,7 +27,7 @@ spec:
         - -hf
         - w-ahmad/Gemma-4-12B-it-qat-GGUF-MoQ
         - --hf-file
-        - MoQ-Quants/MoQ-3.25.gguf
+        - MoQ-Quants/MoQ-3.75.gguf
         - --mmproj-url
         - https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF/resolve/main/mmproj-gemma-4-12B-it-bf16.gguf
         - --alias
