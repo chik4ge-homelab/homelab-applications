@@ -82,6 +82,21 @@ spec:
               name: hermes-discord
               key: DISCORD_HOME_CHANNEL
 
+      - name: fix-data-ownership
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - |
+          for path in cron sessions logs hooks memories skills skins plans workspace home profiles pairing platforms; do
+            if [ -e "/opt/data/${path}" ]; then
+              chown -R 10000:10000 "/opt/data/${path}"
+            fi
+          done
+        volumeMounts:
+        - name: hermes-data
+          mountPath: /opt/data
+
       containers:
       - name: hermes
         image: nousresearch/hermes-agent:latest
