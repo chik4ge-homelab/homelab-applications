@@ -9,6 +9,9 @@ data:
     from pathlib import Path
 
     path = Path("/opt/hermes/gateway/platforms/discord.py")
+    if not path.exists():
+        raise SystemExit(0)
+
     source = path.read_text()
 
     replacements = {
