@@ -85,13 +85,10 @@ spec:
       containers:
       - name: hermes
         image: nousresearch/hermes-agent:latest
-        command:
+        args:
         - sh
         - -c
-        - python3 /patch/patch.py && exec /opt/hermes/.venv/bin/hermes "$0" "$@"
-        args:
-        - gateway
-        - run
+        - python3 /patch/patch.py && exec hermes gateway run
         ports:
         - name: gateway
           containerPort: 8642
