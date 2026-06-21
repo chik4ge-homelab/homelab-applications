@@ -73,9 +73,9 @@ spec:
         - "1.15"
 
         - --cache-ram
-        - "0"
+        - "2048"
         - --ctx-checkpoints
-        - "8"
+        - "2"
 
         - --api-key-file
         - /run/secrets/llm-gateway/api-key
