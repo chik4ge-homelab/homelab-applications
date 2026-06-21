@@ -83,10 +83,6 @@ spec:
         - name: hermes-config
           mountPath: /config
           readOnly: true
-        - name: hermes-channels
-          mountPath: /config/channels.json
-          subPath: channels.json
-          readOnly: true
         - name: hermes-data
           mountPath: /opt/pi
           subPath: pi
@@ -124,11 +120,12 @@ spec:
 
       volumes:
       - name: hermes-config
-        configMap:
-          name: hermes-config
-      - name: hermes-channels
-        secret:
-          secretName: hermes-channels
+        projected:
+          sources:
+          - configMap:
+              name: hermes-config
+          - secret:
+              name: hermes-channels
       - name: hermes-data
         persistentVolumeClaim:
           claimName: hermes-data
