@@ -30,6 +30,14 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: searxng
+            k8s:app.kubernetes.io/name: searxng
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
     - toCIDRSet:
         - cidr: 0.0.0.0/0
           except:

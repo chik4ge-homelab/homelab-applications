@@ -21,271 +21,116 @@ spec:
       serviceAccountName: hermes
       automountServiceAccountToken: false
       enableServiceLinks: false
-      initContainers:
-      - name: generate-terminal-ssh-key
-        image: lscr.io/linuxserver/openssh-server:latest
-        command:
-        - sh
-        - -c
-        - |
-          mkdir -p /ssh
-          if [ ! -s /ssh/id_ed25519 ]; then
-            ssh-keygen -t ed25519 -N "" -f /ssh/id_ed25519
-          fi
-          chmod 600 /ssh/id_ed25519
-          chmod 644 /ssh/id_ed25519.pub
-        volumeMounts:
-        - name: terminal-ssh-key
-          mountPath: /ssh
-
-      - name: install-config
-        image: busybox:1.37
-        command:
-        - sh
-        - -c
-        - |
-          cp /config/config.yaml /opt/data/config.yaml
-          cat > /opt/data/.env <<EOF
-          HERMES_INFERENCE_PROVIDER=custom
-          HERMES_TIMEZONE=Asia/Tokyo
-          DISCORD_COMMAND_SYNC_POLICY=safe
-          DISCORD_ALLOWED_USERS=0
-          DISCORD_HOME_CHANNEL=${DISCORD_HOME_CHANNEL}
-          DISCORD_ALLOWED_CHANNELS=${DISCORD_ALLOWED_CHANNELS}
-          DISCORD_ALLOWED_ROLES=${DISCORD_ALLOWED_ROLES}
-          DISCORD_ADMIN_ROLES=${DISCORD_ADMIN_ROLES}
-          EOF
-        volumeMounts:
-        - name: hermes-config
-          mountPath: /config
-        - name: hermes-data
-          mountPath: /opt/data
-        env:
-        - name: DISCORD_ALLOWED_ROLES
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_ALLOWED_ROLES
-        - name: DISCORD_ADMIN_ROLES
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_ADMIN_ROLES
-        - name: DISCORD_HOME_CHANNEL
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_HOME_CHANNEL
-        - name: DISCORD_ALLOWED_CHANNELS
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_HOME_CHANNEL
-
-      - name: fix-data-ownership
-        image: busybox:1.37
-        command:
-        - sh
-        - -c
-        - |
-          for path in cron sessions logs hooks memories skills skins plans workspace home profiles pairing platforms; do
-            if [ -e "/opt/data/${path}" ]; then
-              chown -R 10000:10000 "/opt/data/${path}"
-            fi
-          done
-        volumeMounts:
-        - name: hermes-data
-          mountPath: /opt/data
-
       containers:
-      - name: hermes
-        image: nousresearch/hermes-agent:latest
-        args:
-        - sh
-        - -c
-        - python3 /patch/patch.py && exec hermes gateway run
-        ports:
-        - name: gateway
-          containerPort: 8642
-
+      - name: control-plane
+        image: ghcr.io/chik4ge/pi-discord-agent-control-plane:v1.0.1
         env:
-        - name: HERMES_HOME
-          value: /opt/data
-        - name: HERMES_INFERENCE_PROVIDER
-          value: custom
-        - name: HERMES_TIMEZONE
+        - name: TZ
           value: Asia/Tokyo
-        - name: TERMINAL_ENV
-          value: ssh
-        - name: TERMINAL_CWD
-          value: /workspace
-        - name: TERMINAL_SSH_HOST
-          value: 127.0.0.1
-        - name: TERMINAL_SSH_USER
-          value: hermes-terminal
-        - name: TERMINAL_SSH_PORT
-          value: "2222"
-        - name: TERMINAL_SSH_KEY
-          value: /terminal-ssh/id_ed25519
-        - name: BROWSER_CDP_URL
-          value: http://127.0.0.1:9222
-        - name: DISCORD_COMMAND_SYNC_POLICY
-          value: safe
-        - name: DISCORD_ALLOWED_USERS
-          value: "0"
-        - name: DISCORD_HOME_CHANNEL
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_HOME_CHANNEL
-        - name: DISCORD_ALLOWED_CHANNELS
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_HOME_CHANNEL
+        - name: HOME
+          value: /opt/pi
+        - name: PI_CODING_AGENT_DIR
+          value: /opt/pi/.pi/agent
         - name: DISCORD_BOT_TOKEN
           valueFrom:
             secretKeyRef:
               name: hermes-discord
               key: DISCORD_BOT_TOKEN
-        - name: DISCORD_ALLOWED_ROLES
+        - name: LLM_GATEWAY_API_KEY
           valueFrom:
             secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_ALLOWED_ROLES
-        - name: DISCORD_ADMIN_ROLES
-          valueFrom:
-            secretKeyRef:
-              name: hermes-discord
-              key: DISCORD_ADMIN_ROLES
-
+              name: hermes-llm-gateway
+              key: LLM_GATEWAY_API_KEY
+        - name: LLM_BASE_URL
+          value: http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1
+        - name: PI_REMOTE_TOOLS_HOST
+          value: 127.0.0.1
+        - name: PI_REMOTE_TOOLS_PORT
+          value: "2222"
+        - name: PI_REMOTE_TOOLS_USER
+          value: pi-executor
+        - name: PI_REMOTE_TOOLS_KEY
+          value: /ssh/id_ed25519
+        - name: PI_REMOTE_TOOLS_WORKSPACE
+          value: /workspace
+        - name: PI_REMOTE_TOOLS_ATTACHMENTS_ROOT
+          value: /attachments
+        - name: PI_REMOTE_TOOLS_TIMEOUT_SECONDS
+          value: "120"
+        - name: PI_REMOTE_TOOLS_MAX_OUTPUT_BYTES
+          value: "26214400"
+        - name: PISCORD_ATTACHMENTS_DIR
+          value: /attachments
+        - name: TRIGGER_NAME
+          value: pi
+        - name: CHANNEL_POLICY
+          value: open-trigger
+        - name: AUTO_REGISTER_DMS
+          value: "false"
+        - name: MAX_CONCURRENCY
+          value: "1"
+        - name: MAX_SCHEDULED_CONCURRENCY
+          value: "1"
+        - name: LOG_LEVEL
+          value: info
         resources:
           requests:
             cpu: 100m
             memory: 512Mi
           limits:
             memory: 2Gi
-
-        volumeMounts:
-        - name: discord-admin-roles-patch
-          mountPath: /patch
-          readOnly: true
-        - name: hermes-data
-          mountPath: /opt/data
-        - name: terminal-ssh-key
-          mountPath: /terminal-ssh
-          readOnly: true
-
-      - name: llm-gateway-proxy
-        image: caddy:2.10.2-alpine
-        command:
-        - caddy
-        args:
-        - run
-        - --config
-        - /etc/caddy/Caddyfile
-        ports:
-        - name: llm-proxy
-          containerPort: 8000
-        env:
-        - name: LLM_GATEWAY_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hermes-llm-gateway
-              key: LLM_GATEWAY_API_KEY
-        resources:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            memory: 128Mi
         volumeMounts:
         - name: hermes-config
-          mountPath: /etc/caddy
-          readOnly: true
-
-      - name: terminal
-        image: lscr.io/linuxserver/openssh-server:latest
-        command:
-        - sh
-        - -c
-        - apk add --no-cache python3 py3-pip && exec /init
-        ports:
-        - name: terminal-ssh
-          containerPort: 2222
-        env:
-        - name: TZ
-          value: Asia/Tokyo
-        - name: USER_NAME
-          value: hermes-terminal
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: PASSWORD_ACCESS
-          value: "false"
-        - name: SUDO_ACCESS
-          value: "false"
-        - name: PUBLIC_KEY_FILE
-          value: /terminal-ssh/id_ed25519.pub
-        resources:
-          requests:
-            cpu: 25m
-            memory: 64Mi
-          limits:
-            memory: 512Mi
-        volumeMounts:
-        - name: terminal-ssh-key
-          mountPath: /terminal-ssh
-          readOnly: true
-        - name: hermes-data
-          mountPath: /opt/data/cache/documents
-          subPath: cache/documents
-        - name: hermes-data
-          mountPath: /opt/data/cache/images
-          subPath: cache/images
-        - name: hermes-data
-          mountPath: /opt/data/cache/screenshots
-          subPath: cache/screenshots
-        - name: terminal-config
           mountPath: /config
-        - name: terminal-workspace
-          mountPath: /workspace
+          readOnly: true
+        - name: hermes-channels
+          mountPath: /config/channels.json
+          subPath: channels.json
+          readOnly: true
+        - name: hermes-data
+          mountPath: /opt/pi
+          subPath: pi
+        - name: hermes-data
+          mountPath: /var/lib/piscord
+          subPath: piscord
+        - name: hermes-data
+          mountPath: /attachments
+          subPath: attachments
+        - name: ssh-data
+          mountPath: /ssh
 
-      - name: browser
-        image: chromedp/headless-shell:latest
-        args:
-        - --headless=new
-        - --user-data-dir=/tmp/chrome-profile
-        - --no-first-run
-        - --no-default-browser-check
-        - --no-sandbox
-        - --disable-gpu
-        - --disable-software-rasterizer
-        - --disable-dev-shm-usage
+      - name: executor
+        image: ghcr.io/chik4ge/pi-discord-agent-executor:v1.0.1
         ports:
-        - name: browser-cdp
-          containerPort: 9222
+        - name: ssh
+          containerPort: 2222
         resources:
           requests:
-            cpu: 25m
+            cpu: 50m
             memory: 128Mi
           limits:
             memory: 1Gi
+        volumeMounts:
+        - name: hermes-data
+          mountPath: /workspace
+          subPath: workspace
+        - name: hermes-data
+          mountPath: /attachments
+          subPath: attachments
+          readOnly: true
+        - name: ssh-data
+          mountPath: /ssh
+          readOnly: true
 
       volumes:
-      - name: discord-admin-roles-patch
-        configMap:
-          name: hermes-discord-admin-roles-patch
       - name: hermes-config
         configMap:
           name: hermes-config
+      - name: hermes-channels
+        secret:
+          secretName: hermes-channels
       - name: hermes-data
         persistentVolumeClaim:
           claimName: hermes-data
-      - name: terminal-ssh-key
-        emptyDir: {}
-      - name: terminal-config
-        emptyDir: {}
-      - name: terminal-workspace
+      - name: ssh-data
         emptyDir: {}

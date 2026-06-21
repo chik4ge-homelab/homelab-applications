@@ -5,127 +5,82 @@ metadata:
   labels:
     app.kubernetes.io/name: hermes
 data:
-  config.yaml: |
-    model:
-      provider: custom
-      default: Qwen/Qwen3.5-9B
-      base_url: http://127.0.0.1:8000/v1
-      api_key: hermes-proxy
-      api_mode: openai
-
-    terminal:
-      backend: ssh
-      cwd: /workspace
-
-    browser:
-      cdp_url: http://127.0.0.1:9222
-
-    approvals:
-      mode: smart
-      cron_mode: deny
-
-    display:
-      language: ja
-
-    agent:
-      disabled_toolsets:
-        - image_gen
-        - tts
-
-    skills:
-      disabled:
-        - airtable
-        - architecture-diagram
-        - arxiv
-        - ascii-art
-        - ascii-video
-        - audiocraft-audio-generation
-        - axolotl
-        - baoyu-comic
-        - baoyu-infographic
-        - blogwatcher
-        - claude-code
-        - claude-design
-        - codebase-inspection
-        - codex
-        - comfyui
-        - debugging-hermes-tui-commands
-        - design-md
-        - dogfood
-        - dspy
-        - evaluating-llms-harness
-        - excalidraw
-        - fine-tuning-with-trl
-        - heartmula
-        - github-auth
-        - github-code-review
-        - github-issues
-        - github-pr-workflow
-        - github-repo-management
-        - godmode
-        - google-workspace
-        - gaming-reference
-        - hermes-agent-skill-authoring
-        - hermes-tool-verification
-        - himalaya
-        - huggingface-hub
-        - humanizer
-        - ideation
-        - jupyter-live-kernel
-        - kanban-orchestrator
-        - kanban-worker
-        - linear
-        - llama-cpp
-        - llm-wiki
-        - manim-video
-        - maps
-        - minecraft-modpack-server
-        - nano-pdf
-        - native-mcp
-        - node-inspect-debugger
-        - notion
-        - obliteratus
-        - obsidian
-        - ocr-and-documents
-        - opencode
-        - openhue
-        - outlines
-        - p5js
-        - pixel-art
-        - pokemon-player
-        - polymarket
-        - popular-web-designs
-        - powerpoint
-        - pretext
-        - python-debugpy
-        - requesting-code-review
-        - research-paper-writing
-        - segment-anything-model
-        - serving-llms-vllm
-        - sketch
-        - songsee
-        - songwriting-and-ai-music
-        - spike
-        - spotify
-        - subagent-driven-development
-        - test-driven-development
-        - touchdesigner-mcp
-        - unsloth
-        - webhook-subscriptions
-        - weights-and-biases
-        - writing-plans
-        - xurl
-        - yuanbao
-
-    group_sessions_per_user: true
-
-  Caddyfile: |
+  settings.json: |
     {
-      admin off
+      "defaultProvider": "local-llama",
+      "defaultModel": "gemma-4-12b-it",
+      "defaultThinkingLevel": "off",
+
+      "quietStartup": true,
+      "defaultProjectTrust": "never",
+
+      "extensions": [
+        "/opt/pi/extensions/pi-ssh-tools"
+      ],
+
+      "packages": [
+        "npm:pi-mcp-extension"
+      ]
     }
 
-    http://127.0.0.1:8000 {
-      reverse_proxy http://llama-cpp-api.llm-gateway.svc.cluster.local:8000 {
-        header_up Authorization "Bearer {$LLM_GATEWAY_API_KEY}"
+  mcp.json: |
+    {
+      "settings": {
+        "toolPrefix": "mcp",
+        "requestTimeoutMs": 30000,
+        "maxRetries": 5
+      },
+      "mcpServers": {
+        "searxng": {
+          "command": "npx",
+          "args": ["-y", "mcp-searxng"],
+          "lifecycle": "eager",
+          "env": {
+            "SEARXNG_URL": "http://searxng.searxng.svc.cluster.local:8080"
+          }
+        }
       }
     }
+
+  models.template.json: |
+    {
+      "providers": {
+        "local-llama": {
+          "baseUrl": "${LLM_BASE_URL}",
+          "api": "openai-completions",
+          "apiKey": "${LLM_GATEWAY_API_KEY}",
+          "compat": {
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": false,
+            "supportsUsageInStreaming": false,
+            "supportsStrictMode": false,
+            "maxTokensField": "max_tokens"
+          },
+          "models": [
+            {
+              "id": "gemma-4-12b-it",
+              "name": "Gemma 4 12B IT via local llama.cpp",
+              "reasoning": false,
+              "input": ["text", "image"],
+              "contextWindow": 131072,
+              "maxTokens": 8192,
+              "cost": {
+                "input": 0,
+                "output": 0,
+                "cacheRead": 0,
+                "cacheWrite": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+
+  APPEND_SYSTEM.md: |
+    必ず日本語で回答してください。
+
+    知らないことを推測で答えないでください。不確かな場合は、不確かであることを明確に述べてください。
+
+    事実の検証が必要なタスクでは、利用可能な検索ツールで確認してください。確認した場合は、証跡として参照した URL を回答に含めてください。
+
+    ユーザーのメッセージに `<attachments>` が含まれている場合、回答する前に、関連する添付ファイルの `path` を必ず read ツールで確認してください。添付ファイルを確認できない場合は、内容を推測せず、確認できないと答えてください。
