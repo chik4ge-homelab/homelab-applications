@@ -74,6 +74,8 @@ spec:
 
         - --cache-ram
         - "0"
+        - --ctx-checkpoints
+        - "8"
 
         - --api-key-file
         - /run/secrets/llm-gateway/api-key
@@ -88,10 +90,10 @@ spec:
         resources:
           requests:
             cpu: "2"
-            memory: 3Gi
+            memory: 4Gi
             nvidia.com/gpu: "1"
           limits:
-            memory: 3Gi
+            memory: 4Gi
             nvidia.com/gpu: "1"
 
         volumeMounts:
