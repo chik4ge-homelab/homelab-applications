@@ -21,6 +21,18 @@ spec:
       serviceAccountName: hermes
       automountServiceAccountToken: false
       enableServiceLinks: false
+      initContainers:
+      - name: prepare-attachments
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - chmod 755 /attachments
+        volumeMounts:
+        - name: hermes-data
+          mountPath: /attachments
+          subPath: attachments
+
       containers:
       - name: control-plane
         image: ghcr.io/chik4ge/pi-discord-agent-control-plane:v1.0.2
