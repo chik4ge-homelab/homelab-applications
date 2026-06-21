@@ -35,7 +35,7 @@ spec:
 
       containers:
       - name: control-plane
-        image: ghcr.io/chik4ge/pi-discord-agent-control-plane:v1.0.2
+        image: ghcr.io/chik4ge/pi-discord-agent-control-plane:v1.0.3
         env:
         - name: TZ
           value: Asia/Tokyo
@@ -108,7 +108,7 @@ spec:
           mountPath: /ssh
 
       - name: executor
-        image: ghcr.io/chik4ge/pi-discord-agent-executor:v1.0.2
+        image: ghcr.io/chik4ge/pi-discord-agent-executor:v1.0.3
         ports:
         - name: ssh
           containerPort: 2222
