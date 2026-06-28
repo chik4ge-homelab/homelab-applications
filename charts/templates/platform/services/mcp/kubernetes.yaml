@@ -50,9 +50,15 @@ spec:
             - name: tunnel-client
               image: ghcr.io/chik4ge-homelab/tunnel-client:v0.0.9--context-conduit-topaz # renovate: datasource=docker depName=ghcr.io/chik4ge-homelab/tunnel-client
               imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
               args:
-                - --log.level=info
-                - --log.format=json
+                - |
+                  until wget -q -O /dev/null http://127.0.0.1:8080/healthz; do
+                    sleep 1
+                  done
+                  exec /usr/bin/tunnel-client run --log.level=info --log.format=json
               env:
                 - name: CONTROL_PLANE_API_KEY
                   valueFrom:
