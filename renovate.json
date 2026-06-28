@@ -29,6 +29,16 @@
       "matchStrings": [
         "version:\\s*(?<currentValue>\\S+)\\s*#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/charts/templates/.+\\.yaml$/"
+      ],
+      "matchStrings": [
+        "version:\\s*(?<currentValue>\\S+)\\s*#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)",
+        "image:\\s*(?<depName>[^\\s:@]+(?:/[^\\s:@]+)+):(?<currentValue>[^\\s@]+)\\s*#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=\\S+"
+      ]
     }
   ],
   "packageRules": [

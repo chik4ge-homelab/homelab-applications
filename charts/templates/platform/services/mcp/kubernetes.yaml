@@ -1,0 +1,112 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubernetes-mcp
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - chart: kubernetes-mcp-server
+      repoURL: ghcr.io/containers/charts
+      targetRevision: 0.1.0
+      helm:
+        releaseName: kubernetes-mcp
+        valuesObject:
+          fullnameOverride: kubernetes-mcp
+          ingress:
+            enabled: false
+          httpRoute:
+            enabled: false
+          replicaCount: 1
+          image:
+            version: v0.0.63 # renovate: datasource=docker depName=quay.io/containers/kubernetes_mcp_server
+          service:
+            port: 8080
+          config:
+            port: 8080
+            read_only: true
+            disable_destructive: true
+            stateless: true
+            cluster_provider_strategy: in-cluster
+            toolsets:
+              - core
+            denied_resources:
+              - group: ""
+                version: v1
+                kind: Secret
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          rbac:
+            extraClusterRoleBindings:
+              - name: view
+                roleRef:
+                  name: view
+                  external: true
+          extraContainers:
+            - name: tunnel-client
+              image: ghcr.io/chik4ge-homelab/tunnel-client:v0.0.9--context-conduit-topaz # renovate: datasource=docker depName=ghcr.io/chik4ge-homelab/tunnel-client
+              imagePullPolicy: IfNotPresent
+              args:
+                - --log.level=info
+                - --log.format=json
+              env:
+                - name: CONTROL_PLANE_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: kubernetes-mcp-tunnel
+                      key: control-plane-api-key
+                - name: CONTROL_PLANE_TUNNEL_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: kubernetes-mcp-tunnel
+                      key: tunnel-id
+                - name: MCP_SERVER_URL
+                  value: http://127.0.0.1:8080/mcp
+                - name: HEALTH_LISTEN_ADDR
+                  value: 127.0.0.1:8081
+              livenessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8081
+                  host: 127.0.0.1
+              readinessProbe:
+                httpGet:
+                  path: /readyz
+                  port: 8081
+                  host: 127.0.0.1
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 65532
+                runAsGroup: 65532
+                seccompProfile:
+                  type: RuntimeDefault
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/platform/services/mcp/kubernetes
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: mcp-kubernetes
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
