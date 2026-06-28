@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-mcp
+  labels:
+    app.kubernetes.io/name: kubernetes-mcp
+spec:
+  ingressClassName: cloudflare-tunnel
+  rules:
+    - host: kubernetes-mcp.chik4ge.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kubernetes-mcp
+                port:
+                  number: 8080
