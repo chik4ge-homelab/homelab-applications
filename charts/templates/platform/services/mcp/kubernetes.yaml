@@ -17,7 +17,7 @@ spec:
             enabled: false
           httpRoute:
             enabled: false
-          replicaCount: 1
+          replicaCount: 0
           image:
             version: v0.0.63 # renovate: datasource=docker depName=quay.io/containers/kubernetes_mcp_server
           service:
