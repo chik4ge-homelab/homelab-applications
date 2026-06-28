@@ -67,17 +67,15 @@ spec:
                 - name: MCP_SERVER_URL
                   value: http://127.0.0.1:8080/mcp
                 - name: HEALTH_LISTEN_ADDR
-                  value: 127.0.0.1:8081
+                  value: :8081
               livenessProbe:
                 httpGet:
                   path: /healthz
                   port: 8081
-                  host: 127.0.0.1
               readinessProbe:
                 httpGet:
                   path: /readyz
                   port: 8081
-                  host: 127.0.0.1
               resources:
                 requests:
                   cpu: 10m
