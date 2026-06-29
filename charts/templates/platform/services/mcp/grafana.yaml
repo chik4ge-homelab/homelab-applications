@@ -17,12 +17,16 @@ spec:
             tag: "0.17.0"
           grafana:
             url: http://grafana.grafana.svc.cluster.local
+            apiKeySecret:
+              name: grafana-service-account
+              key: token
           disableWrite: true
           extraArgs:
             - -t
             - streamable-http
           env:
             GRAFANA_FORWARD_HEADERS: "Cookie,Authorization,X-Grafana-Org-Id"
+            GRAFANA_ORG_ID: "1"
           service:
             port: 8000
           ingress:
