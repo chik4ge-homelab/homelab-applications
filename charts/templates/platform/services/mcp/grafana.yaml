@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana-mcp
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - chart: grafana-mcp
+      repoURL: https://grafana-community.github.io/helm-charts
+      targetRevision: 0.18.0
+      helm:
+        releaseName: grafana-mcp
+        valuesObject:
+          replicas: 1
+          image:
+            tag: "0.17.0"
+          grafana:
+            url: http://grafana.grafana.svc.cluster.local
+          disableWrite: true
+          extraArgs:
+            - -t
+            - streamable-http
+          env:
+            GRAFANA_FORWARD_HEADERS: "Cookie,Authorization,X-Grafana-Org-Id"
+          service:
+            port: 8000
+          ingress:
+            enabled: false
+          route:
+            main:
+              enabled: false
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: mcp-http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: mcp-http
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/platform/services/mcp/grafana
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: mcp-grafana
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
