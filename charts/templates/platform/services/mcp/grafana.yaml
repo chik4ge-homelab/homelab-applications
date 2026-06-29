@@ -21,6 +21,8 @@ spec:
               name: grafana-service-account
               key: token
           disableWrite: true
+          disabledCategories:
+            - datasource
           extraArgs:
             - -t
             - streamable-http
