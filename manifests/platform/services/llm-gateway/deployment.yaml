@@ -29,7 +29,7 @@ spec:
         - --hf-file
         - MoQ-3.75.gguf
         - --mmproj-url
-        - https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF/resolve/main/mmproj-gemma-4-12B-it-bf16.gguf
+        - https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF/resolve/main/mmproj-gemma-4-12B-it-BF16.gguf
         - --alias
         - google/gemma-4-12b-it
         - --chat-template-file
