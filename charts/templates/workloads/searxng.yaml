@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://techpipe-io.github.io/searxng-helm-chart
       chart: searxng
-      targetRevision: 0.1.8
+      targetRevision: 0.1.9
       helm:
         valuesObject:
           replicaCount: 2
