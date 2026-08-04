@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: home-assistant-mqtt-config
+  namespace: home-assistant
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    app.kubernetes.io/name: home-assistant
+data:
+  configure.py: |
+    from __future__ import annotations
+
+    import json
+    import os
+    import stat
+    import tempfile
+    from datetime import datetime, timezone
+    from pathlib import Path
+    from uuid import uuid4
+
+
+    BROKER = "192.168.3.207"
+    PORT = 1883
+    PROTOCOL = "5"
+    TRANSPORT = "tcp"
+    DISCOVERY_PREFIX = "homeassistant"
+    CONFIG_PATH = Path("/config/.storage/core.config_entries")
+
+
+    def required_env(name: str) -> str:
+        value = os.environ.get(name)
+        if not value:
+            raise RuntimeError(f"{name} is not set")
+        return value
+
+
+    def load_config_entries() -> tuple[dict, int]:
+        if not CONFIG_PATH.exists():
+            return {
+                "version": 1,
+                "minor_version": 5,
+                "key": "core.config_entries",
+                "data": {"entries": []},
+            }, 0o600
+
+        with CONFIG_PATH.open(encoding="utf-8") as config_file:
+            document = json.load(config_file)
+        if document.get("key") != "core.config_entries":
+            raise RuntimeError(f"unexpected storage key: {document.get('key')!r}")
+        mode = stat.S_IMODE(CONFIG_PATH.stat().st_mode)
+        return document, mode
+
+
+    def mqtt_data(username: str, password: str, existing: dict | None) -> dict:
+        data = dict(existing or {})
+        data.update(
+            {
+                "broker": BROKER,
+                "port": PORT,
+                "protocol": PROTOCOL,
+                "transport": TRANSPORT,
+                "username": username,
+                "password": password,
+            }
+        )
+        for key in ("certificate", "client_cert", "client_key", "tls_insecure", "ws_path", "ws_headers"):
+            data.pop(key, None)
+        return data
+
+
+    def configure() -> None:
+        username = required_env("MQTT_USERNAME")
+        password = required_env("MQTT_PASSWORD")
+        document, mode = load_config_entries()
+        entries = document.setdefault("data", {}).setdefault("entries", [])
+        mqtt_entries = [entry for entry in entries if entry.get("domain") == "mqtt"]
+        if len(mqtt_entries) > 1:
+            raise RuntimeError("multiple MQTT config entries found")
+
+        now = datetime.now(timezone.utc).isoformat()
+        if mqtt_entries:
+            entry = mqtt_entries[0]
+            entry["data"] = mqtt_data(username, password, entry.get("data"))
+            entry["options"] = {
+                **entry.get("options", {}),
+                "discovery": True,
+                "discovery_prefix": DISCOVERY_PREFIX,
+                "discovery_qos": 0,
+            }
+            entry["disabled_by"] = None
+            entry["title"] = BROKER
+            entry["modified_at"] = now
+            entry["version"] = 2
+            entry["minor_version"] = 1
+        else:
+            entries.append(
+                {
+                    "created_at": now,
+                    "data": mqtt_data(username, password, None),
+                    "disabled_by": None,
+                    "discovery_keys": {},
+                    "domain": "mqtt",
+                    "entry_id": uuid4().hex,
+                    "minor_version": 1,
+                    "modified_at": now,
+                    "options": {
+                        "discovery": True,
+                        "discovery_prefix": DISCOVERY_PREFIX,
+                        "discovery_qos": 0,
+                    },
+                    "source": "user",
+                    "subentries": [],
+                    "title": BROKER,
+                    "unique_id": None,
+                    "version": 2,
+                }
+            )
+
+        CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        temporary_path: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                "w",
+                dir=CONFIG_PATH.parent,
+                encoding="utf-8",
+                prefix=".core.config_entries.",
+                delete=False,
+            ) as temporary_file:
+                temporary_path = temporary_file.name
+                json.dump(document, temporary_file, ensure_ascii=False, separators=(",", ":"))
+                temporary_file.write("\n")
+            os.chmod(temporary_path, mode)
+            os.replace(temporary_path, CONFIG_PATH)
+        finally:
+            if temporary_path and os.path.exists(temporary_path):
+                os.unlink(temporary_path)
+
+        print(f"Configured MQTT broker {BROKER}:{PORT} with discovery prefix {DISCOVERY_PREFIX}")
+
+
+    if __name__ == "__main__":
+        configure()
