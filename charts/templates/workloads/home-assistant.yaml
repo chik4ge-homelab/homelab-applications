@@ -19,6 +19,7 @@ spec:
               memory: 1Gi
           podAnnotations:
             descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
+            configmap.reloader.stakater.com/reload: home-assistant-mqtt-config
             secret.reloader.stakater.com/reload: home-assistant-mqtt
           initContainers:
             - name: configure-mqtt
