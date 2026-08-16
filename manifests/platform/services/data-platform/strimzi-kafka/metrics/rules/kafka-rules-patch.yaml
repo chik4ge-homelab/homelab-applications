@@ -1,6 +1,6 @@
 - op: replace
   path: /spec/groups/0/rules/2/for
-  value: 10m
+  value: 3m
 - op: replace
   path: /spec/groups/0/rules/7/annotations/description
   value: All Kafka broker containers have been down or in CrashLookBackOff status for 3 minutes
