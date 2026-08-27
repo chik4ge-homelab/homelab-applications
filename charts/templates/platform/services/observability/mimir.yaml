@@ -16,8 +16,7 @@ spec:
         valuesObject:
           compactor:
             persistentVolume:
-              size: 20Gi
-              storageClass: ceph-rbd
+              enabled: false
             resources:
               requests:
                 cpu: 10m
