@@ -11,6 +11,8 @@ spec:
       targetRevision: 0.3.78
       helm:
         valuesObject:
+          nodeSelector:
+            chik4ge.me/iot-access: "true"
           resources:
             requests:
               cpu: 100m
