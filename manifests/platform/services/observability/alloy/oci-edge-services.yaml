@@ -5,7 +5,6 @@ metadata:
   namespace: alloy
   annotations:
     tailscale.com/hostname: alloy-syslog
-    tailscale.com/proxy-group: ts-proxies-ingress
 spec:
   type: LoadBalancer
   loadBalancerClass: tailscale
