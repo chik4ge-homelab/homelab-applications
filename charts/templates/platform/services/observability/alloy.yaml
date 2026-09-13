@@ -36,6 +36,19 @@ spec:
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: alloy
+  ignoreDifferences:
+    - group: ""
+      kind: Service
+      name: edge03-haproxy-metrics
+      namespace: alloy
+      jsonPointers:
+        - /spec/externalName
+    - group: ""
+      kind: Service
+      name: edge04-haproxy-metrics
+      namespace: alloy
+      jsonPointers:
+        - /spec/externalName
   syncPolicy:
     automated:
       prune: true

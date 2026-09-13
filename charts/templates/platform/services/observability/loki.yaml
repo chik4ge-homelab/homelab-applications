@@ -36,6 +36,10 @@ spec:
               allow_structured_metadata: true
               volume_enabled: true
               retention_period: 30d
+              retention_stream:
+                - selector: '{job="oci-edge-haproxy"}'
+                  priority: 10
+                  period: 168h
             ruler:
               enable_api: true
             storage:

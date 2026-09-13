@@ -240,6 +240,37 @@ prometheus.scrape "network_devices" {
   forward_to = [prometheus.remote_write.default.receiver]
 }
 
+discovery.relabel "oci_edge_haproxy" {
+  targets = [
+    {
+      "__address__" = "edge03-haproxy-metrics.alloy.svc.cluster.local:8405",
+      "instance"    = "edge03",
+    },
+    {
+      "__address__" = "edge04-haproxy-metrics.alloy.svc.cluster.local:8405",
+      "instance"    = "edge04",
+    },
+  ]
+
+  rule {
+    replacement  = "oci-edge-haproxy"
+    target_label = "job"
+  }
+
+  rule {
+    replacement  = "talos-k8s"
+    target_label = "homelab_cluster"
+  }
+}
+
+prometheus.scrape "oci_edge_haproxy" {
+  targets       = discovery.relabel.oci_edge_haproxy.output
+  metrics_path  = "/metrics"
+  scrape_interval = "60s"
+  clustering { enabled = true }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
 prometheus.operator.podmonitors "podmonitors" {
   rule {
     replacement   = "talos-k8s"
@@ -471,6 +502,47 @@ prometheus.remote_write "default" {
 loki.source.kubernetes "pods" {
   targets = discovery.kubernetes.pods.targets
   forward_to = [loki.write.default.receiver]
+}
+
+loki.relabel "oci_edge_haproxy" {
+  // This component is used as a relabel-rules export by the syslog source.
+  // The source applies these rules before removing its internal __syslog_* labels.
+  forward_to = [loki.write.default.receiver]
+
+  rule {
+    source_labels = ["__syslog_message_hostname"]
+    regex         = `(?i)^edge03(?:\..*)?$`
+    replacement   = "edge03"
+    target_label  = "instance"
+    action        = "replace"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_hostname"]
+    regex         = `(?i)^edge04(?:\..*)?$`
+    replacement   = "edge04"
+    target_label  = "instance"
+    action        = "replace"
+  }
+}
+
+loki.source.syslog "oci_edge_haproxy" {
+  listener {
+    address       = "0.0.0.0:1514"
+    protocol      = "tcp"
+    syslog_format = "rfc5424"
+
+    labels = {
+      job         = "oci-edge-haproxy",
+      service     = "haproxy",
+      environment = "homelab",
+    }
+
+    use_incoming_timestamp = true
+  }
+
+  relabel_rules          = loki.relabel.oci_edge_haproxy.rules
+  forward_to             = [loki.write.default.receiver]
 }
 
 loki.write "default" {

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alloy-syslog
+  namespace: alloy
+  annotations:
+    tailscale.com/hostname: alloy-syslog
+    tailscale.com/proxy-group: ts-proxies-ingress
+spec:
+  type: LoadBalancer
+  loadBalancerClass: tailscale
+  ports:
+    - name: syslog-tcp
+      port: 1514
+      protocol: TCP
+      targetPort: 1514
+  selector:
+    app.kubernetes.io/instance: alloy
+    app.kubernetes.io/name: alloy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edge03-haproxy-metrics
+  namespace: alloy
+  annotations:
+    tailscale.com/proxy-group: ts-proxies-egress
+    tailscale.com/tailnet-fqdn: edge03.serval-great.ts.net
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - name: metrics
+      port: 8405
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edge04-haproxy-metrics
+  namespace: alloy
+  annotations:
+    tailscale.com/proxy-group: ts-proxies-egress
+    tailscale.com/tailnet-fqdn: edge04.serval-great.ts.net
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - name: metrics
+      port: 8405
+      protocol: TCP
