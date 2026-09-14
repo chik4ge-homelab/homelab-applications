@@ -43,6 +43,9 @@ spec:
               library:
                 existingClaim: immich-library
           server:
+            controllers:
+              main:
+                strategy: Recreate
             ingress:
               main:
                 enabled: false
