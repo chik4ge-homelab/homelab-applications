@@ -140,7 +140,7 @@ extraVolumes:
           name: minecraft-vanilla-local-sftp-users
       - name: sftp-key
         secret:
-          name: minecraft-vanilla-local-sftp-key
+          secretName: minecraft-vanilla-local-sftp-key
 
 persistence:
   dataDir:
