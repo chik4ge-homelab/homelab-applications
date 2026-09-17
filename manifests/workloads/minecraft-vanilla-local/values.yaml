@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=https://artifacthub.io/api/v1/packages/41047d86-5c50-4d89-b4fc-9083efcd7acf/4.26.3/values-schema
+
+initContainers:
+  - name: prepare-upload-area
+    image: atmoz/sftp:alpine
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+      - -ec
+    args:
+      - |
+        mkdir -p /data/world /data/.sftp-host-keys
+        chown 1000:2000 /data/world
+        chmod 2775 /data/world
+
+        if [ ! -s /data/.sftp-host-keys/ssh_host_ed25519_key ]; then
+          ssh-keygen -t ed25519 -f /data/.sftp-host-keys/ssh_host_ed25519_key -N ''
+        fi
+        if [ ! -s /data/.sftp-host-keys/ssh_host_rsa_key ]; then
+          ssh-keygen -t rsa -b 4096 -f /data/.sftp-host-keys/ssh_host_rsa_key -N ''
+        fi
+        chown root:root /data/.sftp-host-keys/ssh_host_*
+        chmod 600 /data/.sftp-host-keys/ssh_host_*_key
+
+        mkdir -p /sftp-home/upload/.ssh/keys
+        cp /sftp-key/id_ed25519.pub /sftp-home/upload/.ssh/keys/id_ed25519.pub
+        chmod 0444 /sftp-home/upload/.ssh/keys/id_ed25519.pub
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+    securityContext:
+      runAsUser: 0
+      runAsGroup: 0
+    volumeMounts:
+      - name: datadir
+        mountPath: /data
+      - name: sftp-home
+        mountPath: /sftp-home
+      - name: sftp-key
+        mountPath: /sftp-key
+        readOnly: true
+
+sidecarContainers:
+  - name: sftp
+    image: atmoz/sftp:alpine
+    imagePullPolicy: IfNotPresent
+    ports:
+      - name: sftp
+        containerPort: 22
+        protocol: TCP
+    readinessProbe:
+      tcpSocket:
+        port: sftp
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsUser: 0
+      runAsGroup: 0
+    volumeMounts:
+      - name: datadir
+        mountPath: /home/upload/world
+        subPath: world
+      - name: datadir
+        mountPath: /etc/ssh/ssh_host_ed25519_key
+        subPath: .sftp-host-keys/ssh_host_ed25519_key
+        readOnly: true
+      - name: datadir
+        mountPath: /etc/ssh/ssh_host_rsa_key
+        subPath: .sftp-host-keys/ssh_host_rsa_key
+        readOnly: true
+      - name: sftp-home
+        mountPath: /home
+      - name: sftp-users
+        mountPath: /etc/sftp/users.conf
+        subPath: users.conf
+        readOnly: true
+
+podSecurityContext:
+  fsGroup: 2000
+  runAsGroup: 3000
+  runAsNonRoot: false
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 6Gi
+  limits:
+    cpu: 6
+    memory: 8Gi
+
+workloadAsStatefulSet: true
+strategyType: RollingUpdate
+
+affinity:
+  nodeAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        preference:
+          matchExpressions:
+            - key: chik4ge.me/node-tier
+              operator: NotIn
+              values:
+                - small
+
+minecraftServer:
+  eula: TRUE
+  version: 1.21.4
+  type: VANILLA
+  onlineMode: true
+  enforceSecureProfile: true
+  memory: 4G
+  motd: "Vanilla 1.21.4"
+  serviceType: LoadBalancer
+  loadBalancerClass: tailscale
+  rcon:
+    enabled: false
+    password: ""
+  autoCurseForge:
+    apiKey:
+      key: ""
+
+serviceAnnotations:
+  tailscale.com/hostname: minecraft-vanilla-local
+
+extraVolumes:
+  - volumes:
+      - name: sftp-home
+        emptyDir: {}
+      - name: sftp-users
+        configMap:
+          name: minecraft-vanilla-local-sftp-users
+      - name: sftp-key
+        secret:
+          name: minecraft-vanilla-local-sftp-key
+
+persistence:
+  dataDir:
+    enabled: true
+    existingClaim: minecraft-vanilla-local-data

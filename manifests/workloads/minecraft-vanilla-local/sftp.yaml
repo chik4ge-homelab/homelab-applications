@@ -1,0 +1,47 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: minecraft-vanilla-local-sftp-key
+  namespace: minecraft-vanilla-local
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: 1password-connect
+    kind: ClusterSecretStore
+  target:
+    name: minecraft-vanilla-local-sftp-key
+    creationPolicy: Owner
+  data:
+    - secretKey: id_ed25519.pub
+      remoteRef:
+        key: "Minecraft vanilla local SFTP"
+        property: public_key
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minecraft-vanilla-local-sftp-users
+  namespace: minecraft-vanilla-local
+data:
+  users.conf: |
+    upload::1000:2000:world
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-vanilla-local-sftp
+  namespace: minecraft-vanilla-local
+  annotations:
+    tailscale.com/hostname: minecraft-vanilla-local-sftp
+spec:
+  type: LoadBalancer
+  loadBalancerClass: tailscale
+  ports:
+    - name: sftp
+      port: 22
+      targetPort: sftp
+      protocol: TCP
+  selector:
+    app: minecraft-vanilla-local

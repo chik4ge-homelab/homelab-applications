@@ -111,3 +111,12 @@ core → platform/base → platform/services → workloads
 - mixin 生成定義は `mixins/build/config.yaml` で管理する
 - `entrypoint` は jsonnet の入口、`destination` は出力先ディレクトリ
 - 生成は `scripts/generate-mixin-rules.sh` を実行する
+
+### Minecraft standalone vanilla
+
+`minecraft-vanilla-local` はDBなしの完全バニラサーバーで、Tailnet限定の
+SFTPエンドポイント `minecraft-vanilla-local-sftp.serval-great.ts.net` から
+`/data/world` に対応する `/world` へファイルを送信できる。稼働中のサーバーが
+使用するワールドを直接参照するため、ファイル操作はサーバー停止中に行う。
+SFTPの公開鍵は1Passwordの
+`Minecraft vanilla local SFTP` 項目にある `public_key` フィールドから注入する。

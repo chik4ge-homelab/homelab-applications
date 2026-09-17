@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minecraft-vanilla-local
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: manifests/workloads/minecraft-vanilla-local
+      ref: repo
+    - repoURL: https://itzg.github.io/minecraft-server-charts/
+      chart: minecraft
+      targetRevision: 4.26.3
+      helm:
+        releaseName: minecraft-vanilla-local
+        valueFiles:
+          - $repo/manifests/workloads/minecraft-vanilla-local/values.yaml
+  destination:
+    namespace: minecraft-vanilla-local
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: baseline
