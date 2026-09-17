@@ -129,6 +129,7 @@ minecraftServer:
       key: ""
 
 extraEnv:
+  CREATE_CONSOLE_IN_PIPE: "true"
   ENFORCE_WHITELIST: "true"
 
 extraVolumes:
