@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: minecraft-vanilla-local
+  namespace: minecraft-vanilla-local
+spec:
+  parentRefs:
+    - name: envoy-gateway-external
+      namespace: envoy-gateway
+      sectionName: minecraft
+  rules:
+    - backendRefs:
+        - name: minecraft-vanilla-local
+          port: 25565

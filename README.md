@@ -114,7 +114,8 @@ core → platform/base → platform/services → workloads
 
 ### Minecraft standalone vanilla
 
-`minecraft-vanilla-local` はDBなしの完全バニラサーバーで、Tailnet限定の
+`minecraft-vanilla-local` は Minecraft Java 26.3 のDBなし完全バニラサーバーで、
+Envoy Gateway 経由の公開エンドポイント `mc.chik4ge.me:25565` と、Tailnet限定の
 SFTPエンドポイント `minecraft-vanilla-local-sftp.serval-great.ts.net` から
 `/data/world` に対応する `/world` へファイルを送信できる。稼働中のサーバーが
 使用するワールドを直接参照するため、ファイル操作はサーバー停止中に行う。

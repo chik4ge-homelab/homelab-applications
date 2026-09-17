@@ -113,23 +113,19 @@ affinity:
 
 minecraftServer:
   eula: TRUE
-  version: 1.21.4
+  version: "26.3"
   type: VANILLA
   onlineMode: true
   enforceSecureProfile: true
   memory: 4G
-  motd: "Vanilla 1.21.4"
-  serviceType: LoadBalancer
-  loadBalancerClass: tailscale
+  motd: "Vanilla 26.3"
+  serviceType: ClusterIP
   rcon:
     enabled: false
     password: ""
   autoCurseForge:
     apiKey:
       key: ""
-
-serviceAnnotations:
-  tailscale.com/hostname: minecraft-vanilla-local
 
 extraVolumes:
   - volumes:
