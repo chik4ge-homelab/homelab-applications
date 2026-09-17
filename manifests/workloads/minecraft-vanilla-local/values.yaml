@@ -116,6 +116,7 @@ minecraftServer:
   version: "26.3"
   type: VANILLA
   onlineMode: true
+  whitelist: "chik4ge,sofia0701jp,aki1234"
   enforceSecureProfile: true
   memory: 4G
   motd: "Vanilla 26.3"
@@ -126,6 +127,9 @@ minecraftServer:
   autoCurseForge:
     apiKey:
       key: ""
+
+extraEnv:
+  ENFORCE_WHITELIST: "true"
 
 extraVolumes:
   - volumes:
