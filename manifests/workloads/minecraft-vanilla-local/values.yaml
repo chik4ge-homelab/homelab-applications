@@ -114,12 +114,12 @@ affinity:
 minecraftServer:
   eula: TRUE
   version: "26.3"
-  type: VANILLA
+  type: FABRIC
   onlineMode: true
   whitelist: "chik4ge,sofia0701jp,aki1234"
   enforceSecureProfile: true
   memory: 4G
-  motd: "Vanilla 26.3"
+  motd: "Fabric 26.3"
   serviceType: ClusterIP
   rcon:
     enabled: false
@@ -131,6 +131,11 @@ minecraftServer:
 extraEnv:
   CREATE_CONSOLE_IN_PIPE: "true"
   ENFORCE_WHITELIST: "true"
+  MODRINTH_PROJECTS: |-
+    distanthorizons:I4fvXVOw
+    c2me-fabric:XgxQ7H1c
+    lithium:WXHRsMRl
+    ferrite-core:d5ddUdiB
 
 extraVolumes:
   - volumes:
