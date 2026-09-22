@@ -27,6 +27,7 @@ spec:
                 allowUsersInNamespaces:
                   - mimir
                   - loki
+                  - llm-gateway
               storageClass:
                 enabled: true
                 name: ceph-bucket
