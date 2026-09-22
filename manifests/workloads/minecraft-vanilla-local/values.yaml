@@ -116,7 +116,7 @@ minecraftServer:
   version: "26.3"
   type: FABRIC
   onlineMode: true
-  whitelist: "chik4ge,sofia0701jp,aki1234"
+  whitelist:
   enforceSecureProfile: true
   memory: 4G
   motd: "Fabric 26.3"
@@ -131,6 +131,11 @@ minecraftServer:
 extraEnv:
   CREATE_CONSOLE_IN_PIPE: "true"
   ENFORCE_WHITELIST: "true"
+  WHITELIST:
+    valueFrom:
+      secretKeyRef:
+        name: minecraft-vanilla-local-common-secret
+        key: whitelist
   MODRINTH_PROJECTS: |-
     distanthorizons:I4fvXVOw
     c2me-fabric:XgxQ7H1c

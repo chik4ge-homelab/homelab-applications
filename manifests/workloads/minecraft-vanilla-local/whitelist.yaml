@@ -1,0 +1,20 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: minecraft-vanilla-local-common-secret
+  namespace: minecraft-vanilla-local
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: 1password-connect
+    kind: ClusterSecretStore
+  target:
+    name: minecraft-vanilla-local-common-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: whitelist
+      remoteRef:
+        key: "CUBE common whitelist"
+        property: notesPlain

@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - pvc.yaml
   - sftp.yaml
+  - whitelist.yaml
   - tcproute.yaml
