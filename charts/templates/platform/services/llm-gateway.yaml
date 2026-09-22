@@ -12,9 +12,17 @@ spec:
   destination:
     server: {{ .Values.spec.destination.server }}
     namespace: llm-gateway
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: llama-cpp
+      namespace: llm-gateway
+      jsonPointers:
+        - /spec/replicas
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true

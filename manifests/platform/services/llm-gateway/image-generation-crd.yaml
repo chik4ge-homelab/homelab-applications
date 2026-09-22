@@ -1,0 +1,155 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: imagegenerationrequests.homelab.chik4ge.me
+spec:
+  group: homelab.chik4ge.me
+  scope: Namespaced
+  names:
+    plural: imagegenerationrequests
+    singular: imagegenerationrequest
+    kind: ImageGenerationRequest
+    shortNames:
+      - igr
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - idempotencyKey
+                - prompt
+              properties:
+                idempotencyKey:
+                  type: string
+                  minLength: 1
+                  maxLength: 256
+                prompt:
+                  type: string
+                  minLength: 1
+                  maxLength: 8192
+                aspectRatio:
+                  type: string
+                  maxLength: 16
+                  default: 1:1
+                steps:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  maximum: 100
+                  default: 40
+                seed:
+                  type: integer
+                  format: int64
+                  default: 42
+                suspend:
+                  type: boolean
+                  default: true
+            status:
+              type: object
+              properties:
+                observedGeneration:
+                  type: integer
+                  format: int64
+                phase:
+                  type: string
+                  enum:
+                    - Pending
+                    - StoppingText
+                    - Optimizing
+                    - Generating
+                    - RestoringText
+                    - Succeeded
+                    - Failed
+                startedAt:
+                  type: string
+                  format: date-time
+                completedAt:
+                  type: string
+                  format: date-time
+                optimizer:
+                  type: object
+                  properties:
+                    rewrittenPrompt:
+                      type: string
+                      maxLength: 4096
+                    whRatio:
+                      type: string
+                      maxLength: 16
+                artifact:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      maxLength: 1024
+                    sha256:
+                      type: string
+                      pattern: '^[a-fA-F0-9]{64}$'
+                    contentType:
+                      type: string
+                      maxLength: 128
+                    width:
+                      type: integer
+                      format: int32
+                    height:
+                      type: integer
+                      format: int32
+                failure:
+                  type: object
+                  properties:
+                    stage:
+                      type: string
+                      maxLength: 64
+                    reason:
+                      type: string
+                      maxLength: 128
+                    message:
+                      type: string
+                      maxLength: 2048
+                conditions:
+                  type: array
+                  x-kubernetes-list-type: map
+                  x-kubernetes-list-map-keys:
+                    - type
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                      - reason
+                      - lastTransitionTime
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                      reason:
+                        type: string
+                      message:
+                        type: string
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Phase
+          type: string
+          jsonPath: .status.phase
+        - name: Suspended
+          type: boolean
+          jsonPath: .spec.suspend
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp

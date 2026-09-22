@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: image-generation-api
+  labels:
+    app.kubernetes.io/name: image-generation-api
+automountServiceAccountToken: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: image-generation-controller
+  labels:
+    app.kubernetes.io/name: image-generation-controller
+automountServiceAccountToken: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: image-generation-job
+  labels:
+    app.kubernetes.io/name: image-generation-job
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: image-generation-api
+  labels:
+    app.kubernetes.io/name: image-generation-api
+rules:
+  - apiGroups:
+      - homelab.chik4ge.me
+    resources:
+      - imagegenerationrequests
+    verbs:
+      - create
+      - get
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: image-generation-api
+  labels:
+    app.kubernetes.io/name: image-generation-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: image-generation-api
+subjects:
+  - kind: ServiceAccount
+    name: image-generation-api
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: image-generation-controller
+  labels:
+    app.kubernetes.io/name: image-generation-controller
+rules:
+  - apiGroups:
+      - homelab.chik4ge.me
+    resources:
+      - imagegenerationrequests
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - homelab.chik4ge.me
+    resources:
+      - imagegenerationrequests/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/scale
+    resourceNames:
+      - llama-cpp
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - patch
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: image-generation-controller
+  labels:
+    app.kubernetes.io/name: image-generation-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: image-generation-controller
+subjects:
+  - kind: ServiceAccount
+    name: image-generation-controller

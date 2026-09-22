@@ -1,6 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - image-generation-crd.yaml
+  - image-generation-models-pvc.yaml
+  - image-generation-object-store-user.yaml
+  - image-generation-artifacts-bucket.yaml
+  - image-generation-rbac.yaml
+  - image-generation-deployments.yaml
+  - image-generation-service.yaml
+  - image-generation-model-loader.yaml
   - externalsecret.yaml
   - pvc.yaml
   - deployment.yaml
