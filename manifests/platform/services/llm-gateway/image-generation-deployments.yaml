@@ -100,7 +100,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: OPTIMIZER_IMAGE
-              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:4ed77e7d04abe3b33d194aa2a971f61ac0f73c325d219958d4da2d01b6c15c33
+              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:fa9f5e0e371fc7b628796a46ccb205096bc3e4c84efb2b5c2417f96c52c622ca
             - name: DIFFUSER_IMAGE
               value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
             - name: OPTIMIZER_MODEL_PATH
