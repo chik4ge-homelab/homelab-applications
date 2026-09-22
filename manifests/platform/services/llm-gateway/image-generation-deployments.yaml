@@ -104,7 +104,7 @@ spec:
             - name: DIFFUSER_IMAGE
               value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
             - name: OPTIMIZER_MODEL_PATH
-              value: /models/Qwen3VL-8B-Instruct-Q4_K_M.gguf
+              value: /models/Qwen3-4B-Q4_K_M.gguf
             - name: DIFFUSER_MODEL_PATH
               value: /models
             - name: OBJECT_BUCKET_SECRET_NAME
