@@ -100,11 +100,11 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: OPTIMIZER_IMAGE
-              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:fa9f5e0e371fc7b628796a46ccb205096bc3e4c84efb2b5c2417f96c52c622ca
+              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:0b897b7b3bebf6b6140383fca4cd78cb27829d0d8bf6676c2e40594763197444
             - name: DIFFUSER_IMAGE
               value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
             - name: OPTIMIZER_MODEL_PATH
-              value: /models/Qwen3-4B-Q4_K_M.gguf
+              value: /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf
             - name: DIFFUSER_MODEL_PATH
               value: /models
             - name: OBJECT_BUCKET_SECRET_NAME

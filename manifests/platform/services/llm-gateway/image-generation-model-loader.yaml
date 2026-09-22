@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: image-generation-model-loader-v2
+  name: image-generation-model-loader-v3
   labels:
     app.kubernetes.io/name: image-generation-model-loader
 spec:
@@ -39,9 +39,9 @@ spec:
                       "cc11433936a06e9765f7c0c0b1f0436cfd2b9856",
                   ),
                   (
-                      "Qwen/Qwen3-4B-GGUF",
-                      "Qwen3-4B-Q4_K_M.gguf",
-                      "bc640142c66e1fdd12af0bd68f40445458f3869b",
+                      "prithivMLmods/Qwen-Image-2.1-PE-T2I-GGUF",
+                      "Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf",
+                      "e18d4a3e0830ab157770738b16830e6fcf5f57d4",
                   ),
                   (
                       "Comfy-Org/Qwen-Image-2.1",
