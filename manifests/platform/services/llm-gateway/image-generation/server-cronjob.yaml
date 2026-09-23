@@ -106,7 +106,7 @@ spec:
                 - name: SD_CPP_CFG_SCALE
                   value: "1"
                 - name: SD_CPP_STEPS
-                  value: "4"
+                  value: "8"
                 - name: SD_CPP_SAMPLING_METHOD
                   value: euler
                 - name: SD_CPP_BACKEND
