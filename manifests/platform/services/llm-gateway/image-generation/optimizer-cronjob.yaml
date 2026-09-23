@@ -74,9 +74,10 @@ spec:
                     -m /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf \
                     -sysf /models/system_prompt.txt \
                     -f /work/user_prompt.txt \
-                    --chat-template-kwargs '{"enable_thinking":true}' \
                     --jinja \
+                    -cnv \
                     -st \
+                    --reasoning on \
                     -n 16256 \
                     -c 32768 \
                     -ngl all \
@@ -92,7 +93,7 @@ spec:
                     --no-display-prompt \
                     --no-warmup \
                     --simple-io \
-                    -o /work/completion.txt
+                    > /work/completion.txt
                   python3 - <<'PY'
                   import json
                   from pathlib import Path
