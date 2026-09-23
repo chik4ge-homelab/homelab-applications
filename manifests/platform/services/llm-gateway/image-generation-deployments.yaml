@@ -104,7 +104,7 @@ spec:
             - name: ARGOCD_APPLICATION_NAME
               value: llm-gateway
             - name: OPTIMIZER_IMAGE
-              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:eacbdf9743aeeb02f898cc5add07b1383148c740ae441515e76b27b06bdc1af4
+              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:601c54e9b3c972a0ec2b50afed0cc4b33a9174529093097b9df4ebf5a9a28c7d
             - name: DIFFUSER_IMAGE
               value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
             - name: OPTIMIZER_MODEL_PATH
