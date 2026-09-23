@@ -108,7 +108,7 @@ spec:
                 - name: SD_CPP_BACKEND
                   value: diffusion=cuda0,te=cpu,vae=cuda0
                 - name: SD_CPP_PARAMS_BACKEND
-                  value: diffusion=disk,te=cpu,vae=cuda0
+                  value: diffusion=cpu,te=cpu,vae=cuda0
                 - name: SD_CPP_MAX_VRAM
                   value: cuda0=6
               ports:
