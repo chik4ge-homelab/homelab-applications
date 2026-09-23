@@ -49,12 +49,13 @@ spec:
                   user_prompt += f"\nAspect ratio: {aspect_ratio}"
 
                   system_prompt = Path("/models/system_prompt.txt").read_text(encoding="utf-8").strip()
-                  chat_prompt = (
-                      f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
-                      f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
-                      "<|im_start|>assistant\n<think>\n"
+                  messages = [
+                      {"role": "system", "content": system_prompt},
+                      {"role": "user", "content": user_prompt},
+                  ]
+                  Path("/work/messages.json").write_text(
+                      json.dumps(messages, ensure_ascii=False), encoding="utf-8"
                   )
-                  Path("/work/chat_prompt.txt").write_text(chat_prompt, encoding="utf-8")
               resources:
                 requests:
                   cpu: "100m"
@@ -75,38 +76,81 @@ spec:
               image: ghcr.io/ggml-org/llama.cpp:full-cuda@sha256:1276d8b3f09fe1cb05b8d7369f64a5a9c15619fb05a61f3df1d261a4b53c96d9
               imagePullPolicy: IfNotPresent
               command:
-                - /bin/sh
+                - python3
                 - -c
               args:
                 - |
-                  set -eu
-                  /app/llama-completion \
-                    -m /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf \
-                    -f /work/chat_prompt.txt \
-                    -no-cnv \
-                    --no-jinja \
-                    -n 16256 \
-                    -c 32768 \
-                    -ngl all \
-                    -t 2 \
-                    --flash-attn on \
-                    -ctk q8_0 \
-                    -ctv q8_0 \
-                    -b 128 \
-                    -ub 128 \
-                    --temp 1.0 \
-                    --top-p 0.95 \
-                    --top-k 20 \
-                    --no-display-prompt \
-                    --no-warmup \
-                    --simple-io \
-                    > /work/completion.txt
-                  python3 - <<'PY'
                   import json
                   import sys
+                  import subprocess
+                  import time
+                  import urllib.error
+                  import urllib.request
                   from pathlib import Path
 
-                  completion = Path("/work/completion.txt").read_text(encoding="utf-8")
+                  model = "prithivMLmods/Qwen-Image-2.1-PE-T2I-GGUF"
+                  server = subprocess.Popen(
+                      [
+                          "/app/llama-server",
+                          "-hf", model,
+                          "--hf-file", "Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf",
+                          "--jinja",
+                          "--host", "127.0.0.1",
+                          "--port", "8080",
+                          "-c", "32768",
+                          "-ngl", "all",
+                          "-t", "2",
+                          "--flash-attn", "on",
+                          "-ctk", "q8_0",
+                          "-ctv", "q8_0",
+                          "-b", "128",
+                          "-ub", "128",
+                          "-np", "1",
+                          "--no-warmup",
+                          "--no-webui",
+                      ]
+                  )
+                  try:
+                      deadline = time.monotonic() + 1800
+                      while time.monotonic() < deadline:
+                          if server.poll() is not None:
+                              raise SystemExit(f"llama-server exited with status {server.returncode}")
+                          try:
+                              with urllib.request.urlopen("http://127.0.0.1:8080/health", timeout=2) as response:
+                                  if response.status == 200:
+                                      break
+                          except (urllib.error.URLError, TimeoutError):
+                              time.sleep(2)
+                      else:
+                          raise SystemExit("llama-server readiness timed out")
+
+                      payload = {
+                          "model": model,
+                          "messages": json.loads(Path("/work/messages.json").read_text(encoding="utf-8")),
+                          "temperature": 1.0,
+                          "top_p": 0.95,
+                          "top_k": 20,
+                          "presence_penalty": 1.5,
+                          "max_tokens": 16256,
+                          "stream": False,
+                      }
+                      request = urllib.request.Request(
+                          "http://127.0.0.1:8080/v1/chat/completions",
+                          data=json.dumps(payload).encode("utf-8"),
+                          headers={"Content-Type": "application/json"},
+                      )
+                      with urllib.request.urlopen(request, timeout=1800) as response:
+                          completion = json.load(response)["choices"][0]["message"]["content"]
+                  finally:
+                      server.terminate()
+                      try:
+                          server.wait(timeout=30)
+                      except subprocess.TimeoutExpired:
+                          server.kill()
+                          server.wait()
+
+                  if not isinstance(completion, str):
+                      raise SystemExit("Qwen chat completion content is not text")
                   _, marker, answer = completion.partition("</think>")
                   if not marker:
                       answer = completion
@@ -134,14 +178,16 @@ spec:
                           file=sys.stderr,
                       )
                   if not isinstance(result, dict) or set(result) != {"rewritten_prompt", "wh_ratio"}:
-                    raise SystemExit("Qwen completion must be a JSON object with rewritten_prompt and wh_ratio")
+                      raise SystemExit("Qwen completion must be a JSON object with rewritten_prompt and wh_ratio")
                   if not all(isinstance(result[key], str) and result[key].strip() for key in result):
                       raise SystemExit("Qwen completion fields must be non-empty strings")
                   output = json.dumps(result, ensure_ascii=False, separators=(",", ":"))
                   if len(output.encode("utf-8")) > 4096:
                       raise SystemExit("Qwen completion JSON exceeds the 4 KiB Job result limit")
                   Path("/dev/termination-log").write_text(output, encoding="utf-8")
-                  PY
+              env:
+                - name: HF_HOME
+                  value: /root/.cache/huggingface
               terminationMessagePolicy: File
               resources:
                 requests:
@@ -157,6 +203,8 @@ spec:
                 - name: models
                   mountPath: /models
                   readOnly: true
+                - name: llama-cpp-cache
+                  mountPath: /root/.cache/huggingface
           volumes:
             - name: input
               configMap:
@@ -167,5 +215,8 @@ spec:
             - name: models
               persistentVolumeClaim:
                 claimName: image-generation-models
+            - name: llama-cpp-cache
+              persistentVolumeClaim:
+                claimName: llama-cpp-cache
             - name: prompt
               emptyDir: {}

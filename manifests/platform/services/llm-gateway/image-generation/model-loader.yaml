@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: image-generation-model-loader-v4
+  name: image-generation-model-loader-v5
   labels:
     app.kubernetes.io/name: image-generation-model-loader
 spec:
@@ -17,8 +17,6 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      nodeSelector:
-        nvidia.com/gpu.count: "1"
       containers:
         - name: download-models
           image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
@@ -37,11 +35,6 @@ spec:
                       "leejet/Qwen-Image-2.1-GGUF",
                       "qwen_image_2.1-Q4_K.gguf",
                       "cc11433936a06e9765f7c0c0b1f0436cfd2b9856",
-                  ),
-                  (
-                      "prithivMLmods/Qwen-Image-2.1-PE-T2I-GGUF",
-                      "Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf",
-                      "e18d4a3e0830ab157770738b16830e6fcf5f57d4",
                   ),
                   (
                       "Comfy-Org/Qwen-Image-2.1",
