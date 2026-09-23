@@ -29,7 +29,7 @@ spec:
           serviceAccountName: image-generation-job
           runtimeClassName: nvidia
           initContainers:
-            - name: build-user-prompt
+            - name: build-chat-prompt
               image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
               imagePullPolicy: IfNotPresent
               command:
@@ -41,13 +41,20 @@ spec:
                   from pathlib import Path
 
                   request = json.loads(Path("/inputs/input.json").read_text())
-                  prompt = request["prompt"]
+                  user_prompt = request["prompt"].strip()
                   supported_ratios = {"1:1", "3:2", "2:3", "16:9", "9:16"}
                   aspect_ratio = request.get("aspect_ratio", "1:1")
                   if aspect_ratio not in supported_ratios:
                       aspect_ratio = "1:1"
-                  prompt += f"\nAspect ratio: {aspect_ratio}"
-                  Path("/work/user_prompt.txt").write_text(prompt, encoding="utf-8")
+                  user_prompt += f"\nAspect ratio: {aspect_ratio}"
+
+                  system_prompt = Path("/models/system_prompt.txt").read_text(encoding="utf-8").strip()
+                  chat_prompt = (
+                      f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
+                      f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
+                      "<|im_start|>assistant\n<think>\n"
+                  )
+                  Path("/work/chat_prompt.txt").write_text(chat_prompt, encoding="utf-8")
               resources:
                 requests:
                   cpu: "100m"
@@ -60,6 +67,9 @@ spec:
                   readOnly: true
                 - name: prompt
                   mountPath: /work
+                - name: models
+                  mountPath: /models
+                  readOnly: true
           containers:
             - name: optimizer
               image: ghcr.io/ggml-org/llama.cpp:full-cuda@sha256:1276d8b3f09fe1cb05b8d7369f64a5a9c15619fb05a61f3df1d261a4b53c96d9
@@ -72,12 +82,9 @@ spec:
                   set -eu
                   /app/llama-completion \
                     -m /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf \
-                    -sysf /models/system_prompt.txt \
-                    -p "$(cat /work/user_prompt.txt)" \
-                    --jinja \
-                    -cnv \
-                    -st \
-                    --reasoning on \
+                    -f /work/chat_prompt.txt \
+                    -no-cnv \
+                    --no-jinja \
                     -n 16256 \
                     -c 32768 \
                     -ngl all \
