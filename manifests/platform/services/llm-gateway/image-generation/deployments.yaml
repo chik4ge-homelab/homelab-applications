@@ -35,7 +35,9 @@ spec:
             - name: ARGOCD_APPLICATION_NAME
               value: llm-gateway
             - name: ARTIFACT_ENDPOINT
-              value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
+              value: https://rgw.chik4ge.me
+            - name: BUCKET_NAME
+              value: image-generation-artifacts
           envFrom:
             - secretRef:
                 name: image-generation-artifacts
@@ -105,6 +107,8 @@ spec:
               value: llm-gateway
             - name: ARTIFACT_ENDPOINT
               value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
+            - name: BUCKET_NAME
+              value: image-generation-artifacts
             - name: LLM_RESTORE_TIMEOUT_SECONDS
               value: "300"
           envFrom:
