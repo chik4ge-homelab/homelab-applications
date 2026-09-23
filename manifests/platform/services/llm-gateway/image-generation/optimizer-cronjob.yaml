@@ -29,6 +29,39 @@ spec:
           serviceAccountName: image-generation-job
           runtimeClassName: nvidia
           initContainers:
+            - name: prepare-model-cache
+              image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+              imagePullPolicy: IfNotPresent
+              command:
+                - sh
+                - -c
+              args:
+                - |
+                  set -eu
+                  python -m pip install --no-cache-dir 'huggingface_hub==0.36.2'
+                  exec python /config/cache.py /config/optimizer.json
+              env:
+                - name: HF_HUB_DISABLE_XET
+                  value: "1"
+                - name: MODEL_CACHE_ROOT
+                  value: /cache
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 256Mi
+                limits:
+                  memory: 512Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: optimizer-model-cache
+                  mountPath: /cache
+                - name: model-cache-config
+                  mountPath: /config
+                  readOnly: true
             - name: build-chat-prompt
               image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
               imagePullPolicy: IfNotPresent
@@ -48,7 +81,7 @@ spec:
                       aspect_ratio = "1:1"
                   user_prompt += f"\nAspect ratio: {aspect_ratio}"
 
-                  system_prompt = Path("/models/system_prompt.txt").read_text(encoding="utf-8").strip()
+                  system_prompt = Path("/root/.cache/huggingface/system_prompt.txt").read_text(encoding="utf-8").strip()
                   messages = [
                       {"role": "system", "content": system_prompt},
                       {"role": "user", "content": user_prompt},
@@ -68,8 +101,8 @@ spec:
                   readOnly: true
                 - name: prompt
                   mountPath: /work
-                - name: models
-                  mountPath: /models
+                - name: optimizer-model-cache
+                  mountPath: /root/.cache/huggingface
                   readOnly: true
           containers:
             - name: optimizer
@@ -200,9 +233,6 @@ spec:
               volumeMounts:
                 - name: prompt
                   mountPath: /work
-                - name: models
-                  mountPath: /models
-                  readOnly: true
                 - name: optimizer-model-cache
                   mountPath: /root/.cache/huggingface
           volumes:
@@ -212,11 +242,11 @@ spec:
                 items:
                   - key: input.json
                     path: input.json
-            - name: models
-              persistentVolumeClaim:
-                claimName: image-generation-models
             - name: optimizer-model-cache
               persistentVolumeClaim:
                 claimName: image-generation-optimizer-model-cache
+            - name: model-cache-config
+              configMap:
+                name: llm-gateway-model-cache
             - name: prompt
               emptyDir: {}

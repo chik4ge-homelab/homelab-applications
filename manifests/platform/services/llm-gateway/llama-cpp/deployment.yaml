@@ -19,6 +19,40 @@ spec:
         app.kubernetes.io/name: llm-gateway
     spec:
       runtimeClassName: nvidia
+      initContainers:
+      - name: prepare-model-cache
+        image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+        imagePullPolicy: IfNotPresent
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          set -eu
+          python -m pip install --no-cache-dir 'huggingface_hub==0.36.2'
+          exec python /config/cache.py /config/gemma.json
+        env:
+        - name: HF_HUB_DISABLE_XET
+          value: "1"
+        - name: MODEL_CACHE_ROOT
+          value: /cache
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: llama-cpp-cache
+          mountPath: /cache
+        - name: model-cache-config
+          mountPath: /config
+          readOnly: true
       containers:
       - name: llama-cpp
         image: ghcr.io/ggml-org/llama.cpp:server-cuda
@@ -126,6 +160,9 @@ spec:
       - name: llama-cpp-cache
         persistentVolumeClaim:
           claimName: llama-cpp-cache
+      - name: model-cache-config
+        configMap:
+          name: llm-gateway-model-cache
       - name: llm-gateway-api-key
         secret:
           secretName: llm-gateway-api-key

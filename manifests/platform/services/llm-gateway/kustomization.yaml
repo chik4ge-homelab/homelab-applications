@@ -3,3 +3,10 @@ kind: Kustomization
 resources:
   - llama-cpp
   - image-generation
+configMapGenerator:
+  - name: llm-gateway-model-cache
+    files:
+      - model-cache/cache.py
+      - model-cache/gemma.json
+      - model-cache/optimizer.json
+      - model-cache/diffuser.json

@@ -1,0 +1,12 @@
+{
+  "assets": [
+    {
+      "repo_id": "kaitchup/gemma-4-12b-it-GGUF-MoQ",
+      "filename": "MoQ-3.75.gguf",
+      "revision": "main",
+      "kind": "hub",
+      "role": "model",
+      "download": false
+    }
+  ]
+}

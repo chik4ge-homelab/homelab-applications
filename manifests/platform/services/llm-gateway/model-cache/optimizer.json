@@ -1,0 +1,20 @@
+{
+  "assets": [
+    {
+      "repo_id": "prithivMLmods/Qwen-Image-2.1-PE-T2I-GGUF",
+      "filename": "Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf",
+      "revision": "main",
+      "kind": "hub",
+      "role": "model",
+      "download": false
+    },
+    {
+      "repo_id": "Qwen/Qwen-Image-2.1-PE-T2I",
+      "filename": "system_prompt.txt",
+      "revision": "f3ed7985c788ad75b3ab7223e0c4c51e2a43545b",
+      "kind": "local",
+      "role": "support",
+      "download": true
+    }
+  ]
+}

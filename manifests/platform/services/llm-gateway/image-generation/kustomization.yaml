@@ -9,6 +9,5 @@ resources:
   - rbac.yaml
   - deployments.yaml
   - service.yaml
-  - model-loader.yaml
   - optimizer-cronjob.yaml
   - diffuser-cronjob.yaml

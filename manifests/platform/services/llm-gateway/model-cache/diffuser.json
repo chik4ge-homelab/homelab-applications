@@ -1,0 +1,28 @@
+{
+  "assets": [
+    {
+      "repo_id": "leejet/Qwen-Image-2.1-GGUF",
+      "filename": "qwen_image_2.1-Q4_K.gguf",
+      "revision": "cc11433936a06e9765f7c0c0b1f0436cfd2b9856",
+      "kind": "local",
+      "role": "model",
+      "download": true
+    },
+    {
+      "repo_id": "Comfy-Org/Qwen-Image-2.1",
+      "filename": "vae/qwen_image_2.1_vae_bf16.safetensors",
+      "revision": "5dc5850eb514a3685f6a03a2641728a8f7549c69",
+      "kind": "local",
+      "role": "model",
+      "download": true
+    },
+    {
+      "repo_id": "Qwen/Qwen3-VL-8B-Instruct-GGUF",
+      "filename": "Qwen3VL-8B-Instruct-Q4_K_M.gguf",
+      "revision": "f982a07559d4a2f6c8744d840bf6fccab30eea96",
+      "kind": "local",
+      "role": "model",
+      "download": true
+    }
+  ]
+}
