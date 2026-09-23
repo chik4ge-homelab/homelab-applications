@@ -10,3 +10,6 @@ configMapGenerator:
   - name: llama-cpp-chat-template
     files:
       - chat_template.jinja
+  - name: llama-cpp-gateway-proxy
+    files:
+      - default.conf=gateway-proxy.conf

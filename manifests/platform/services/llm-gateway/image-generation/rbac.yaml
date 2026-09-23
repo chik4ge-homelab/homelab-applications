@@ -36,6 +36,12 @@ rules:
     verbs:
       - create
       - get
+  - apiGroups:
+      - homelab.chik4ge.me
+    resources:
+      - imagegenerationrequests/status
+    verbs:
+      - get
       - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -94,6 +100,7 @@ rules:
       - list
       - watch
       - create
+      - delete
   - apiGroups:
       - batch
     resources:
@@ -101,6 +108,7 @@ rules:
     resourceNames:
       - image-generation-optimizer
       - image-generation-diffuser
+      - image-generation-server
     verbs:
       - get
   - apiGroups:

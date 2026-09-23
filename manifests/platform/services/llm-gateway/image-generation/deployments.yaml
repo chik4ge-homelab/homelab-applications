@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:8def83e91f675f45d7fdb39a2a3464b01935aecbb4b87a1aa7819cb6b305ba6e
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:bab6c66a5c98e7ed788fb6073f374d1a9f8bc2f69d098386834b1ace2e705634
           imagePullPolicy: IfNotPresent
           args:
             - api
@@ -34,13 +34,11 @@ spec:
                   fieldPath: metadata.namespace
             - name: ARGOCD_APPLICATION_NAME
               value: llm-gateway
-            - name: ARTIFACT_ENDPOINT
-              value: https://rgw.chik4ge.me
-            - name: BUCKET_NAME
-              value: image-generation-artifacts
-          envFrom:
-            - secretRef:
-                name: image-generation-artifacts
+            - name: LLM_GATEWAY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-gateway-api-key
+                  key: api-key
           ports:
             - name: http
               containerPort: 8080
@@ -94,7 +92,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: controller
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:8def83e91f675f45d7fdb39a2a3464b01935aecbb4b87a1aa7819cb6b305ba6e
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:bab6c66a5c98e7ed788fb6073f374d1a9f8bc2f69d098386834b1ace2e705634
           imagePullPolicy: IfNotPresent
           args:
             - controller

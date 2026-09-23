@@ -1,0 +1,148 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: image-generation-server
+  labels:
+    app.kubernetes.io/name: image-generation-server
+    app.kubernetes.io/part-of: image-generation
+spec:
+  schedule: "0 0 1 1 *"
+  suspend: true
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 60
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: image-generation-server
+        app.kubernetes.io/part-of: image-generation
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 21600
+      ttlSecondsAfterFinished: 3600
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: image-generation-server
+            app.kubernetes.io/part-of: image-generation
+        spec:
+          restartPolicy: Never
+          serviceAccountName: image-generation-job
+          runtimeClassName: nvidia
+          initContainers:
+            - name: prepare-model-cache
+              image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+              imagePullPolicy: IfNotPresent
+              command:
+                - sh
+                - -c
+              args:
+                - |
+                  set -eu
+                  python -m pip install --no-cache-dir 'huggingface_hub==0.36.2'
+                  exec python /config/cache.py /config/diffuser.json
+              env:
+                - name: HF_HUB_DISABLE_XET
+                  value: "1"
+                - name: MODEL_CACHE_ROOT
+                  value: /cache
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 256Mi
+                limits:
+                  memory: 512Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: models
+                  mountPath: /cache
+                - name: model-cache-config
+                  mountPath: /config
+                  readOnly: true
+          containers:
+            - name: sd-server
+              image: ghcr.io/leejet/stable-diffusion.cpp:master-cuda@sha256:b0b24683e7020cdb2f5c0e36805abde9b9c6ae1eda6f9d305c73b07eabc3669a
+              imagePullPolicy: IfNotPresent
+              command:
+                - /sd-server
+              args:
+                - --listen-ip
+                - $(SD_CPP_LISTEN_IP)
+                - --listen-port
+                - $(SD_CPP_LISTEN_PORT)
+                - --diffusion-model
+                - $(SD_CPP_DIFFUSION_MODEL)
+                - --vae
+                - $(SD_CPP_VAE)
+                - --llm
+                - $(SD_CPP_LLM)
+                - --cfg-scale
+                - $(SD_CPP_CFG_SCALE)
+                - --sampling-method
+                - $(SD_CPP_SAMPLING_METHOD)
+                - --backend
+                - $(SD_CPP_BACKEND)
+                - --params-backend
+                - $(SD_CPP_PARAMS_BACKEND)
+                - --max-vram
+                - $(SD_CPP_MAX_VRAM)
+                - --diffusion-fa
+              env:
+                - name: SD_CPP_LISTEN_IP
+                  value: 0.0.0.0
+                - name: SD_CPP_LISTEN_PORT
+                  value: "8080"
+                - name: SD_CPP_DIFFUSION_MODEL
+                  value: /models/qwen_image_2.1-Q4_K.gguf
+                - name: SD_CPP_VAE
+                  value: /models/vae/qwen_image_2.1_vae_bf16.safetensors
+                - name: SD_CPP_LLM
+                  value: /models/Qwen3VL-8B-Instruct-Q4_K_M.gguf
+                - name: SD_CPP_CFG_SCALE
+                  value: "6"
+                - name: SD_CPP_SAMPLING_METHOD
+                  value: euler
+                - name: SD_CPP_BACKEND
+                  value: diffusion=cuda0,te=cpu,vae=cuda0
+                - name: SD_CPP_PARAMS_BACKEND
+                  value: diffusion=disk,te=cpu,vae=cuda0
+                - name: SD_CPP_MAX_VRAM
+                  value: cuda0=6
+              ports:
+                - name: http
+                  containerPort: 8080
+                  protocol: TCP
+              readinessProbe:
+                httpGet:
+                  path: /v1/models
+                  port: http
+                periodSeconds: 5
+                timeoutSeconds: 3
+                failureThreshold: 12
+              resources:
+                requests:
+                  cpu: "2"
+                  memory: 6Gi
+                  nvidia.com/gpu: "1"
+                limits:
+                  memory: 12Gi
+                  nvidia.com/gpu: "1"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: models
+                  mountPath: /models
+                  readOnly: true
+          volumes:
+            - name: models
+              persistentVolumeClaim:
+                claimName: image-generation-models
+            - name: model-cache-config
+              configMap:
+                name: llm-gateway-model-cache

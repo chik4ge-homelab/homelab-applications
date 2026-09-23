@@ -11,3 +11,4 @@ resources:
   - service.yaml
   - optimizer-cronjob.yaml
   - diffuser-cronjob.yaml
+  - server-cronjob.yaml

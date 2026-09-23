@@ -64,7 +64,7 @@ spec:
                   readOnly: true
           containers:
             - name: diffuser
-              image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
+              image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:2dd45b38c16c0cd88a28003f6b1843e6b6c2bfb10e86196b162f08893c800975
               imagePullPolicy: IfNotPresent
               args:
                 - --input
@@ -72,8 +72,25 @@ spec:
                 - --output
                 - /dev/termination-log
               env:
-                - name: MODEL_PATH
-                  value: /models
+                - name: SD_CPP_ARGS
+                  value: |-
+                    [
+                      "--diffusion-model", "/models/qwen_image_2.1-Q4_K.gguf",
+                      "--vae", "/models/vae/qwen_image_2.1_vae_bf16.safetensors",
+                      "--llm", "/models/Qwen3VL-8B-Instruct-Q4_K_M.gguf",
+                      "-p", "${PROMPT}",
+                      "--cfg-scale", "6",
+                      "--sampling-method", "euler",
+                      "--steps", "${STEPS}",
+                      "--seed", "${SEED}",
+                      "--backend", "diffusion=cuda0,te=cpu,vae=cuda0",
+                      "--params-backend", "diffusion=disk,te=cpu,vae=cuda0",
+                      "--max-vram", "cuda0=6",
+                      "--diffusion-fa",
+                      "-W", "${WIDTH}",
+                      "-H", "${HEIGHT}",
+                      "-o", "${OUTPUT}"
+                    ]
                 - name: ARTIFACT_ENDPOINT
                   value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
                 - name: BUCKET_NAME

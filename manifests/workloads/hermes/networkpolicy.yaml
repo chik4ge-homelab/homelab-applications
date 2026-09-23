@@ -32,14 +32,6 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: llm-gateway
-            k8s:app.kubernetes.io/name: image-generation-api
-      toPorts:
-        - ports:
-            - port: "8080"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: searxng
             k8s:app.kubernetes.io/name: searxng
       toPorts:

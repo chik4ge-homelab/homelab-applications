@@ -15,6 +15,26 @@ spec:
   - matches:
     - path:
         type: PathPrefix
+        value: /v1/images/generations
+    timeouts:
+      request: 65m
+      backendRequest: 65m
+    backendRefs:
+    - name: llama-cpp-api
+      port: 8000
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /v1/images/edits
+    timeouts:
+      request: 65m
+      backendRequest: 65m
+    backendRefs:
+    - name: llama-cpp-api
+      port: 8000
+  - matches:
+    - path:
+        type: PathPrefix
         value: /
     timeouts:
       request: 10m
