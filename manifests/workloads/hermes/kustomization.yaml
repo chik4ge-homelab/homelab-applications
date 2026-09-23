@@ -7,3 +7,9 @@ resources:
   - networkpolicy.yaml
   - pvc.yaml
   - deployment.yaml
+configMapGenerator:
+  - name: pi-agent-config
+    files:
+      - settings.json=agent/settings.json
+      - SYSTEM.md=agent/SYSTEM.md
+      - discord-image-tools.js=extensions/discord-image-tools.js

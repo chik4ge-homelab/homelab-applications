@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hermes
+  name: pi-discord-agent
   labels:
-    app.kubernetes.io/name: hermes
+    app.kubernetes.io/name: pi-discord-agent
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app.kubernetes.io/name: hermes
+      app.kubernetes.io/name: pi-discord-agent
   template:
     metadata:
       annotations:
         descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
       labels:
-        app.kubernetes.io/name: hermes
+        app.kubernetes.io/name: pi-discord-agent
     spec:
       serviceAccountName: hermes
       automountServiceAccountToken: false
@@ -32,6 +32,24 @@ spec:
         - name: hermes-data
           mountPath: /attachments
           subPath: attachments
+      - name: sync-agent-config
+        image: busybox:1.38
+        command:
+        - sh
+        - -c
+        - |
+          set -eu
+          mkdir -p /opt/pi/.pi/agent
+          cp /config/settings.json /opt/pi/.pi/agent/settings.json
+          cp /config/mcp.json /opt/pi/.pi/agent/mcp.json
+          cp /config/SYSTEM.md /opt/pi/.pi/agent/SYSTEM.md
+        volumeMounts:
+        - name: hermes-config
+          mountPath: /config
+          readOnly: true
+        - name: hermes-data
+          mountPath: /opt/pi
+          subPath: pi
 
       containers:
       - name: control-plane
@@ -55,6 +73,10 @@ spec:
               key: LLM_GATEWAY_API_KEY
         - name: LLM_BASE_URL
           value: http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1
+        - name: IMAGE_GENERATION_BASE_URL
+          value: http://image-generation-api.llm-gateway.svc.cluster.local:8080/v1
+        - name: PI_IMAGE_GENERATION_OUTPUT_DIR
+          value: /opt/pi/.pi/images/generated
         - name: PI_REMOTE_TOOLS_HOST
           value: 127.0.0.1
         - name: PI_REMOTE_TOOLS_PORT
@@ -136,6 +158,8 @@ spec:
           sources:
           - configMap:
               name: hermes-config
+          - configMap:
+              name: pi-agent-config
           - secret:
               name: hermes-channels
       - name: hermes-data

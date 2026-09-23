@@ -7,7 +7,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: hermes
+      app.kubernetes.io/name: pi-discord-agent
   egress:
     - toEndpoints:
         - matchLabels:
@@ -29,6 +29,14 @@ spec:
       toPorts:
         - ports:
             - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: image-generation-api
+      toPorts:
+        - ports:
+            - port: "8080"
               protocol: TCP
     - toEndpoints:
         - matchLabels:

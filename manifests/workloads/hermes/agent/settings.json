@@ -1,0 +1,38 @@
+{
+  "defaultProvider": "local-llama",
+  "defaultModel": "gemma-4-12b-it",
+  "defaultThinkingLevel": "off",
+  "quietStartup": true,
+  "defaultProjectTrust": "never",
+  "extensions": [
+    "/opt/pi/extensions/pi-ssh-tools",
+    "/config/discord-image-tools.js"
+  ],
+  "packages": [
+    "npm:pi-mcp-extension",
+    "npm:@amaster.ai/pi-image-gen@0.1.17"
+  ],
+  "pi-image-gen": {
+    "defaultModel": "sd-cpp-local",
+    "outputDir": "/opt/pi/.pi/images/generated",
+    "customProviders": {
+      "image-generation-gateway": {
+        "api": "openai",
+        "baseUrl": "${IMAGE_GENERATION_BASE_URL}",
+        "apiKey": "${LLM_GATEWAY_API_KEY}",
+        "name": "Image Generation Gateway",
+        "models": [
+          {
+            "id": "sd-cpp-local",
+            "capabilities": {
+              "nMax": 4,
+              "maxReferenceImages": 4,
+              "inputFormats": ["PNG", "JPEG", "WebP"],
+              "inputMaxBytes": 20971520
+            }
+          }
+        ]
+      }
+    }
+  }
+}
