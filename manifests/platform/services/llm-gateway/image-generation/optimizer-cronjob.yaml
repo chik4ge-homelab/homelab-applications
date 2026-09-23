@@ -203,7 +203,7 @@ spec:
                 - name: models
                   mountPath: /models
                   readOnly: true
-                - name: llama-cpp-cache
+                - name: optimizer-model-cache
                   mountPath: /root/.cache/huggingface
           volumes:
             - name: input
@@ -215,8 +215,8 @@ spec:
             - name: models
               persistentVolumeClaim:
                 claimName: image-generation-models
-            - name: llama-cpp-cache
+            - name: optimizer-model-cache
               persistentVolumeClaim:
-                claimName: llama-cpp-cache
+                claimName: image-generation-optimizer-model-cache
             - name: prompt
               emptyDir: {}

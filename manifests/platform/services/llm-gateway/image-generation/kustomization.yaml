@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - crd.yaml
   - models-pvc.yaml
+  - optimizer-model-cache-pvc.yaml
   - object-store-user.yaml
   - artifacts-bucket.yaml
   - rbac.yaml

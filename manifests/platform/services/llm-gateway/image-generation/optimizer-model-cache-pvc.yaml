@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: image-generation-optimizer-model-cache
+  labels:
+    app.kubernetes.io/name: image-generation
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-rbd
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 10Gi
