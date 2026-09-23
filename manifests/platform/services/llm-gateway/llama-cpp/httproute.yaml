@@ -20,8 +20,8 @@ spec:
       request: 65m
       backendRequest: 65m
     backendRefs:
-    - name: llama-cpp-api
-      port: 8000
+    - name: image-generation-api
+      port: 8080
   - matches:
     - path:
         type: PathPrefix
@@ -30,8 +30,8 @@ spec:
       request: 65m
       backendRequest: 65m
     backendRefs:
-    - name: llama-cpp-api
-      port: 8000
+    - name: image-generation-api
+      port: 8080
   - matches:
     - path:
         type: PathPrefix
