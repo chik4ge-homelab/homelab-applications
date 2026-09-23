@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: image-generation-model-loader-v3
+  name: image-generation-model-loader-v4
   labels:
     app.kubernetes.io/name: image-generation-model-loader
 spec:
@@ -47,6 +47,11 @@ spec:
                       "Comfy-Org/Qwen-Image-2.1",
                       "vae/qwen_image_2.1_vae_bf16.safetensors",
                       "5dc5850eb514a3685f6a03a2641728a8f7549c69",
+                  ),
+                  (
+                      "Qwen/Qwen-Image-2.1-PE-T2I",
+                      "system_prompt.txt",
+                      "f3ed7985c788ad75b3ab7223e0c4c51e2a43545b",
                   ),
               ]
               for repo_id, filename, revision in files:

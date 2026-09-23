@@ -28,20 +28,90 @@ spec:
           restartPolicy: Never
           serviceAccountName: image-generation-job
           runtimeClassName: nvidia
+          initContainers:
+            - name: build-user-prompt
+              image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+              imagePullPolicy: IfNotPresent
+              command:
+                - python3
+                - -c
+              args:
+                - |
+                  import json
+                  from pathlib import Path
+
+                  request = json.loads(Path("/inputs/input.json").read_text())
+                  prompt = request["prompt"]
+                  supported_ratios = {"1:1", "3:2", "2:3", "16:9", "9:16"}
+                  aspect_ratio = request.get("aspect_ratio", "1:1")
+                  if aspect_ratio not in supported_ratios:
+                      aspect_ratio = "1:1"
+                  prompt += f"\nAspect ratio: {aspect_ratio}"
+                  Path("/work/user_prompt.txt").write_text(prompt, encoding="utf-8")
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              volumeMounts:
+                - name: input
+                  mountPath: /inputs
+                  readOnly: true
+                - name: prompt
+                  mountPath: /work
           containers:
             - name: optimizer
-              image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5bd301fd16df9da18c310f68fdf2f9d6eee503eceb6019667cd265a5d49432a
+              image: ghcr.io/ggml-org/llama.cpp:full-cuda@sha256:1276d8b3f09fe1cb05b8d7369f64a5a9c15619fb05a61f3df1d261a4b53c96d9
               imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
               args:
-                - --input
-                - /inputs/input.json
-                - --output
-                - /dev/termination-log
-              env:
-                - name: MODEL_PATH
-                  value: /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf
-                - name: ARTIFACT_ENDPOINT
-                  value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
+                - |
+                  set -eu
+                  /app/llama-completion \
+                    -m /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf \
+                    -sysf /models/system_prompt.txt \
+                    -f /work/user_prompt.txt \
+                    --chat-template-kwargs '{"enable_thinking":true}' \
+                    --jinja \
+                    -st \
+                    -n 16256 \
+                    -c 32768 \
+                    -ngl all \
+                    -t 2 \
+                    --flash-attn on \
+                    -ctk q8_0 \
+                    -ctv q8_0 \
+                    -b 128 \
+                    -ub 128 \
+                    --temp 1.0 \
+                    --top-p 0.95 \
+                    --top-k 20 \
+                    --no-display-prompt \
+                    --no-warmup \
+                    --simple-io \
+                    -o /work/completion.txt
+                  python3 - <<'PY'
+                  import json
+                  from pathlib import Path
+
+                  completion = Path("/work/completion.txt").read_text(encoding="utf-8")
+                  _, marker, answer = completion.partition("</think>")
+                  if not marker:
+                      answer = completion
+                  result = json.loads(answer.strip())
+                  if not isinstance(result, dict) or set(result) != {"rewritten_prompt", "wh_ratio"}:
+                      raise SystemExit("Qwen completion must be a JSON object with rewritten_prompt and wh_ratio")
+                  if not all(isinstance(result[key], str) and result[key].strip() for key in result):
+                      raise SystemExit("Qwen completion fields must be non-empty strings")
+                  output = json.dumps(result, ensure_ascii=False, separators=(",", ":"))
+                  if len(output.encode("utf-8")) > 4096:
+                      raise SystemExit("Qwen completion JSON exceeds the 4 KiB Job result limit")
+                  Path("/dev/termination-log").write_text(output, encoding="utf-8")
+                  PY
+              terminationMessagePolicy: File
               resources:
                 requests:
                   cpu: "2"
@@ -51,8 +121,8 @@ spec:
                   memory: 4Gi
                   nvidia.com/gpu: "1"
               volumeMounts:
-                - name: input
-                  mountPath: /inputs
+                - name: prompt
+                  mountPath: /work
                   readOnly: true
                 - name: models
                   mountPath: /models
@@ -67,3 +137,5 @@ spec:
             - name: models
               persistentVolumeClaim:
                 claimName: image-generation-models
+            - name: prompt
+              emptyDir: {}
