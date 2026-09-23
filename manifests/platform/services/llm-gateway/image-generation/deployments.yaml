@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:4aac3d4952547b13febd2f915dc6957b2b35c203f03222f385b9adc4b4c65987
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:ee48ae4d94159197ca201133488415495faf66a8ffe3ff4fa1f7c766e94f32b5
           imagePullPolicy: IfNotPresent
           args:
             - api
@@ -90,7 +90,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: controller
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:4aac3d4952547b13febd2f915dc6957b2b35c203f03222f385b9adc4b4c65987
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:ee48ae4d94159197ca201133488415495faf66a8ffe3ff4fa1f7c766e94f32b5
           imagePullPolicy: IfNotPresent
           args:
             - controller
@@ -99,15 +99,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: ARTIFACT_ENDPOINT
-              value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
-            - name: BUCKET_NAME
-              value: image-generation-artifacts
             - name: LLM_RESTORE_TIMEOUT_SECONDS
               value: "300"
-          envFrom:
-            - secretRef:
-                name: image-generation-artifacts
           resources:
             requests:
               cpu: 100m

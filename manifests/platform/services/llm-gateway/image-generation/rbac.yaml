@@ -107,8 +107,6 @@ rules:
     resources:
       - cronjobs
     resourceNames:
-      - image-generation-optimizer
-      - image-generation-diffuser
       - image-generation-server
     verbs:
       - get
@@ -120,17 +118,6 @@ rules:
       - get
       - list
       - watch
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - get
-      - list
-      - watch
-      - create
-      - patch
-      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

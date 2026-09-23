@@ -30,33 +30,6 @@ spec:
                   type: string
                   minLength: 1
                   maxLength: 256
-                prompt:
-                  type: string
-                  minLength: 1
-                  maxLength: 8192
-                operation:
-                  type: string
-                  enum:
-                    - artifact
-                    - openai
-                  default: artifact
-                optimizePrompt:
-                  type: boolean
-                  default: false
-                aspectRatio:
-                  type: string
-                  maxLength: 16
-                  default: 1:1
-                steps:
-                  type: integer
-                  format: int32
-                  minimum: 1
-                  maximum: 100
-                  default: 40
-                seed:
-                  type: integer
-                  format: int64
-                  default: 42
                 suspend:
                   type: boolean
                   default: true
@@ -71,9 +44,7 @@ spec:
                   enum:
                     - Pending
                     - StoppingText
-                    - Optimizing
                     - Prepared
-                    - Generating
                     - StartingServer
                     - Proxying
                     - RestoringText
@@ -85,33 +56,6 @@ spec:
                 completedAt:
                   type: string
                   format: date-time
-                optimizer:
-                  type: object
-                  properties:
-                    rewrittenPrompt:
-                      type: string
-                      maxLength: 4096
-                    whRatio:
-                      type: string
-                      maxLength: 16
-                artifact:
-                  type: object
-                  properties:
-                    key:
-                      type: string
-                      maxLength: 1024
-                    sha256:
-                      type: string
-                      pattern: '^[a-fA-F0-9]{64}$'
-                    contentType:
-                      type: string
-                      maxLength: 128
-                    width:
-                      type: integer
-                      format: int32
-                    height:
-                      type: integer
-                      format: int32
                 serverJobName:
                   type: string
                   maxLength: 63
