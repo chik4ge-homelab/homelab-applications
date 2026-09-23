@@ -42,6 +42,8 @@ spec:
                   value: /models
                 - name: ARTIFACT_ENDPOINT
                   value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
+                - name: BUCKET_NAME
+                  value: image-generation-artifacts
               envFrom:
                 - secretRef:
                     name: image-generation-artifacts
