@@ -73,7 +73,7 @@ spec:
                   readOnly: true
           containers:
             - name: optimizer
-              image: ghcr.io/ggml-org/llama.cpp:full-cuda@sha256:1276d8b3f09fe1cb05b8d7369f64a5a9c15619fb05a61f3df1d261a4b53c96d9
+              image: ghcr.io/ggml-org/llama.cpp:full-cuda@sha256:ed98defbe35a39d33d08e4fcb097a90c4ad9add2da96b372ce2b175540d0aab6
               imagePullPolicy: IfNotPresent
               command:
                 - python3
