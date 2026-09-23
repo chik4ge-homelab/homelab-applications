@@ -110,7 +110,7 @@ spec:
                 - name: SD_CPP_SAMPLING_METHOD
                   value: euler
                 - name: SD_CPP_BACKEND
-                  value: diffusion=cuda0,te=cpu,vae=cuda0
+                  value: diffusion=cuda0,te=cuda0,vae=cuda0
                 - name: SD_CPP_PARAMS_BACKEND
                   value: diffusion=cpu,te=cpu,vae=cuda0
                 - name: SD_CPP_MAX_VRAM
