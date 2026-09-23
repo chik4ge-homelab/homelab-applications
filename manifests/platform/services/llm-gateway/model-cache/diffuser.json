@@ -23,6 +23,14 @@
       "kind": "local",
       "role": "model",
       "download": true
+    },
+    {
+      "repo_id": "Qwen/Qwen3-VL-8B-Instruct-GGUF",
+      "filename": "mmproj-Qwen3VL-8B-Instruct-F16.gguf",
+      "revision": "f982a07559d4a2f6c8744d840bf6fccab30eea96",
+      "kind": "local",
+      "role": "model",
+      "download": true
     }
   ]
 }
