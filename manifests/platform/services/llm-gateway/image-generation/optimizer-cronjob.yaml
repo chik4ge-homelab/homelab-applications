@@ -73,7 +73,7 @@ spec:
                   /app/llama-completion \
                     -m /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf \
                     -sysf /models/system_prompt.txt \
-                    -f /work/user_prompt.txt \
+                    -p "$(cat /work/user_prompt.txt)" \
                     --jinja \
                     -cnv \
                     -st \
