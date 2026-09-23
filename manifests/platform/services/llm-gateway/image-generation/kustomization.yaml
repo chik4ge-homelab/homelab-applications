@@ -4,7 +4,6 @@ resources:
   - crd.yaml
   - models-pvc.yaml
   - optimizer-model-cache-pvc.yaml
-  - object-store-user.yaml
   - rbac.yaml
   - deployments.yaml
   - service.yaml
