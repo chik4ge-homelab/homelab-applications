@@ -1,9 +1,9 @@
 {
   "assets": [
     {
-      "repo_id": "leejet/Qwen-Image-2.1-GGUF",
-      "filename": "qwen_image_2.1-Q4_K.gguf",
-      "revision": "cc11433936a06e9765f7c0c0b1f0436cfd2b9856",
+      "repo_id": "Abiray/Qwen-Image-2.1-viggle-4-steps-turbo-GGUF",
+      "filename": "qwen_image_2.1_turbo_Q4_K_M.gguf",
+      "revision": "0016110b769f6625b92098ab9e3f4906dba367f6",
       "kind": "local",
       "role": "model",
       "download": true

@@ -81,6 +81,8 @@ spec:
                 - $(SD_CPP_LLM)
                 - --cfg-scale
                 - $(SD_CPP_CFG_SCALE)
+                - --steps
+                - $(SD_CPP_STEPS)
                 - --sampling-method
                 - $(SD_CPP_SAMPLING_METHOD)
                 - --backend
@@ -96,13 +98,15 @@ spec:
                 - name: SD_CPP_LISTEN_PORT
                   value: "8080"
                 - name: SD_CPP_DIFFUSION_MODEL
-                  value: /models/qwen_image_2.1-Q4_K.gguf
+                  value: /models/qwen_image_2.1_turbo_Q4_K_M.gguf
                 - name: SD_CPP_VAE
                   value: /models/vae/qwen_image_2.1_vae_bf16.safetensors
                 - name: SD_CPP_LLM
                   value: /models/Qwen3VL-8B-Instruct-Q4_K_M.gguf
                 - name: SD_CPP_CFG_SCALE
-                  value: "6"
+                  value: "1"
+                - name: SD_CPP_STEPS
+                  value: "4"
                 - name: SD_CPP_SAMPLING_METHOD
                   value: euler
                 - name: SD_CPP_BACKEND
