@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:83a624784160dd3d4ea04c4219a3e739e7bda657919b3e79d5b0da201522dbfd
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:063f9d2b98d3d5dfcad5c48d6c776bad5329144f5f838a1405b7ee8509a488ee
           imagePullPolicy: IfNotPresent
           args:
             - api
@@ -92,7 +92,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: controller
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:83a624784160dd3d4ea04c4219a3e739e7bda657919b3e79d5b0da201522dbfd
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:063f9d2b98d3d5dfcad5c48d6c776bad5329144f5f838a1405b7ee8509a488ee
           imagePullPolicy: IfNotPresent
           args:
             - controller
@@ -103,20 +103,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: ARGOCD_APPLICATION_NAME
               value: llm-gateway
-            - name: OPTIMIZER_IMAGE
-              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:601c54e9b3c972a0ec2b50afed0cc4b33a9174529093097b9df4ebf5a9a28c7d
-            - name: DIFFUSER_IMAGE
-              value: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
-            - name: OPTIMIZER_MODEL_PATH
-              value: /models/Qwen-Image-2.1-PE-T2I.Q3_K_M.gguf
-            - name: DIFFUSER_MODEL_PATH
-              value: /models
-            - name: OBJECT_BUCKET_SECRET_NAME
-              value: image-generation-artifacts
             - name: ARTIFACT_ENDPOINT
               value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
-            - name: JOB_ACTIVE_DEADLINE_SECONDS
-              value: "3600"
             - name: LLM_RESTORE_TIMEOUT_SECONDS
               value: "300"
           envFrom:

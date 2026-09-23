@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: image-generation-diffuser
+  labels:
+    app.kubernetes.io/name: image-generation-diffuser
+    app.kubernetes.io/part-of: image-generation
+spec:
+  schedule: "0 0 1 1 *"
+  suspend: true
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 60
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: image-generation-diffuser
+        app.kubernetes.io/part-of: image-generation
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 3600
+      ttlSecondsAfterFinished: 3600
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: image-generation-diffuser
+            app.kubernetes.io/part-of: image-generation
+        spec:
+          restartPolicy: Never
+          serviceAccountName: image-generation-job
+          runtimeClassName: nvidia
+          containers:
+            - name: diffuser
+              image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:c5097f8175e55d4ef64616f19c4459ed01f992dc3e8e84a61b1cc3667a1a62d3
+              imagePullPolicy: IfNotPresent
+              args:
+                - --input
+                - /inputs/input.json
+                - --output
+                - /dev/termination-log
+              env:
+                - name: MODEL_PATH
+                  value: /models
+                - name: ARTIFACT_ENDPOINT
+                  value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
+              envFrom:
+                - secretRef:
+                    name: image-generation-artifacts
+              resources:
+                requests:
+                  cpu: "2"
+                  memory: 6Gi
+                  nvidia.com/gpu: "1"
+                limits:
+                  memory: 12Gi
+                  nvidia.com/gpu: "1"
+              volumeMounts:
+                - name: input
+                  mountPath: /inputs
+                  readOnly: true
+                - name: models
+                  mountPath: /models
+                  readOnly: true
+          volumes:
+            - name: input
+              configMap:
+                name: image-generation-diffuser-input-template
+                items:
+                  - key: input.json
+                    path: input.json
+            - name: models
+              persistentVolumeClaim:
+                claimName: image-generation-models

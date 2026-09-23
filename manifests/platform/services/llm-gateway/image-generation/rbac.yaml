@@ -95,6 +95,15 @@ rules:
       - watch
       - create
   - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+    resourceNames:
+      - image-generation-optimizer
+      - image-generation-diffuser
+    verbs:
+      - get
+  - apiGroups:
       - ""
     resources:
       - pods

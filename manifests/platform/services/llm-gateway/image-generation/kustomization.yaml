@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - crd.yaml
+  - models-pvc.yaml
+  - object-store-user.yaml
+  - artifacts-bucket.yaml
+  - rbac.yaml
+  - deployments.yaml
+  - service.yaml
+  - model-loader.yaml
+  - optimizer-cronjob.yaml
+  - diffuser-cronjob.yaml
