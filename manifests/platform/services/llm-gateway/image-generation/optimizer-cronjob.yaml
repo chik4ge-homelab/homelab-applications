@@ -103,15 +103,38 @@ spec:
                     > /work/completion.txt
                   python3 - <<'PY'
                   import json
+                  import sys
                   from pathlib import Path
 
                   completion = Path("/work/completion.txt").read_text(encoding="utf-8")
                   _, marker, answer = completion.partition("</think>")
                   if not marker:
                       answer = completion
-                  result = json.loads(answer.strip())
+                  answer = answer.strip()
+                  decoder = json.JSONDecoder()
+                  result = None
+                  end = 0
+                  for start, character in enumerate(answer):
+                      if character != "{":
+                          continue
+                      try:
+                          candidate, candidate_end = decoder.raw_decode(answer, start)
+                      except json.JSONDecodeError:
+                          continue
+                      if isinstance(candidate, dict):
+                          result = candidate
+                          end = candidate_end
+                          break
+                  if result is None:
+                      raise SystemExit("Qwen completion contains no valid JSON object")
+                  trailing = answer[end:].strip()
+                  if trailing:
+                      print(
+                          f"Ignoring {len(trailing)} trailing characters after Qwen JSON",
+                          file=sys.stderr,
+                      )
                   if not isinstance(result, dict) or set(result) != {"rewritten_prompt", "wh_ratio"}:
-                      raise SystemExit("Qwen completion must be a JSON object with rewritten_prompt and wh_ratio")
+                    raise SystemExit("Qwen completion must be a JSON object with rewritten_prompt and wh_ratio")
                   if not all(isinstance(result[key], str) and result[key].strip() for key in result):
                       raise SystemExit("Qwen completion fields must be non-empty strings")
                   output = json.dumps(result, ensure_ascii=False, separators=(",", ":"))
