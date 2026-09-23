@@ -4,6 +4,7 @@ import { copyFile, lstat, mkdir, mkdtemp, open, realpath } from "node:fs/promise
 import { basename, extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { createRequire } from "node:module";
 import { promisify } from "node:util";
+import { waitForLlmReady } from "./llm-readiness.mjs";
 
 const piRequire = createRequire("/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/dist/cli.js");
 const { Type } = piRequire("typebox");
@@ -84,6 +85,16 @@ export default function (pi) {
     for (const directory of stagedDirectories) {
       try { rmSync(directory, { recursive: true, force: true }); } catch {}
     }
+  });
+
+  pi.on("tool_result", async (event, ctx) => {
+    if (event.toolName !== "image_generate" || event.isError) return;
+
+    await waitForLlmReady({
+      baseUrl: process.env.LLM_BASE_URL,
+      apiKey: process.env.LLM_GATEWAY_API_KEY,
+      signal: ctx.signal,
+    });
   });
 
   pi.registerTool({
