@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:bab6c66a5c98e7ed788fb6073f374d1a9f8bc2f69d098386834b1ace2e705634
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:d7c22f88d4e1f5a02b56943b4c0b0856de30baee99a053f9b07d60c9a1f7cf8a
           imagePullPolicy: IfNotPresent
           args:
             - api
@@ -92,7 +92,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: controller
-          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:bab6c66a5c98e7ed788fb6073f374d1a9f8bc2f69d098386834b1ace2e705634
+          image: ghcr.io/chik4ge-homelab/image-generation-gateway@sha256:d7c22f88d4e1f5a02b56943b4c0b0856de30baee99a053f9b07d60c9a1f7cf8a
           imagePullPolicy: IfNotPresent
           args:
             - controller
