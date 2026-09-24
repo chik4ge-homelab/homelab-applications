@@ -19,13 +19,23 @@ export function extractGeneratedImagePaths(details, maxImages = 4) {
 export async function finalizeImageDelivery({ details, signal, deliverImages, waitForLlm, onError = () => {} }) {
   let imageCount = 0;
   let delivered = false;
+  let uploadAttempted = false;
+  let paths;
   try {
-    const paths = extractGeneratedImagePaths(details);
+    paths = extractGeneratedImagePaths(details);
     imageCount = paths.length;
-    await deliverImages(paths);
-    delivered = true;
   } catch (error) {
-    onError("Discord image upload", error);
+    onError("Image generation result", error);
+  }
+
+  if (paths) {
+    uploadAttempted = true;
+    try {
+      await deliverImages(paths);
+      delivered = true;
+    } catch (error) {
+      onError("Discord image upload", error);
+    }
   }
 
   let llmReady = true;
@@ -39,12 +49,14 @@ export async function finalizeImageDelivery({ details, signal, deliverImages, wa
 
   const status = delivered
     ? `Generated and sent ${imageCount} image(s) to the current Discord channel.`
-    : "Image generation completed, but sending the image to Discord failed. Do not expose local file paths.";
+    : uploadAttempted
+      ? `Image generation returned ${imageCount} image(s), but uploading them to Discord failed. Do not claim they were attached.`
+      : "Image generation returned no output image. No Discord upload was attempted. Do not claim an image was generated or sent.";
   const contentText = llmReady ? status : `${status} The local LLM endpoint is still unavailable.`;
 
   return {
     content: [{ type: "text", text: contentText }],
-    details: { delivery: delivered ? "sent" : "failed", imageCount, llmReady },
+    details: { delivery: delivered ? "sent" : uploadAttempted ? "failed" : "not-attempted", imageCount, llmReady },
     isError: !delivered,
   };
 }
