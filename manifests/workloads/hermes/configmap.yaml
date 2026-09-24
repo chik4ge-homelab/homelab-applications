@@ -44,7 +44,7 @@ data:
               "name": "Ornith 1.5 9B AtomicChat AD-Q4_K-IQ4_XS via local llama.cpp",
               "reasoning": false,
               "input": ["text", "image"],
-              "contextWindow": 131072,
+              "contextWindow": 98304,
               "maxTokens": 8192,
               "cost": {
                 "input": 0,
