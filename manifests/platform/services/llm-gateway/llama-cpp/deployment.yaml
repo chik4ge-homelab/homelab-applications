@@ -82,7 +82,7 @@ spec:
         - off
 
         - -ngl
-        - "31"
+        - all
 
         - --flash-attn
         - "on"
