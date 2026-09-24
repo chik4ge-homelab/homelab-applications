@@ -10,3 +10,6 @@ configMapGenerator:
       - model-cache/ornith.json
       - model-cache/optimizer.json
       - model-cache/diffuser.json
+  - name: llm-request-logger-config
+    files:
+      - request_logger.py=model-cache/request_logger.py
