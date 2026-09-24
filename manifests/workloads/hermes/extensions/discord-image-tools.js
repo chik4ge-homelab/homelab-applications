@@ -66,6 +66,17 @@ function currentDiscordSessionFolder() {
   return folder;
 }
 
+function currentMessageAttachmentPaths() {
+  const paths = new Set();
+  for (const arg of process.argv) {
+    if (arg.startsWith("@")) paths.add(arg.slice(1));
+    for (const match of arg.matchAll(/<file\b[^>]*\bname=(["'])(.*?)\1[^>]*>/gsu)) {
+      paths.add(match[2]);
+    }
+  }
+  return [...paths].filter(Boolean);
+}
+
 async function currentChannelJid() {
   const folder = currentDiscordSessionFolder();
   const { stdout } = await execFileAsync(piscordCli, ["channels"], { timeout: 10000, maxBuffer: 1024 * 1024 });
@@ -131,10 +142,7 @@ export default function (pi) {
     parameters: Type.Object({}, { additionalProperties: false }),
     async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
       try {
-        const inputs = [...new Set(process.argv
-          .filter((arg) => arg.startsWith("@"))
-          .map((arg) => arg.slice(1))
-          .filter(Boolean))];
+        const inputs = currentMessageAttachmentPaths();
         const sources = [];
         for (const input of inputs) {
           const path = resolve(input);
