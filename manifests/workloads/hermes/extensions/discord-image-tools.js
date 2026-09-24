@@ -10,6 +10,15 @@ import { waitForLlmReady } from "./llm-readiness.mjs";
 
 const piRequire = createRequire("/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/dist/cli.js");
 const { Type } = piRequire("typebox");
+const { createJiti } = piRequire("jiti");
+const imageGenRequire = createRequire("/opt/pi/.pi/agent/npm/package.json");
+const imageGenJiti = createJiti(import.meta.url, {
+  moduleCache: false,
+  alias: {
+    "@earendil-works/pi-ai": "/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-ai/dist/index.js",
+    typebox: piRequire.resolve("typebox"),
+  },
+});
 const execFileAsync = promisify(execFile);
 const attachmentsRoot = resolve(process.env.PISCORD_ATTACHMENTS_DIR || "/attachments");
 const outputRoot = resolve(process.env.PI_IMAGE_GENERATION_OUTPUT_DIR || "/opt/pi/.pi/images/generated");
@@ -18,6 +27,15 @@ const maxImageBytes = 20 * 1024 * 1024;
 const maxBatchBytes = 50 * 1024 * 1024;
 const allowedExtensions = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 const stagedDirectories = new Set();
+let imageGenModulePromise;
+
+function imageGenModule() {
+  if (!imageGenModulePromise) {
+    const entry = imageGenRequire.resolve("@amaster.ai/pi-image-gen");
+    imageGenModulePromise = imageGenJiti.import(entry);
+  }
+  return imageGenModulePromise;
+}
 
 function isWithin(root, path) {
   const pathFromRoot = relative(root, path);
@@ -112,14 +130,30 @@ async function rememberSentImages(channelJid, paths) {
 
 async function uploadGeneratedImageFiles(paths) {
   const images = [];
-  for (const path of paths) images.push(await validateImageFile(path, outputRoot, "Generated image"));
-  if (images.reduce((sum, image) => sum + image.size, 0) > maxBatchBytes) {
-    throw new Error("The generated image files exceed 50 MiB in total.");
+  let channelJid;
+  try {
+    for (const path of paths) images.push(await validateImageFile(path, outputRoot, "Generated image"));
+    if (images.reduce((sum, image) => sum + image.size, 0) > maxBatchBytes) {
+      throw new Error("The generated image files exceed 50 MiB in total.");
+    }
+    channelJid = await currentChannelJid();
+  } catch {
+    const error = new Error("Discord image delivery could not be prepared.");
+    error.name = "DiscordImageDeliveryError";
+    error.phase = "prepare";
+    throw error;
   }
-  const channelJid = await currentChannelJid();
+
   const args = ["send", "--channel", channelJid];
   for (const image of images) args.push("--file", image.canonicalPath);
-  await execFileAsync(piscordCli, args, { timeout: 120000, maxBuffer: 1024 * 1024 });
+  try {
+    await execFileAsync(piscordCli, args, { timeout: 120000, maxBuffer: 1024 * 1024 });
+  } catch {
+    const error = new Error("Discord image send failed.");
+    error.name = "DiscordImageDeliveryError";
+    error.phase = "send";
+    throw error;
+  }
   try {
     await rememberSentImages(channelJid, images.map((image) => image.canonicalPath));
   } catch (error) {
@@ -144,7 +178,7 @@ async function latestSentImagePaths() {
   return images.map((image) => image.canonicalPath);
 }
 
-async function stageReferenceImages(inputPaths, cwd) {
+async function stageReferenceImages(inputPaths, cwd, sourceRoot = attachmentsRoot, label = "Reference image") {
   const sourcePaths = [...new Set(inputPaths.map((input) => resolve(input)))];
   if (sourcePaths.length < 1 || sourcePaths.length > 4) {
     throw new Error("At most four reference images can be used at once.");
@@ -152,10 +186,10 @@ async function stageReferenceImages(inputPaths, cwd) {
 
   const sources = [];
   for (const path of sourcePaths) {
-    if (!isWithin(attachmentsRoot, path)) {
-      throw new Error("Reference image is not an attachment from the current Discord message.");
+    if (!isWithin(sourceRoot, path)) {
+      throw new Error(`${label} is outside the allowed directory.`);
     }
-    sources.push(await validateImageFile(path, attachmentsRoot, "Reference image"));
+    sources.push(await validateImageFile(path, sourceRoot, label));
   }
   if (sources.reduce((sum, image) => sum + image.size, 0) > maxBatchBytes) {
     throw new Error("The reference image attachments exceed 50 MiB in total.");
@@ -175,117 +209,126 @@ async function stageReferenceImages(inputPaths, cwd) {
   return new Map(sourcePaths.map((path, index) => [path, paths[index]]));
 }
 
-function toolError(message) {
-  return { content: [{ type: "text", text: message }], details: {}, isError: true };
+function toolError(message, delivery = "not-attempted") {
+  return { content: [{ type: "text", text: `delivery=${delivery}. ${message}` }], details: { delivery }, isError: true };
 }
 
 export default function (pi) {
+  let imageActionUsed = false;
+
   process.once("exit", () => {
     for (const directory of stagedDirectories) {
       try { rmSync(directory, { recursive: true, force: true }); } catch {}
     }
   });
 
-  pi.on("tool_call", async (event, ctx) => {
-    if (event.toolName !== "image_generate") return;
-    event.input.outputDir = outputRoot;
+  pi.registerTool({
+    name: "discord_image_create",
+    label: "画像を生成して送信",
+    description: "画像の新規生成または編集から、現在のDiscordチャンネルへの送信までを1回で行います。新規生成は reference='none'、現在のメッセージに添付された画像を使う場合は 'current_attachment'、直前に送信した画像の編集をユーザーが明示した場合だけ 'last_sent' を選んでください。prompt には画像の内容や変更内容を指定します。添付画像の取得、参照画像の準備、生成、送信は内部で処理します。ファイルパスは渡さず、返信で送信成功を伝えるのは結果が delivery=sent の場合だけにしてください。",
+    promptSnippet: "画像を生成または編集してこのDiscordチャンネルに送信します。参照元はユーザーの意図に従って選び、ファイル処理と送信はツールに任せます。",
+    promptGuidelines: [
+      "画像生成・編集の依頼ごとに1回だけ呼び出す。",
+      "現在のメッセージに添付された画像を使う場合だけ reference=current_attachment を選ぶ。",
+      "直前に送信した画像の編集をユーザーが明示した場合だけ reference=last_sent を選ぶ。",
+      "ファイルパスを引数にせず、内部パスを返信にも出さない。",
+      "結果が delivery=sent の場合だけ送信成功を伝える。",
+    ],
+    parameters: Type.Object({
+      prompt: Type.String({ description: "生成したい画像、または編集で加えたい変更を説明します。" }),
+      reference: Type.Union([
+        Type.Literal("none"),
+        Type.Literal("current_attachment"),
+        Type.Literal("last_sent"),
+      ], { description: "none=新規生成、current_attachment=現在の投稿の添付画像、last_sent=直前に送信した画像の編集。パスではありません。" }),
+      n: Type.Optional(Type.Integer({ minimum: 1, maximum: 4, description: "生成する枚数（1〜4枚）。省略時は1枚です。" })),
+    }, { additionalProperties: false }),
+    executionMode: "sequential",
+    async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+      if (imageActionUsed) {
+        return toolError("An image action already ran for this Discord request. Do not retry it; report the previous result.");
+      }
+      imageActionUsed = true;
 
-    const rawImages = event.input.image;
-    const imagePaths = typeof rawImages === "string"
-      ? [rawImages]
-      : Array.isArray(rawImages)
-        ? rawImages.filter((path) => typeof path === "string")
-        : [];
-    const attachmentPaths = imagePaths.filter((path) => isWithin(attachmentsRoot, resolve(path)));
-    if (attachmentPaths.length === 0) return;
+      let referencePaths = [];
+      try {
+        if (params.reference === "current_attachment") {
+          const sourcePaths = currentMessageAttachmentPaths()
+            .map((path) => resolve(path))
+            .filter((path) => isWithin(attachmentsRoot, path) && allowedExtensions.has(extname(path).toLowerCase()));
+          if (sourcePaths.length === 0) {
+            return toolError("No supported image attachment was found in the current Discord message. Image generation did not run.");
+          }
+          const staged = await stageReferenceImages(sourcePaths, ctx.cwd || process.cwd());
+          referencePaths = [...staged.values()];
+        } else if (params.reference === "last_sent") {
+          const sourcePaths = await latestSentImagePaths();
+          const staged = await stageReferenceImages(sourcePaths, ctx.cwd || process.cwd(), outputRoot, "Previously sent image");
+          referencePaths = [...staged.values()];
+        }
+      } catch (error) {
+        const errorName = error instanceof Error ? error.name : "unknown error";
+        console.error(`[discord-image-tools] Reference preparation failed (${errorName})`);
+        return toolError("The requested reference image could not be prepared. Image generation did not run.");
+      }
 
-    const currentAttachments = new Set(currentMessageAttachmentPaths().map((path) => resolve(path)));
-    if (attachmentPaths.some((path) => !currentAttachments.has(resolve(path)))) {
-      return {
-        block: true,
-        reason: "This image path is not attached to the current Discord message. Do not retry it. For an explicit edit of the immediately previous successful image, use that image's reference path from its successful image_generate result; otherwise ask the user to attach the source image again.",
-      };
-    }
+      let generated;
+      try {
+        const imageGen = await imageGenModule();
+        const settings = imageGen.loadImageGenSettings(ctx.cwd || process.cwd(), ctx.isProjectTrusted());
+        const generateParams = {
+          prompt: params.prompt,
+          outputDir: outputRoot,
+          ...(params.n === undefined ? {} : { n: params.n }),
+          ...(referencePaths.length === 0 ? {} : { image: referencePaths }),
+        };
+        generated = await imageGen.generateImage(generateParams, {
+          cwd: ctx.cwd || process.cwd(),
+          settings,
+          signal,
+        });
+      } catch (error) {
+        const errorName = error instanceof Error ? error.name : "unknown error";
+        console.error(`[discord-image-tools] Image generation failed (${errorName})`);
+        return toolError("Image generation failed. No image was sent to Discord.", "generation-failed");
+      }
 
-    try {
-      const staged = await stageReferenceImages(attachmentPaths, ctx.cwd);
-      const replacePath = (path) => staged.get(resolve(path)) || path;
-      event.input.image = typeof rawImages === "string"
-        ? replacePath(rawImages)
-        : rawImages.map((path) => typeof path === "string" ? replacePath(path) : path);
-    } catch (error) {
-      const errorName = error instanceof Error ? error.name : "unknown error";
-      console.error(`[discord-image-tools] Reference image staging failed (${errorName})`);
-      return {
-        block: true,
-        reason: "The current Discord reference image could not be staged, so image generation did not run. Do not retry this request or claim success; explain the failure briefly in Japanese.",
-      };
-    }
-  });
-
-  pi.on("tool_result", async (event, ctx) => {
-    if (event.toolName !== "image_generate" || event.isError) return;
-
-    return finalizeImageDelivery({
-      details: event.details,
-      signal: ctx.signal,
-      deliverImages: uploadGeneratedImageFiles,
-      waitForLlm: (signal) => waitForLlmReady({
-        baseUrl: process.env.LLM_BASE_URL,
-        apiKey: process.env.LLM_GATEWAY_API_KEY,
+      return finalizeImageDelivery({
+        details: generated,
         signal,
-      }),
-      onError: (operation, error) => {
-        const errorName = error instanceof Error ? error.name : "unknown error";
-        console.error(`[discord-image-tools] ${operation} failed (${errorName})`);
-      },
-    });
-  });
-
-  pi.registerTool({
-    name: "stage_discord_reference_images",
-    label: "Stage Discord reference images",
-    description: "Copy image attachments from the current Discord message into the Pi session directory so image_generate can safely use them as references. Call this for image edits or when the user asks to base a new image on an attached image.",
-    promptSnippet: "For image edits or requests based on attached images, call stage_discord_reference_images first and pass its returned file paths as image_generate.image.",
-    parameters: Type.Object({}, { additionalProperties: false }),
-    async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
-      try {
-        const inputs = currentMessageAttachmentPaths();
-        const sourcePaths = inputs.filter((input) => isWithin(attachmentsRoot, resolve(input)));
-        if (sourcePaths.length === 0) return toolError("No supported image attachments were found in the current Discord message.");
-        const staged = await stageReferenceImages(sourcePaths, ctx.cwd || process.cwd());
-        const paths = [...staged.values()];
-        return {
-          content: [{ type: "text", text: `Reference images staged for image_generate.image:\n${paths.map((path) => `- ${path}`).join("\n")}` }],
-          details: { images: paths },
-        };
-      } catch (error) {
-        return toolError(error instanceof Error ? error.message : "Could not stage the Discord reference images.");
-      }
+        deliverImages: uploadGeneratedImageFiles,
+        waitForLlm: (waitSignal) => waitForLlmReady({
+          baseUrl: process.env.LLM_BASE_URL,
+          apiKey: process.env.LLM_GATEWAY_API_KEY,
+          signal: waitSignal,
+        }),
+        onError: (operation, error) => {
+          const errorName = error instanceof Error ? error.name : "unknown error";
+          console.error(`[discord-image-tools] ${operation} failed (${errorName})`);
+        },
+      });
     },
   });
 
-  pi.registerTool({
-    name: "get_last_sent_image_reference",
-    label: "Get last sent image reference",
-    description: "Retrieve the most recently generated image successfully sent to the current Discord channel, for an explicit follow-up edit of that image.",
-    promptSnippet: "For an explicit edit of the immediately previous image sent by this bot, call this tool and pass its returned path to image_generate.image. Never show the path to the user.",
-    parameters: Type.Object({}, { additionalProperties: false }),
-    async execute() {
-      try {
-        const paths = await latestSentImagePaths();
-        return {
-          content: [{
-            type: "text",
-            text: `Use these references only when the user explicitly asks to edit the most recently sent image. Never show the paths to the user:\n${paths.map((path) => `- ${path}`).join("\n")}`,
-          }],
-          details: { images: paths },
-        };
-      } catch (error) {
-        const errorName = error instanceof Error ? error.name : "unknown error";
-        console.error(`[discord-image-tools] Previous image lookup failed (${errorName})`);
-        return toolError("No successfully sent image is available in the current Discord channel.");
-      }
-    },
+  pi.on("agent_start", () => {
+    imageActionUsed = false;
+    const internalImageTools = new Set([
+      "image_generate",
+      "stage_discord_reference_images",
+      "get_last_sent_image_reference",
+      "discord_image_create",
+    ]);
+    pi.setActiveTools([
+      ...pi.getActiveTools().filter((name) => !internalImageTools.has(name)),
+      "discord_image_create",
+    ]);
+  });
+
+  pi.on("tool_call", (event) => {
+    if (event.toolName !== "image_generate") return;
+    return {
+      block: true,
+      reason: "Use discord_image_create for image requests. It resolves references and sends the image internally; do not call the raw image_generate tool.",
+    };
   });
 }

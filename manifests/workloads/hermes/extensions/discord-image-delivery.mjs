@@ -19,7 +19,7 @@ export function extractGeneratedImagePaths(details, maxImages = 4) {
 export async function finalizeImageDelivery({ details, signal, deliverImages, waitForLlm, onError = () => {} }) {
   let imageCount = 0;
   let delivered = false;
-  let uploadAttempted = false;
+  let uploadError;
   let paths;
   try {
     paths = extractGeneratedImagePaths(details);
@@ -29,12 +29,12 @@ export async function finalizeImageDelivery({ details, signal, deliverImages, wa
   }
 
   if (paths) {
-    uploadAttempted = true;
     try {
       await deliverImages(paths);
       delivered = true;
     } catch (error) {
-      onError("Discord image upload", error);
+      uploadError = error;
+      onError(error?.phase === "prepare" ? "Discord image preparation" : "Discord image upload", error);
     }
   }
 
@@ -48,15 +48,21 @@ export async function finalizeImageDelivery({ details, signal, deliverImages, wa
   }
 
   const status = delivered
-    ? `Generated and sent ${imageCount} image(s) to the current Discord channel.`
-    : uploadAttempted
-      ? `Image generation returned ${imageCount} image(s), but uploading them to Discord failed. Do not claim they were attached.`
-      : "Image generation returned no output image. No Discord upload was attempted. Do not claim an image was generated or sent.";
+    ? `delivery=sent. Successfully sent ${imageCount} image(s) to the current Discord channel.`
+    : !paths
+      ? "delivery=not-attempted. Image generation returned no usable output image; no Discord send was attempted."
+      : uploadError?.phase === "prepare"
+        ? `delivery=preparation-failed. Image generation returned ${imageCount} image(s), but Discord delivery could not be prepared; no send was attempted.`
+        : `delivery=failed. Image generation returned ${imageCount} image(s), but sending them to Discord failed.`;
   const contentText = llmReady ? status : `${status} The local LLM endpoint is still unavailable.`;
 
   return {
     content: [{ type: "text", text: contentText }],
-    details: { delivery: delivered ? "sent" : uploadAttempted ? "failed" : "not-attempted", imageCount, llmReady },
+    details: {
+      delivery: delivered ? "sent" : !paths ? "not-attempted" : uploadError?.phase === "prepare" ? "preparation-failed" : "failed",
+      imageCount,
+      llmReady,
+    },
     isError: !delivered,
   };
 }
