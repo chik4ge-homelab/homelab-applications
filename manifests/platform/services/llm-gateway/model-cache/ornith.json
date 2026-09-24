@@ -1,12 +1,12 @@
 {
   "assets": [
     {
-      "repo_id": "ornith-ai/Ornith-1.5-9B-GGUF",
-      "filename": "Ornith-1.5-9B-Q4_K_M.gguf",
-      "revision": "abdd624b12ebf020b767fff532ff44fe552b28c3",
-      "kind": "hub",
+      "repo_id": "AtomicChat/Ornith-1.5-9B-GGUF",
+      "filename": "Ornith-1.5-9B-AD-Q4_K-IQ4_XS.gguf",
+      "revision": "8fc2368e779489ae43607253fc392ec2acae46f3",
+      "kind": "local",
       "role": "model",
-      "download": false
+      "download": true
     },
     {
       "repo_id": "prithivMLmods/Ornith-1.5-9B-GGUF",

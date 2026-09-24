@@ -1,6 +1,6 @@
 {
   "defaultProvider": "local-llama",
-  "defaultModel": "ornith-1.5-9b-q4_k_m",
+  "defaultModel": "ornith-1.5-9b-ad-q4_k-iq4_xs",
   "defaultThinkingLevel": "off",
   "quietStartup": true,
   "defaultProjectTrust": "never",

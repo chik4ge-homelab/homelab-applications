@@ -58,10 +58,8 @@ spec:
         image: ghcr.io/ggml-org/llama.cpp:server-cuda
         imagePullPolicy: Always
         args:
-        - -hf
-        - ornith-ai/Ornith-1.5-9B-GGUF
-        - --hf-file
-        - Ornith-1.5-9B-Q4_K_M.gguf
+        - -m
+        - /root/.cache/huggingface/Ornith-1.5-9B-AD-Q4_K-IQ4_XS.gguf
         - --mmproj
         - /root/.cache/huggingface/Ornith-1.5-9B.mmproj-q8_0.gguf
         - --image-min-tokens
@@ -69,7 +67,7 @@ spec:
         - --image-max-tokens
         - "1024"
         - --alias
-        - ornith-1.5-9b-q4_k_m
+        - ornith-1.5-9b-ad-q4_k-iq4_xs
         - --chat-template-file
         - /etc/llama/chat_template.jinja
         - --reasoning
@@ -107,13 +105,6 @@ spec:
 
         - -np
         - "1"
-
-        - --spec-type
-        - draft-mtp
-        - --spec-draft-n-max
-        - "8"
-        - --spec-draft-p-min
-        - "0.9"
 
         - --no-warmup
 

@@ -40,11 +40,11 @@ data:
           },
           "models": [
             {
-              "id": "ornith-1.5-9b-q4_k_m",
-              "name": "Ornith 1.5 9B Q4_K_M via local llama.cpp",
+              "id": "ornith-1.5-9b-ad-q4_k-iq4_xs",
+              "name": "Ornith 1.5 9B AtomicChat AD-Q4_K-IQ4_XS via local llama.cpp",
               "reasoning": false,
               "input": ["text", "image"],
-              "contextWindow": 262144,
+              "contextWindow": 65536,
               "maxTokens": 8192,
               "cost": {
                 "input": 0,
