@@ -12,7 +12,7 @@ spec:
       ref: repo
     - repoURL: https://itzg.github.io/minecraft-server-charts/
       chart: minecraft
-      targetRevision: 4.26.4
+      targetRevision: 5.2.0
       helm:
         releaseName: minecraft-vanilla-local
         valueFiles:
