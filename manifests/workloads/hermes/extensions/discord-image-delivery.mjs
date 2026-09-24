@@ -48,13 +48,13 @@ export async function finalizeImageDelivery({ details, signal, deliverImages, wa
   }
 
   const status = delivered
-    ? `delivery=sent. Successfully sent ${imageCount} image(s) to the current Discord channel.`
+    ? `Discordチャンネルに画像を${imageCount}枚送信しました。`
     : !paths
-      ? "delivery=not-attempted. Image generation returned no usable output image; no Discord send was attempted."
+      ? "画像生成ツールから有効な画像を取得できなかったため、Discordには送信していません。"
       : uploadError?.phase === "prepare"
-        ? `delivery=preparation-failed. Image generation returned ${imageCount} image(s), but Discord delivery could not be prepared; no send was attempted.`
-        : `delivery=failed. Image generation returned ${imageCount} image(s), but sending them to Discord failed.`;
-  const contentText = llmReady ? status : `${status} The local LLM endpoint is still unavailable.`;
+        ? `画像は${imageCount}枚生成されましたが、Discordへの送信準備に失敗したため送信していません。`
+        : `画像は${imageCount}枚生成されましたが、Discordへの送信に失敗しました。`;
+  const contentText = llmReady ? status : `${status} 返信生成用のLLMはまだ利用できません。`;
 
   return {
     content: [{ type: "text", text: contentText }],

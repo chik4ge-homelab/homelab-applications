@@ -240,12 +240,19 @@ function filterImageContext(messages) {
   return messages.map((message) => {
     if (message.role === "toolResult" && ["image_generate", "stage_discord_reference_images", "get_last_sent_image_reference"].includes(message.toolName)) {
       const delivery = message.details?.delivery;
-      const status = typeof delivery === "string" ? `delivery=${delivery}` : "delivery=unknown";
+      const status = delivery === "sent"
+        ? "送信済み"
+        : delivery === "failed" || delivery === "preparation-failed" || delivery === "generation-failed"
+          ? "失敗"
+          : "状態不明";
       return {
         ...message,
-        content: [{ type: "text", text: `過去の画像ツール結果（${status}）。内部画像ファイルの参照情報は会話コンテキストから除去済みです。` }],
+        content: [{ type: "text", text: `過去の画像処理結果（${status}）。内部画像ファイルの参照情報は会話コンテキストから除去済みです。` }],
         details: undefined,
       };
+    }
+    if (message.role === "toolResult" && message.toolName === "discord_image_create" && message.details !== undefined) {
+      return { ...message, details: undefined };
     }
 
     const filterText = (source) => {
@@ -298,7 +305,17 @@ function stripInternalImagePaths(text) {
 }
 
 function toolError(message, delivery = "not-attempted") {
-  return { content: [{ type: "text", text: `delivery=${delivery}. ${message}` }], details: { delivery }, isError: true };
+  const status = {
+    "not-attempted": "未実行",
+    "generation-failed": "画像生成失敗",
+    "preparation-failed": "送信準備失敗",
+    failed: "送信失敗",
+  }[delivery] || "状態不明";
+  return {
+    content: [{ type: "text", text: `画像処理結果: ${status}。${message}` }],
+    details: { delivery },
+    isError: true,
+  };
 }
 
 export default function (pi) {
@@ -313,14 +330,14 @@ export default function (pi) {
   pi.registerTool({
     name: "discord_image_create",
     label: "画像を生成して送信",
-    description: "画像の新規生成または編集から、現在のDiscordチャンネルへの送信までを1回で行います。会話中に添付された画像を使う場合は、該当する `<file name=...>` に表示されたファイル名だけを referenceFiles に指定してください。複数の添付画像から、依頼に合うものを選び、必要な画像だけ指定します。直前にこのボットが送信した画像を編集する場合に限り editLastSentImage=true を指定します。添付画像の取得、内部パスの解決、参照画像の準備、生成、送信はプラグインが処理します。内部パスは渡さず、送信成功を伝えるのは結果が delivery=sent の場合だけにしてください。",
+    description: "画像の新規生成または編集から、現在のDiscordチャンネルへの送信までを1回で行います。会話中に添付された画像を使う場合は、該当する `<file name=...>` に表示されたファイル名だけを referenceFiles に指定してください。複数の添付画像から、依頼に合うものを選び、必要な画像だけ指定します。直前にこのボットが送信した画像を編集する場合に限り editLastSentImage=true を指定します。添付画像の取得、内部パスの解決、参照画像の準備、生成、送信はプラグインが処理します。内部パスは渡さず、送信成功はツール結果に「Discordに画像を送信しました」とある場合だけ伝えてください。",
     promptSnippet: "画像を生成または編集してこのDiscordチャンネルに送信します。会話中の添付画像はファイル名で選び、内部パス解決と送信はツールに任せます。",
     promptGuidelines: [
       "画像生成・編集の依頼ごとに1回だけ呼び出す。",
       "会話中の添付画像を使う場合は、ユーザーの依頼と画像内容に合う画像をファイル名で選び、referenceFiles に指定する。",
       "直前に送信した画像の編集をユーザーが明示した場合だけ editLastSentImage=true を指定する。",
       "ファイルパスを引数にせず、内部パスを返信にも出さない。",
-      "結果が delivery=sent の場合だけ送信成功を伝える。",
+      "ツール結果がDiscordへの送信成功を示す場合だけ、送信したと伝える。",
     ],
     parameters: Type.Object({
       prompt: Type.String({ description: "生成したい画像、または編集で加えたい変更を説明します。" }),
@@ -335,7 +352,7 @@ export default function (pi) {
     executionMode: "sequential",
     async execute(_toolCallId, params, signal, _onUpdate, ctx) {
       if (imageActionUsed) {
-        return toolError("An image action already ran for this Discord request. Do not retry it; report the previous result.");
+        return toolError("この依頼では画像処理をすでに実行しています。前回の結果を伝え、再実行しないでください。");
       }
       imageActionUsed = true;
 
@@ -344,13 +361,13 @@ export default function (pi) {
         const pathsByName = sessionImageAttachmentPaths(ctx.sessionManager);
         const requestedNames = params.referenceFiles;
         if (requestedNames.some((name) => typeof name !== "string" || name.length === 0 || /[\\/]/u.test(name) || name === "." || name === "..")) {
-          return toolError("Choose attached images by filename only; internal paths are not accepted.");
+          return toolError("添付画像はファイル名だけで指定してください。内部パスは使えません。");
         }
         const selectedPaths = [];
         for (const name of requestedNames) {
           const matches = [...(pathsByName.get(name) || [])];
-          if (matches.length === 0) return toolError(`No image attachment named ${name} is available in this conversation.`);
-          if (matches.length > 1) return toolError(`The image filename ${name} appears more than once in this conversation; the source is ambiguous.`);
+          if (matches.length === 0) return toolError(`この会話で「${name}」という画像添付を確認できませんでした。`);
+          if (matches.length > 1) return toolError(`「${name}」という名前の画像添付が複数あり、参照元を特定できませんでした。`);
           selectedPaths.push(matches[0]);
         }
         if (selectedPaths.length > 0) {
@@ -359,14 +376,14 @@ export default function (pi) {
         }
         if (params.editLastSentImage) {
           const sourcePaths = await latestSentImagePaths();
-          if (referencePaths.length + sourcePaths.length > 4) return toolError("At most four reference images can be used at once.");
+          if (referencePaths.length + sourcePaths.length > 4) return toolError("参照画像は合計4枚まで指定できます。");
           const staged = await stageReferenceImages(sourcePaths, ctx.cwd || process.cwd(), outputRoot, "Previously sent image");
           referencePaths.push(...sourcePaths.map((path) => staged.get(resolve(path))));
         }
       } catch (error) {
         const errorName = error instanceof Error ? error.name : "unknown error";
         console.error(`[discord-image-tools] Reference preparation failed (${errorName})`);
-        return toolError("The requested reference image could not be prepared. Image generation did not run.");
+        return toolError("参照画像を準備できなかったため、画像生成は実行していません。");
       }
 
       let generated;
@@ -387,7 +404,7 @@ export default function (pi) {
       } catch (error) {
         const errorName = error instanceof Error ? error.name : "unknown error";
         console.error(`[discord-image-tools] Image generation failed (${errorName})`);
-        return toolError("Image generation failed. No image was sent to Discord.", "generation-failed");
+        return toolError("画像生成に失敗したため、Discordには送信していません。", "generation-failed");
       }
 
       return finalizeImageDelivery({
