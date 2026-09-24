@@ -93,7 +93,7 @@ spec:
         - q4_0
 
         - -t
-        - "1"
+        - "4"
 
         - -b
         - "512"
@@ -106,7 +106,9 @@ spec:
         - --spec-type
         - draft-mtp
         - --spec-draft-n-max
-        - "3"
+        - "8"
+        - --spec-draft-p-min
+        - "0.8"
 
         - --no-warmup
 
