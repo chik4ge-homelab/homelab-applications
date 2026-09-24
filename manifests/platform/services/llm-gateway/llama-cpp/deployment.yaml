@@ -162,53 +162,6 @@ spec:
           periodSeconds: 30
           failureThreshold: 6
 
-      - name: request-logger
-        image: python:3.12-slim@sha256:2f17fc044b579bab302c2e8053d4a686e2cb9a83de48e70534b94cd8ebbe06a9
-        imagePullPolicy: IfNotPresent
-        command:
-        - python
-        - /config/request_logger.py
-        env:
-        - name: UPSTREAM_HOST
-          value: 127.0.0.1
-        - name: UPSTREAM_PORT
-          value: "8000"
-        - name: LISTEN_PORT
-          value: "8001"
-        ports:
-        - name: llama-proxy
-          containerPort: 8001
-          protocol: TCP
-        readinessProbe:
-          tcpSocket:
-            port: llama-proxy
-          periodSeconds: 5
-        livenessProbe:
-          tcpSocket:
-            port: llama-proxy
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-            ephemeral-storage: 128Mi
-          limits:
-            memory: 512Mi
-            ephemeral-storage: 2Gi
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-            - ALL
-        volumeMounts:
-        - name: request-logger-config
-          mountPath: /config
-          readOnly: true
-        - name: request-logger-tmp
-          mountPath: /tmp
-
       volumes:
       - name: llama-cpp-cache
         persistentVolumeClaim:
@@ -222,9 +175,3 @@ spec:
       - name: llama-cpp-chat-template
         configMap:
           name: llama-cpp-chat-template
-      - name: request-logger-config
-        configMap:
-          name: llm-request-logger-config
-      - name: request-logger-tmp
-        emptyDir:
-          sizeLimit: 2Gi

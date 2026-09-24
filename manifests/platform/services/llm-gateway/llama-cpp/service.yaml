@@ -9,5 +9,4 @@ spec:
     app.kubernetes.io/name: llm-gateway
   ports:
   - port: 8000
-    targetPort: llama-proxy
-    protocol: TCP
+    targetPort: 8000
