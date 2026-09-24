@@ -76,19 +76,18 @@ spec:
         - "8000"
 
         - -c
-        - "262144"
+        - "65536"
 
         - --fit
         - off
 
         - -ngl
-        - all
+        - "28"
 
         - --flash-attn
         - "on"
 
         - --no-mmproj-offload
-        - --no-kv-offload
 
         - -ctk
         - q4_0
