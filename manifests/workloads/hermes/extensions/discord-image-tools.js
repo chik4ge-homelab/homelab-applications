@@ -209,6 +209,94 @@ async function stageReferenceImages(inputPaths, cwd, sourceRoot = attachmentsRoo
   return new Map(sourcePaths.map((path, index) => [path, paths[index]]));
 }
 
+function sessionImageAttachmentPaths(sessionManager) {
+  const pathsByName = new Map();
+  const addPath = (inputPath) => {
+    if (typeof inputPath !== "string") return;
+    const path = resolve(inputPath);
+    if (!isWithin(attachmentsRoot, path) || !allowedExtensions.has(extname(path).toLowerCase())) return;
+    const name = basename(path);
+    const paths = pathsByName.get(name) || new Set();
+    paths.add(path);
+    pathsByName.set(name, paths);
+  };
+
+  for (const entry of sessionManager.getBranch()) {
+    if (entry.type !== "message" || entry.message?.role !== "user") continue;
+    const content = entry.message.content;
+    const text = typeof content === "string"
+      ? content
+      : Array.isArray(content)
+        ? content.filter((part) => part?.type === "text").map((part) => part.text).join("\n")
+        : "";
+    for (const match of text.matchAll(/<file\b[^>]*\bname=(["'])(.*?)\1[^>]*>/gsu)) addPath(match[2]);
+  }
+
+  for (const path of currentMessageAttachmentPaths()) addPath(path);
+  return pathsByName;
+}
+
+function filterImageContext(messages) {
+  return messages.map((message) => {
+    if (message.role === "toolResult" && ["image_generate", "stage_discord_reference_images", "get_last_sent_image_reference"].includes(message.toolName)) {
+      const delivery = message.details?.delivery;
+      const status = typeof delivery === "string" ? `delivery=${delivery}` : "delivery=unknown";
+      return {
+        ...message,
+        content: [{ type: "text", text: `過去の画像ツール結果（${status}）。内部画像ファイルの参照情報は会話コンテキストから除去済みです。` }],
+        details: undefined,
+      };
+    }
+
+    const filterText = (source) => {
+      let text = source;
+      if (message.role === "user") {
+        text = text.replace(/<file\b[^>]*\bname=(["'])(.*?)\1[^>]*>/gsu, (tag, _quote, inputPath) => {
+          const path = resolve(inputPath);
+          if (!isWithin(attachmentsRoot, path) || !allowedExtensions.has(extname(path).toLowerCase())) return tag;
+          return `<file name="${basename(path)}">`;
+        });
+      }
+      return stripInternalImagePaths(text);
+    };
+
+    if (typeof message.content === "string") {
+      const text = filterText(message.content);
+      return text === message.content ? message : { ...message, content: text };
+    }
+    if (!Array.isArray(message.content)) return message;
+
+    let changed = false;
+    const content = message.content.map((part) => {
+      if (part.type === "text") {
+        const text = filterText(part.text);
+        if (text !== part.text) changed = true;
+        return text === part.text ? part : { ...part, text };
+      }
+      if (message.role === "assistant" && part.type === "toolCall" && part.name === "image_generate" && part.arguments) {
+        const arguments_ = { ...part.arguments };
+        const hadImage = Object.hasOwn(arguments_, "image");
+        const hadOutputDir = Object.hasOwn(arguments_, "outputDir");
+        delete arguments_.image;
+        delete arguments_.outputDir;
+        if (hadImage || hadOutputDir) {
+          changed = true;
+          return { ...part, arguments: arguments_ };
+        }
+      }
+      return part;
+    });
+    return changed ? { ...message, content } : message;
+  });
+}
+
+function stripInternalImagePaths(text) {
+  return text.replace(/(?:\/attachments\/|\/(?:[^/\r\n\s<>"'`()\[\]]+\/)*\.pi\/images\/(?:generated|references)\/)[^\r\n\s<>"'`()\[\]]*/gu, (token) => {
+    const trailingPunctuation = token.match(/[.,!?;:。！？、]+$/u)?.[0] || "";
+    return trailingPunctuation;
+  });
+}
+
 function toolError(message, delivery = "not-attempted") {
   return { content: [{ type: "text", text: `delivery=${delivery}. ${message}` }], details: { delivery }, isError: true };
 }
@@ -225,22 +313,23 @@ export default function (pi) {
   pi.registerTool({
     name: "discord_image_create",
     label: "画像を生成して送信",
-    description: "画像の新規生成または編集から、現在のDiscordチャンネルへの送信までを1回で行います。新規生成は reference='none'、現在のメッセージに添付された画像を使う場合は 'current_attachment'、直前に送信した画像の編集をユーザーが明示した場合だけ 'last_sent' を選んでください。prompt には画像の内容や変更内容を指定します。添付画像の取得、参照画像の準備、生成、送信は内部で処理します。ファイルパスは渡さず、返信で送信成功を伝えるのは結果が delivery=sent の場合だけにしてください。",
-    promptSnippet: "画像を生成または編集してこのDiscordチャンネルに送信します。参照元はユーザーの意図に従って選び、ファイル処理と送信はツールに任せます。",
+    description: "画像の新規生成または編集から、現在のDiscordチャンネルへの送信までを1回で行います。会話中に添付された画像を使う場合は、該当する `<file name=...>` に表示されたファイル名だけを referenceFiles に指定してください。複数の添付画像から、依頼に合うものを選び、必要な画像だけ指定します。直前にこのボットが送信した画像を編集する場合に限り editLastSentImage=true を指定します。添付画像の取得、内部パスの解決、参照画像の準備、生成、送信はプラグインが処理します。内部パスは渡さず、送信成功を伝えるのは結果が delivery=sent の場合だけにしてください。",
+    promptSnippet: "画像を生成または編集してこのDiscordチャンネルに送信します。会話中の添付画像はファイル名で選び、内部パス解決と送信はツールに任せます。",
     promptGuidelines: [
       "画像生成・編集の依頼ごとに1回だけ呼び出す。",
-      "現在のメッセージに添付された画像を使う場合だけ reference=current_attachment を選ぶ。",
-      "直前に送信した画像の編集をユーザーが明示した場合だけ reference=last_sent を選ぶ。",
+      "会話中の添付画像を使う場合は、ユーザーの依頼と画像内容に合う画像をファイル名で選び、referenceFiles に指定する。",
+      "直前に送信した画像の編集をユーザーが明示した場合だけ editLastSentImage=true を指定する。",
       "ファイルパスを引数にせず、内部パスを返信にも出さない。",
       "結果が delivery=sent の場合だけ送信成功を伝える。",
     ],
     parameters: Type.Object({
       prompt: Type.String({ description: "生成したい画像、または編集で加えたい変更を説明します。" }),
-      reference: Type.Union([
-        Type.Literal("none"),
-        Type.Literal("current_attachment"),
-        Type.Literal("last_sent"),
-      ], { description: "none=新規生成、current_attachment=現在の投稿の添付画像、last_sent=直前に送信した画像の編集。パスではありません。" }),
+      referenceFiles: Type.Array(Type.String({ description: "会話中の添付に表示されたファイル名。パスは指定しません。" }), {
+        maxItems: 4,
+        uniqueItems: true,
+        description: "使う添付画像のファイル名を指定します。新規生成なら空配列です。",
+      }),
+      editLastSentImage: Type.Optional(Type.Boolean({ description: "直前にこのボットが送信した画像を編集する場合だけ true。" })),
       n: Type.Optional(Type.Integer({ minimum: 1, maximum: 4, description: "生成する枚数（1〜4枚）。省略時は1枚です。" })),
     }, { additionalProperties: false }),
     executionMode: "sequential",
@@ -252,19 +341,27 @@ export default function (pi) {
 
       let referencePaths = [];
       try {
-        if (params.reference === "current_attachment") {
-          const sourcePaths = currentMessageAttachmentPaths()
-            .map((path) => resolve(path))
-            .filter((path) => isWithin(attachmentsRoot, path) && allowedExtensions.has(extname(path).toLowerCase()));
-          if (sourcePaths.length === 0) {
-            return toolError("No supported image attachment was found in the current Discord message. Image generation did not run.");
-          }
-          const staged = await stageReferenceImages(sourcePaths, ctx.cwd || process.cwd());
-          referencePaths = [...staged.values()];
-        } else if (params.reference === "last_sent") {
+        const pathsByName = sessionImageAttachmentPaths(ctx.sessionManager);
+        const requestedNames = params.referenceFiles;
+        if (requestedNames.some((name) => typeof name !== "string" || name.length === 0 || /[\\/]/u.test(name) || name === "." || name === "..")) {
+          return toolError("Choose attached images by filename only; internal paths are not accepted.");
+        }
+        const selectedPaths = [];
+        for (const name of requestedNames) {
+          const matches = [...(pathsByName.get(name) || [])];
+          if (matches.length === 0) return toolError(`No image attachment named ${name} is available in this conversation.`);
+          if (matches.length > 1) return toolError(`The image filename ${name} appears more than once in this conversation; the source is ambiguous.`);
+          selectedPaths.push(matches[0]);
+        }
+        if (selectedPaths.length > 0) {
+          const staged = await stageReferenceImages(selectedPaths, ctx.cwd || process.cwd());
+          referencePaths = selectedPaths.map((path) => staged.get(resolve(path)));
+        }
+        if (params.editLastSentImage) {
           const sourcePaths = await latestSentImagePaths();
+          if (referencePaths.length + sourcePaths.length > 4) return toolError("At most four reference images can be used at once.");
           const staged = await stageReferenceImages(sourcePaths, ctx.cwd || process.cwd(), outputRoot, "Previously sent image");
-          referencePaths = [...staged.values()];
+          referencePaths.push(...sourcePaths.map((path) => staged.get(resolve(path))));
         }
       } catch (error) {
         const errorName = error instanceof Error ? error.name : "unknown error";
@@ -322,6 +419,11 @@ export default function (pi) {
       ...pi.getActiveTools().filter((name) => !internalImageTools.has(name)),
       "discord_image_create",
     ]);
+  });
+
+  pi.on("context", (event) => {
+    const messages = filterImageContext(event.messages);
+    return { messages };
   });
 
   pi.on("tool_call", (event) => {
