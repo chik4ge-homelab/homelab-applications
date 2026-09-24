@@ -1,6 +1,6 @@
 {
   "defaultProvider": "local-llama",
-  "defaultModel": "gemma-4-12b-it",
+  "defaultModel": "ornith-1.5-9b-q4_k_m",
   "defaultThinkingLevel": "off",
   "quietStartup": true,
   "defaultProjectTrust": "never",

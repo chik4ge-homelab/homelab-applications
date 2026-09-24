@@ -30,7 +30,7 @@ spec:
         - |
           set -eu
           python -m pip install --no-cache-dir 'huggingface_hub==0.36.2'
-          exec python /config/cache.py /config/gemma.json
+          exec python /config/cache.py /config/ornith.json
         env:
         - name: HF_HUB_DISABLE_XET
           value: "1"
@@ -59,17 +59,16 @@ spec:
         imagePullPolicy: Always
         args:
         - -hf
-        - kaitchup/gemma-4-12b-it-GGUF-MoQ
+        - ornith-ai/Ornith-1.5-9B-GGUF
         - --hf-file
-        - MoQ-3.75.gguf
-        - --mmproj-url
-        - https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF/resolve/main/mmproj-gemma-4-12B-it-BF16.gguf
+        - Ornith-1.5-9B-Q4_K_M.gguf
+        - --mmproj-auto
         - --alias
-        - google/gemma-4-12b-it
+        - ornith-1.5-9b-q4_k_m
         - --chat-template-file
         - /etc/llama/chat_template.jinja
         - --chat-template-kwargs
-        - '{"preserve_thinking":true}'
+        - '{"enable_thinking":false}'
 
         - --host
         - 0.0.0.0
@@ -77,18 +76,22 @@ spec:
         - "8000"
 
         - -c
-        - "131072"
+        - "262144"
 
-        - -ngl
-        - all
+        - --fit
+        - on
+        - --fit-target
+        - "512"
 
         - --flash-attn
         - "on"
 
+        - --no-mmproj-offload
+
         - -ctk
-        - q8_0
+        - q4_0
         - -ctv
-        - q8_0
+        - q4_0
 
         - -b
         - "512"
@@ -125,10 +128,10 @@ spec:
         resources:
           requests:
             cpu: "2"
-            memory: 4Gi
+            memory: 8Gi
             nvidia.com/gpu: "1"
           limits:
-            memory: 4Gi
+            memory: 10Gi
             nvidia.com/gpu: "1"
 
         volumeMounts:

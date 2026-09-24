@@ -40,11 +40,11 @@ data:
           },
           "models": [
             {
-              "id": "gemma-4-12b-it",
-              "name": "Gemma 4 12B IT via local llama.cpp",
+              "id": "ornith-1.5-9b-q4_k_m",
+              "name": "Ornith 1.5 9B Q4_K_M via local llama.cpp",
               "reasoning": false,
               "input": ["text", "image"],
-              "contextWindow": 131072,
+              "contextWindow": 262144,
               "maxTokens": 8192,
               "cost": {
                 "input": 0,

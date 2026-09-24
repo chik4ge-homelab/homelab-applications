@@ -1,0 +1,20 @@
+{
+  "assets": [
+    {
+      "repo_id": "ornith-ai/Ornith-1.5-9B-GGUF",
+      "filename": "Ornith-1.5-9B-Q4_K_M.gguf",
+      "revision": "abdd624b12ebf020b767fff532ff44fe552b28c3",
+      "kind": "hub",
+      "role": "model",
+      "download": false
+    },
+    {
+      "repo_id": "ornith-ai/Ornith-1.5-9B-GGUF",
+      "filename": "mmproj-Ornith-1.5-9B-BF16.gguf",
+      "revision": "abdd624b12ebf020b767fff532ff44fe552b28c3",
+      "kind": "hub",
+      "role": "model",
+      "download": false
+    }
+  ]
+}
