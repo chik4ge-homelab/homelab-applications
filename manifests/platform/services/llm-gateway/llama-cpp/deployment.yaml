@@ -67,8 +67,8 @@ spec:
         - ornith-1.5-9b-q4_k_m
         - --chat-template-file
         - /etc/llama/chat_template.jinja
-        - --chat-template-kwargs
-        - '{"enable_thinking":false}'
+        - --reasoning
+        - off
 
         - --host
         - 0.0.0.0
@@ -77,6 +77,9 @@ spec:
 
         - -c
         - "262144"
+
+        - --fit
+        - off
 
         - -ngl
         - all
@@ -106,9 +109,9 @@ spec:
         - --spec-type
         - draft-mtp
         - --spec-draft-n-max
-        - "16"
+        - "8"
         - --spec-draft-p-min
-        - "0.8"
+        - "0.9"
 
         - --no-warmup
 
