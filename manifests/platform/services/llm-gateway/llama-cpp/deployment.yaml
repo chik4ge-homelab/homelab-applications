@@ -92,6 +92,9 @@ spec:
         - -ctv
         - q4_0
 
+        - -t
+        - "4"
+
         - -b
         - "512"
         - -ub
@@ -99,6 +102,11 @@ spec:
 
         - -np
         - "1"
+
+        - --spec-type
+        - draft-mtp
+        - --spec-draft-n-max
+        - "3"
 
         - --no-warmup
 
