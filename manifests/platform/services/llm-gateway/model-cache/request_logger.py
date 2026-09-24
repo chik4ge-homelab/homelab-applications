@@ -146,6 +146,28 @@ def connection_header_tokens(headers) -> set[str]:
     return tokens
 
 
+def read_response_chunk(response: http.client.HTTPResponse) -> bytes:
+    if response.chunked:
+        # HTTPResponse.read(64 KiB) can combine many small SSE frames before returning.
+        if not response.chunk_left:
+            chunk_left = response._get_chunk_left()
+            if chunk_left is None:
+                return b""
+        else:
+            chunk_left = response.chunk_left
+        return response.read(min(READ_SIZE, chunk_left))
+
+    if response.fp is None:
+        return b""
+    if response.length is not None:
+        if response.length == 0:
+            return b""
+        chunk = response.fp.read1(min(READ_SIZE, response.length))
+        response.length -= len(chunk)
+        return chunk
+    return response.fp.read1(READ_SIZE)
+
+
 class RequestLoggerProxy(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     server_version = "llm-gateway-request-logger"
@@ -269,7 +291,7 @@ class RequestLoggerProxy(BaseHTTPRequestHandler):
 
             if not no_response_body:
                 try:
-                    while chunk := upstream_response.read(READ_SIZE):
+                    while chunk := read_response_chunk(upstream_response):
                         response_body.write(chunk)
                         response_bytes += len(chunk)
                         try:
