@@ -62,7 +62,8 @@ spec:
         - ornith-ai/Ornith-1.5-9B-GGUF
         - --hf-file
         - Ornith-1.5-9B-Q4_K_M.gguf
-        - --mmproj-auto
+        - --mmproj
+        - /root/.cache/huggingface/Ornith-1.5-9B.mmproj-q8_0.gguf
         - --alias
         - ornith-1.5-9b-q4_k_m
         - --chat-template-file

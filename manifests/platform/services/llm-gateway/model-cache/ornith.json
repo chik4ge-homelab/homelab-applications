@@ -9,12 +9,12 @@
       "download": false
     },
     {
-      "repo_id": "ornith-ai/Ornith-1.5-9B-GGUF",
-      "filename": "mmproj-Ornith-1.5-9B-BF16.gguf",
-      "revision": "abdd624b12ebf020b767fff532ff44fe552b28c3",
-      "kind": "hub",
+      "repo_id": "prithivMLmods/Ornith-1.5-9B-GGUF",
+      "filename": "Ornith-1.5-9B.mmproj-q8_0.gguf",
+      "revision": "ddc7e3780e1f46434595d274487551e0d5bee1a2",
+      "kind": "local",
       "role": "model",
-      "download": false
+      "download": true
     }
   ]
 }
