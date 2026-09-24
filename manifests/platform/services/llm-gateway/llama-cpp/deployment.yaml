@@ -87,8 +87,6 @@ spec:
         - --flash-attn
         - "on"
 
-        - --no-mmproj-offload
-
         - -ctk
         - q4_0
         - -ctv
