@@ -13,4 +13,5 @@ configMapGenerator:
       - settings.json=agent/settings.json
       - SYSTEM.md=agent/SYSTEM.md
       - discord-image-tools.js=extensions/discord-image-tools.js
+      - discord-image-delivery.mjs=extensions/discord-image-delivery.mjs
       - llm-readiness.mjs=extensions/llm-readiness.mjs

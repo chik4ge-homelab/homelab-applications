@@ -4,6 +4,7 @@ import { copyFile, lstat, mkdir, mkdtemp, open, realpath } from "node:fs/promise
 import { basename, extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { createRequire } from "node:module";
 import { promisify } from "node:util";
+import { finalizeImageDelivery } from "./discord-image-delivery.mjs";
 import { waitForLlmReady } from "./llm-readiness.mjs";
 
 const piRequire = createRequire("/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/dist/cli.js");
@@ -76,6 +77,18 @@ async function currentChannelJid() {
   throw new Error("Could not map the current Discord session to a channel.");
 }
 
+async function uploadGeneratedImageFiles(paths) {
+  const images = [];
+  for (const path of paths) images.push(await validateImageFile(path, outputRoot, "Generated image"));
+  if (images.reduce((sum, image) => sum + image.size, 0) > maxBatchBytes) {
+    throw new Error("The generated image files exceed 50 MiB in total.");
+  }
+  const channelJid = await currentChannelJid();
+  const args = ["send", "--channel", channelJid];
+  for (const image of images) args.push("--file", image.canonicalPath);
+  await execFileAsync(piscordCli, args, { timeout: 120000, maxBuffer: 1024 * 1024 });
+}
+
 function toolError(message) {
   return { content: [{ type: "text", text: message }], details: {}, isError: true };
 }
@@ -87,13 +100,26 @@ export default function (pi) {
     }
   });
 
+  pi.on("tool_call", (event) => {
+    if (event.toolName === "image_generate") event.input.outputDir = outputRoot;
+  });
+
   pi.on("tool_result", async (event, ctx) => {
     if (event.toolName !== "image_generate" || event.isError) return;
 
-    await waitForLlmReady({
-      baseUrl: process.env.LLM_BASE_URL,
-      apiKey: process.env.LLM_GATEWAY_API_KEY,
+    return finalizeImageDelivery({
+      details: event.details,
       signal: ctx.signal,
+      deliverImages: uploadGeneratedImageFiles,
+      waitForLlm: (signal) => waitForLlmReady({
+        baseUrl: process.env.LLM_BASE_URL,
+        apiKey: process.env.LLM_GATEWAY_API_KEY,
+        signal,
+      }),
+      onError: (operation, error) => {
+        const errorName = error instanceof Error ? error.name : "unknown error";
+        console.error(`[discord-image-tools] ${operation} failed (${errorName})`);
+      },
     });
   });
 
@@ -138,41 +164,6 @@ export default function (pi) {
         };
       } catch (error) {
         return toolError(error instanceof Error ? error.message : "Could not stage the Discord reference images.");
-      }
-    },
-  });
-
-  pi.registerTool({
-    name: "send_generated_images_to_discord",
-    label: "Send generated images to Discord",
-    description: "Upload generated image files from the configured Pi image output directory to the Discord channel for the current session. Use only after image_generate succeeds.",
-    promptSnippet: "After image_generate succeeds, call send_generated_images_to_discord with every generated output path before telling the user the image is ready.",
-    parameters: Type.Object({
-      images: Type.Array(Type.String({ description: "Absolute path returned by image_generate." }), {
-        minItems: 1,
-        maxItems: 4,
-        description: "Image paths returned by image_generate.",
-      }),
-    }, { additionalProperties: false }),
-    async execute(_toolCallId, params) {
-      try {
-        const uniquePaths = [...new Set(params.images)];
-        if (uniquePaths.length !== params.images.length) throw new Error("Duplicate image paths are not allowed.");
-        const images = [];
-        for (const path of uniquePaths) images.push(await validateImageFile(path, outputRoot, "Generated image"));
-        if (images.reduce((sum, image) => sum + image.size, 0) > maxBatchBytes) {
-          throw new Error("The generated image files exceed 50 MiB in total.");
-        }
-        const channelJid = await currentChannelJid();
-        const args = ["send", "--channel", channelJid];
-        for (const path of uniquePaths) args.push("--file", path);
-        await execFileAsync(piscordCli, args, { timeout: 120000, maxBuffer: 1024 * 1024 });
-        return {
-          content: [{ type: "text", text: `Sent ${uniquePaths.length} generated image(s) to the current Discord channel.` }],
-          details: { count: uniquePaths.length },
-        };
-      } catch (error) {
-        return toolError(error instanceof Error ? error.message : "Could not send the generated images to Discord.");
       }
     },
   });
