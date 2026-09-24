@@ -78,15 +78,14 @@ spec:
         - -c
         - "262144"
 
-        - --fit
-        - on
-        - --fit-target
-        - "512"
+        - -ngl
+        - all
 
         - --flash-attn
         - "on"
 
         - --no-mmproj-offload
+        - --no-kv-offload
 
         - -ctk
         - q4_0
