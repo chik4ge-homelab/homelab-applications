@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: webui
-          image: ghcr.io/chik4ge-homelab/image-generation-webui@sha256:bd7da896d264f12c168689d439bf92ba30c0efe0b1b263e7c344591e9b2eb64a
+          image: ghcr.io/chik4ge-homelab/image-generation-webui@sha256:0d62e85ed7d648311a04e0b4dcf3575fe20c22ba9ddd86aa662c62dc80d023fd
           imagePullPolicy: IfNotPresent
           env:
             - name: IMAGE_API_BASE_URL
