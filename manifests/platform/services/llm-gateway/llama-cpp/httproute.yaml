@@ -94,13 +94,49 @@ spec:
         value: /v1/mcp
     - path:
         type: PathPrefix
+        value: /.well-known/oauth-authorization-server
+    - path:
+        type: PathPrefix
+        value: /.well-known/oauth-protected-resource
+    - path:
+        type: PathPrefix
+        value: /authorize/mcp-session
+    - path:
+        type: PathPrefix
         value: /v1/agents
+    - path:
+        type: PathPrefix
+        value: /v1beta/agents
+    - path:
+        type: PathPrefix
+        value: /a2a
+    - path:
+        type: PathPrefix
+        value: /v1/a2a
+    - path:
+        type: PathPrefix
+        value: /agent
     - path:
         type: PathPrefix
         value: /v1/vector_stores
     - path:
+        type: PathPrefix
+        value: /v1/vector_store
+    - path:
+        type: PathPrefix
+        value: /toolset
+    - path:
+        type: PathPrefix
+        value: /public/mcp_hub
+    - path:
+        type: PathPrefix
+        value: /public/agent_hub
+    - path:
+        type: PathPrefix
+        value: /public/agents
+    - path:
         type: RegularExpression
-        value: ^/[^/]+/mcp(/.*)?$
+        value: ^/[^/]+/(mcp|authorize|register|token)(/.*)?$
     backendRefs:
     - name: image-generation-webui
       port: 3000
