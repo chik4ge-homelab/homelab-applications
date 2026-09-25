@@ -46,6 +46,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secrets
                   key: PROXY_VIEWER_EMAIL
+            - name: PROXY_VIEWER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: PROXY_VIEWER_PASSWORD
             - name: PROXY_VIEWER_API_KEY
               valueFrom:
                 secretKeyRef:

@@ -98,6 +98,17 @@ def ensure_viewer_user() -> None:
     else:
         raise RuntimeError("could not check read-only UI user")
 
+    password = os.environ["PROXY_VIEWER_PASSWORD"]
+    if not password:
+        raise RuntimeError("read-only UI user password is missing")
+    status, _ = request(
+        "POST",
+        "/user/update",
+        {"user_id": VIEWER_USER_ID, "password": password},
+    )
+    if status not in (200, 201):
+        raise RuntimeError("could not set read-only UI user password")
+
     api_key = os.environ["PROXY_VIEWER_API_KEY"]
     status, _ = key_info(api_key)
     if status == 200:
