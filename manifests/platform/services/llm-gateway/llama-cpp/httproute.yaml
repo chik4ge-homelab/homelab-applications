@@ -85,10 +85,32 @@ spec:
   - matches:
     - path:
         type: PathPrefix
+        value: /mcp
+    - path:
+        type: PathPrefix
+        value: /mcp-rest
+    - path:
+        type: PathPrefix
+        value: /v1/mcp
+    - path:
+        type: PathPrefix
+        value: /v1/agents
+    - path:
+        type: PathPrefix
+        value: /v1/vector_stores
+    - path:
+        type: RegularExpression
+        value: ^/[^/]+/mcp(/.*)?$
+    backendRefs:
+    - name: image-generation-webui
+      port: 3000
+  - matches:
+    - path:
+        type: PathPrefix
         value: /
     timeouts:
       request: 10m
       backendRequest: 10m
     backendRefs:
-    - name: llama-cpp-api
-      port: 8000
+    - name: litellm-proxy
+      port: 4000

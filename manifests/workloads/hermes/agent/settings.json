@@ -19,7 +19,7 @@
       "image-generation-gateway": {
         "api": "openai",
         "baseUrl": "${IMAGE_GENERATION_BASE_URL}",
-        "apiKey": "${LLM_GATEWAY_API_KEY}",
+        "apiKey": "${IMAGE_GENERATION_API_KEY}",
         "name": "Image Generation Gateway",
         "models": [
           {

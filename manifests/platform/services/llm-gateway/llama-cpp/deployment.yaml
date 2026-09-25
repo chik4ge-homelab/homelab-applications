@@ -15,6 +15,7 @@ spec:
     metadata:
       annotations:
         descheduler.alpha.kubernetes.io/prefer-no-eviction: "true"
+        homelab.chik4ge.me/secret-generation: "2"
       labels:
         app.kubernetes.io/name: llm-gateway
     spec:

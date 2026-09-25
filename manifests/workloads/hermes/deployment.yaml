@@ -72,7 +72,12 @@ spec:
               name: hermes-llm-gateway
               key: LLM_GATEWAY_API_KEY
         - name: LLM_BASE_URL
-          value: http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1
+          value: http://litellm-proxy.llm-gateway.svc.cluster.local:4000/v1
+        - name: IMAGE_GENERATION_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hermes-image-generation
+              key: IMAGE_GENERATION_API_KEY
         - name: IMAGE_GENERATION_BASE_URL
           value: http://image-generation-api.llm-gateway.svc.cluster.local:8080/v1
         - name: PI_IMAGE_GENERATION_OUTPUT_DIR

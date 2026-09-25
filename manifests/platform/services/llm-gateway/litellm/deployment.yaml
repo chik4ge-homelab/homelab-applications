@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm-proxy
+  labels:
+    app.kubernetes.io/name: litellm-proxy
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: litellm-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: litellm-proxy
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: discover-upstream-models
+          image: ghcr.io/berriai/litellm-non_root@sha256:ce9eec5907c9828706183dc9b80962f932ad2e34171fc8c7f131e3deda439f36
+          imagePullPolicy: IfNotPresent
+          command:
+            - python
+            - /scripts/discover_models.py
+          env:
+            - name: LLAMA_CPP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-gateway-api-key
+                  key: api-key
+            - name: LITELLM_CONFIG_PATH
+              value: /runtime/config.yaml
+          resources:
+            requests:
+              cpu: 25m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /runtime
+            - name: litellm-scripts
+              mountPath: /scripts
+              readOnly: true
+            - name: model-cache-config
+              mountPath: /model-cache-config
+              readOnly: true
+      containers:
+        - name: proxy
+          image: ghcr.io/berriai/litellm-non_root@sha256:ce9eec5907c9828706183dc9b80962f932ad2e34171fc8c7f131e3deda439f36
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config
+            - /runtime/config.yaml
+            - --port
+            - "4000"
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          env:
+            - name: LITELLM_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: LITELLM_MASTER_KEY
+            - name: LITELLM_SALT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: LITELLM_SALT_KEY
+            - name: LITELLM_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: LITELLM_DB_USERNAME
+            - name: LITELLM_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: LITELLM_DB_PASSWORD
+            - name: DATABASE_URL
+              value: postgresql://$(LITELLM_DB_USERNAME):$(LITELLM_DB_PASSWORD)@cloudnative-pg-cluster-rw.cnpg-database.svc.cluster.local:5432/litellm?sslmode=require
+            - name: LITELLM_S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: llm-api-logs
+                  key: AWS_ACCESS_KEY_ID
+            - name: LITELLM_S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-api-logs
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: LLAMA_CPP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-gateway-api-key
+                  key: api-key
+            - name: DO_NOT_TRACK
+              value: "true"
+            - name: MAX_BASE64_LENGTH_FOR_LOGGING
+              value: "0"
+            - name: DEFAULT_S3_BATCH_SIZE
+              value: "1"
+            - name: DEFAULT_S3_FLUSH_INTERVAL_SECONDS
+              value: "1"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /runtime
+              readOnly: true
+            - name: litellm-scripts
+              mountPath: /scripts
+              readOnly: true
+          startupProbe:
+            httpGet:
+              path: /health/liveliness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: runtime-config
+          emptyDir: {}
+        - name: litellm-scripts
+          configMap:
+            name: litellm-scripts
+        - name: model-cache-config
+          configMap:
+            name: llm-gateway-model-cache

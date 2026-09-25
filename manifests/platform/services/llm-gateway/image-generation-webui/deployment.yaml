@@ -12,6 +12,8 @@ spec:
       app.kubernetes.io/name: image-generation-webui
   template:
     metadata:
+      annotations:
+        homelab.chik4ge.me/secret-generation: "2"
       labels:
         app.kubernetes.io/name: image-generation-webui
         app.kubernetes.io/part-of: llm-gateway

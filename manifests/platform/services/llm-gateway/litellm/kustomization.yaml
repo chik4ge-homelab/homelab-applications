@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - externalsecret.yaml
+  - object-store.yaml
+  - networkpolicy.yaml
+  - bootstrap-job.yaml
+  - lifecycle-cronjob.yaml
+
+configMapGenerator:
+  - name: litellm-scripts
+    files:
+      - scripts/discover_models.py
+      - scripts/bootstrap.py
+      - scripts/apply_bucket_lifecycle.py

@@ -25,10 +25,10 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: llm-gateway
-            k8s:app.kubernetes.io/name: llm-gateway
+            k8s:app.kubernetes.io/name: litellm-proxy
       toPorts:
         - ports:
-            - port: "8000"
+            - port: "4000"
               protocol: TCP
     - toEndpoints:
         - matchLabels:

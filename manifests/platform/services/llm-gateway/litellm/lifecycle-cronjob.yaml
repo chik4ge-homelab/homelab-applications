@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: litellm-audit-bucket-lifecycle
+  labels:
+    app.kubernetes.io/name: litellm-proxy
+spec:
+  schedule: "17 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: litellm-proxy
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 120
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: litellm-proxy
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: set-lifecycle
+              image: ghcr.io/berriai/litellm-non_root@sha256:ce9eec5907c9828706183dc9b80962f932ad2e34171fc8c7f131e3deda439f36
+              imagePullPolicy: IfNotPresent
+              command:
+                - python
+                - /scripts/apply_bucket_lifecycle.py
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: llm-api-logs
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: llm-api-logs
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: AWS_DEFAULT_REGION
+                  value: us-east-1
+                - name: AWS_EC2_METADATA_DISABLED
+                  value: "true"
+                - name: BUCKET_NAME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: llm-api-logs
+                      key: BUCKET_NAME
+                - name: S3_ENDPOINT_URL
+                  value: http://external-rgw-backend.rook-ceph.svc.cluster.local:7480
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: litellm-scripts
+                  mountPath: /scripts
+                  readOnly: true
+          volumes:
+            - name: litellm-scripts
+              configMap:
+                name: litellm-scripts

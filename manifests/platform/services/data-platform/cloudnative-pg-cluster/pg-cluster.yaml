@@ -18,6 +18,10 @@ spec:
         login: true
         passwordSecret:
           name: immich-db-credentials
+      - name: litellm_app
+        login: true
+        passwordSecret:
+          name: litellm-db-credentials
   storage:
     storageClass: ceph-rbd
     size: 20Gi

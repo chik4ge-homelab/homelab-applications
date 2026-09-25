@@ -1,0 +1,88 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: litellm-proxy
+  labels:
+    app.kubernetes.io/name: litellm-proxy
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: litellm-proxy
+  ingress:
+    - fromEntities:
+        - host
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: envoy-gateway
+            k8s:app.kubernetes.io/name: envoy
+            k8s:gateway.envoyproxy.io/owning-gateway-name: envoy-gateway-internal
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hermes
+            k8s:app.kubernetes.io/name: pi-discord-agent
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: litellm-proxy
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: llm-gateway
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: cnpg-database
+            k8s:cnpg.io/cluster: cloudnative-pg-cluster
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toServices:
+        - k8sService:
+            serviceName: external-rgw-backend
+            namespace: rook-ceph
+      toPorts:
+        - ports:
+            - port: "7480"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: litellm-proxy
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
