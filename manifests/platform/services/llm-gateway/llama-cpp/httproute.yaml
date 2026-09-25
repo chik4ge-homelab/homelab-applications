@@ -15,6 +15,16 @@ spec:
   - matches:
     - path:
         type: PathPrefix
+        value: /api/images
+    timeouts:
+      request: 65m
+      backendRequest: 65m
+    backendRefs:
+    - name: image-generation-webui
+      port: 3000
+  - matches:
+    - path:
+        type: PathPrefix
         value: /api
     backendRefs:
     - name: image-generation-webui
