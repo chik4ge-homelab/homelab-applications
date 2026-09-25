@@ -13,6 +13,8 @@ spec:
       app.kubernetes.io/name: litellm-proxy
   template:
     metadata:
+      annotations:
+        homelab.chik4ge.me/secret-generation: "3"
       labels:
         app.kubernetes.io/name: litellm-proxy
     spec:
