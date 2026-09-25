@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - llama-cpp
   - image-generation
+  - image-generation-webui
 configMapGenerator:
   - name: llm-gateway-model-cache
     files:

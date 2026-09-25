@@ -15,6 +15,46 @@ spec:
   - matches:
     - path:
         type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: image-generation-webui
+      port: 3000
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /_next
+    backendRefs:
+    - name: image-generation-webui
+      port: 3000
+  - matches:
+    - path:
+        type: Exact
+        value: /image-studio
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /
+    backendRefs:
+    - name: image-generation-webui
+      port: 3000
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /image-studio/
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+    backendRefs:
+    - name: image-generation-webui
+      port: 3000
+  - matches:
+    - path:
+        type: PathPrefix
         value: /v1/images/generations
     timeouts:
       request: 65m

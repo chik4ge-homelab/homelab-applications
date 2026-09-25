@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-generation-webui
+  labels:
+    app.kubernetes.io/name: image-generation-webui
+    app.kubernetes.io/part-of: llm-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: image-generation-webui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: image-generation-webui
+        app.kubernetes.io/part-of: llm-gateway
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: webui
+          image: ghcr.io/chik4ge-homelab/image-generation-webui@sha256:3d093233c5bb8a721b65417df2a01a175f1e9848353f49cedc1072c7c9c1a610
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: IMAGE_API_BASE_URL
+              value: http://image-generation-api.llm-gateway.svc.cluster.local:8080/v1
+            - name: IMAGE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: llm-gateway-api-key
+                  key: api-key
+            - name: IMAGE_MODEL
+              value: gpt-image-1
+            - name: APP_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: llm-gateway-api-key
+                  key: api-key
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /api/config
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /api/config
+              port: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+  strategy:
+    type: RollingUpdate
