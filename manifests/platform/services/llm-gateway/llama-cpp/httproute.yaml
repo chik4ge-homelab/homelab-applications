@@ -17,8 +17,8 @@ spec:
         type: PathPrefix
         value: /api/images
     timeouts:
-      request: 65m
-      backendRequest: 65m
+      request: 0s
+      backendRequest: 0s
     backendRefs:
     - name: image-generation-webui
       port: 3000
@@ -67,8 +67,8 @@ spec:
         type: PathPrefix
         value: /v1/images/generations
     timeouts:
-      request: 65m
-      backendRequest: 65m
+      request: 0s
+      backendRequest: 0s
     backendRefs:
     - name: image-generation-api
       port: 8080
@@ -77,8 +77,8 @@ spec:
         type: PathPrefix
         value: /v1/images/edits
     timeouts:
-      request: 65m
-      backendRequest: 65m
+      request: 0s
+      backendRequest: 0s
     backendRefs:
     - name: image-generation-api
       port: 8080

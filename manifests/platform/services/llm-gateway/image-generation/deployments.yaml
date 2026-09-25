@@ -37,6 +37,8 @@ spec:
                 secretKeyRef:
                   name: llm-gateway-api-key
                   key: api-key
+            - name: REQUEST_HEARTBEAT_INTERVAL_SECONDS
+              value: "15"
           ports:
             - name: http
               containerPort: 8080
@@ -101,6 +103,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: LLM_RESTORE_TIMEOUT_SECONDS
               value: "300"
+            - name: REQUEST_LEASE_TIMEOUT_SECONDS
+              value: "60"
           resources:
             requests:
               cpu: 100m

@@ -56,6 +56,9 @@ spec:
                 completedAt:
                   type: string
                   format: date-time
+                lastHeartbeatAt:
+                  type: string
+                  format: date-time
                 serverJobName:
                   type: string
                   maxLength: 63
