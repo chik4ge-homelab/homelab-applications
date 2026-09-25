@@ -58,7 +58,7 @@ def build_config(model_ids: list[str]) -> dict:
         "general_settings": {
             "ui_access_mode": "admin_only",
             "store_model_in_db": True,
-            "store_prompts_in_spend_logs": False,
+            "store_prompts_in_spend_logs": True,
             "maximum_spend_logs_retention_period": "30d",
             "maximum_spend_logs_retention_interval": "1d",
             "database_connection_pool_limit": 5,

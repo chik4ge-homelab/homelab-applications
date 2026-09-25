@@ -117,6 +117,8 @@ spec:
               value: "true"
             - name: MAX_BASE64_LENGTH_FOR_LOGGING
               value: "0"
+            - name: MAX_STRING_LENGTH_PROMPT_IN_DB
+              value: "10485760"
             - name: DEFAULT_S3_BATCH_SIZE
               value: "1"
             - name: DEFAULT_S3_FLUSH_INTERVAL_SECONDS
