@@ -24,19 +24,12 @@ spec:
           type: RuntimeDefault
       containers:
         - name: webui
-          image: ghcr.io/chik4ge-homelab/image-generation-webui@sha256:3d093233c5bb8a721b65417df2a01a175f1e9848353f49cedc1072c7c9c1a610
+          image: ghcr.io/chik4ge-homelab/image-generation-webui@sha256:b611cea5b177eddbda3a3796ca365676a2ad2e3967299e1653ce159c68670c8f
           imagePullPolicy: IfNotPresent
           env:
             - name: IMAGE_API_BASE_URL
               value: http://image-generation-api.llm-gateway.svc.cluster.local:8080/v1
             - name: IMAGE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: llm-gateway-api-key
-                  key: api-key
-            - name: IMAGE_MODEL
-              value: gpt-image-1
-            - name: APP_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: llm-gateway-api-key
