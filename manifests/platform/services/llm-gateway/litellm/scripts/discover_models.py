@@ -57,6 +57,7 @@ def build_config(model_ids: list[str]) -> dict:
         ],
         "general_settings": {
             "ui_access_mode": "admin_only",
+            "disable_env_credential_login": True,
             "store_model_in_db": True,
             "store_prompts_in_spend_logs": True,
             "maximum_spend_logs_retention_period": "30d",
