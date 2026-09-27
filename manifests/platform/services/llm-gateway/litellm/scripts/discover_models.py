@@ -93,7 +93,7 @@ def build_config(model_ids: list[str]) -> dict:
                     "path": "/v1/systemone",
                     "target": f"{JULIA_API_BASE}/systemone",
                     "methods": ["POST"],
-                    "auth": False,
+                    "auth": True,
                     "forward_headers": False,
                     "timeout": 300,
                 }
