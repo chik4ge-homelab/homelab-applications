@@ -5,6 +5,7 @@ resources:
   - litellm
   - image-generation
   - image-generation-webui
+  - julia-systemone-api
 configMapGenerator:
   - name: llm-gateway-model-cache
     files:
@@ -12,3 +13,6 @@ configMapGenerator:
       - model-cache/ornith.json
       - model-cache/optimizer.json
       - model-cache/diffuser.json
+  - name: julia-systemone-model-cache
+    files:
+      - model-cache/julia-1.json

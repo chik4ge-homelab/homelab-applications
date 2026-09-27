@@ -1,0 +1,12 @@
+{
+  "assets": [
+    {
+      "repo_id": "SupersonicLabs/Julia-1",
+      "filename": "model.safetensors",
+      "revision": "a85b127321d580d65176c89ced8273f305745d85",
+      "kind": "local",
+      "role": "model",
+      "download": true
+    }
+  ]
+}

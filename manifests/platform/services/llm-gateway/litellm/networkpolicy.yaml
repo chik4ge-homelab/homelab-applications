@@ -86,3 +86,11 @@ spec:
         - ports:
             - port: "4000"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: julia-systemone-api
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

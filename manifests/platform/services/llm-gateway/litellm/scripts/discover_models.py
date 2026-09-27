@@ -8,6 +8,8 @@ import urllib.request
 
 UPSTREAM_MODELS_URL = "http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1/models"
 UPSTREAM_API_BASE = "http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1"
+JULIA_API_BASE = "http://julia-systemone-api.llm-gateway.svc.cluster.local:8080/v1"
+JULIA_API_KEY_PLACEHOLDER = "systemone-only-no-chat-endpoint"
 CONFIG_PATH = os.environ.get("LITELLM_CONFIG_PATH", "/runtime/config.yaml")
 CONTEXT_WINDOW = 131072
 MAX_OUTPUT_TOKENS = 8192
@@ -38,23 +40,45 @@ def discover_models(api_key: str) -> list[str]:
 
 
 def build_config(model_ids: list[str]) -> dict:
+    model_list = [
+        {
+            "model_name": model_id,
+            "litellm_params": {
+                "model": f"openai/{model_id}",
+                "api_base": UPSTREAM_API_BASE,
+                "api_key": "os.environ/LLAMA_CPP_API_KEY",
+            },
+            "model_info": {
+                "mode": "chat",
+                "max_input_tokens": MAX_INPUT_TOKENS,
+                "max_output_tokens": MAX_OUTPUT_TOKENS,
+            },
+        }
+        for model_id in model_ids
+    ]
+    model_list.append(
+        {
+            "model_name": "julia-1",
+            "litellm_params": {
+                "model": "openai/julia-1",
+                "api_base": JULIA_API_BASE,
+                "api_key": JULIA_API_KEY_PLACEHOLDER,
+            },
+            "model_info": {
+                "mode": "chat",
+                "metadata": {
+                    "interface": "systemone",
+                    "capabilities": {
+                        "systemone": True,
+                        "chat_completions": False,
+                    },
+                },
+            },
+        }
+    )
+
     return {
-        "model_list": [
-            {
-                "model_name": model_id,
-                "litellm_params": {
-                    "model": f"openai/{model_id}",
-                    "api_base": UPSTREAM_API_BASE,
-                    "api_key": "os.environ/LLAMA_CPP_API_KEY",
-                },
-                "model_info": {
-                    "mode": "chat",
-                    "max_input_tokens": MAX_INPUT_TOKENS,
-                    "max_output_tokens": MAX_OUTPUT_TOKENS,
-                },
-            }
-            for model_id in model_ids
-        ],
+        "model_list": model_list,
         "general_settings": {
             "ui_access_mode": "admin_only",
             "disable_env_credential_login": True,
@@ -63,6 +87,17 @@ def build_config(model_ids: list[str]) -> dict:
             "maximum_spend_logs_retention_period": "30d",
             "maximum_spend_logs_retention_interval": "1d",
             "database_connection_pool_limit": 5,
+            "pass_through_request_timeout": 300,
+            "pass_through_endpoints": [
+                {
+                    "path": "/v1/systemone",
+                    "target": f"{JULIA_API_BASE}/systemone",
+                    "methods": ["POST"],
+                    "auth": True,
+                    "forward_headers": False,
+                    "timeout": 300,
+                }
+            ],
         },
         "litellm_settings": {
             "callbacks": ["s3_v2"],

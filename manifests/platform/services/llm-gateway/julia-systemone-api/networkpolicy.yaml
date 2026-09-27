@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: julia-systemone-api
+  labels:
+    app.kubernetes.io/name: julia-systemone-api
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: julia-systemone-api
+  ingress:
+    - fromEntities:
+        - host
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: litellm-proxy
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

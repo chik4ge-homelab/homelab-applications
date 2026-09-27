@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: julia-systemone-model-cache
+  labels:
+    app.kubernetes.io/name: julia-systemone-api
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-rbd
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
