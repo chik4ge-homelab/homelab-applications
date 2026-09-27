@@ -32,7 +32,7 @@ spec:
           imagePullPolicy: IfNotPresent
           command:
             - python
-            - /scripts/discover_models.py
+            - /scripts/prepare_config.py
           env:
             - name: LLAMA_CPP_API_KEY
               valueFrom:

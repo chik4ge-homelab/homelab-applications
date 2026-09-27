@@ -57,22 +57,35 @@ def key_info(api_key: str):
 
 def ensure_agent_key() -> None:
     api_key = os.environ["LITELLM_AGENT_API_KEY"]
+    allowed_routes = [
+        "/v1/chat/completions",
+        "/v1/models",
+        "/v1/images/generations",
+        "/v1/images/edits",
+    ]
     status, _ = key_info(api_key)
-    if status == 200:
-        return
-    if status != 404:
+    if status == 404:
+        status, _ = request(
+            "POST",
+            "/key/generate",
+            {
+                "key": api_key,
+                "key_alias": "hermes-agent",
+                "allowed_routes": allowed_routes,
+            },
+        )
+        if status not in (200, 201):
+            raise RuntimeError("could not create Hermes API key")
+    elif status == 200:
+        status, _ = request(
+            "POST",
+            "/key/update",
+            {"key": api_key, "allowed_routes": allowed_routes},
+        )
+        if status not in (200, 201):
+            raise RuntimeError("could not update Hermes API key routes")
+    else:
         raise RuntimeError("could not check Hermes API key")
-    status, _ = request(
-        "POST",
-        "/key/generate",
-        {
-            "key": api_key,
-            "key_alias": "hermes-agent",
-            "allowed_routes": ["/v1/chat/completions", "/v1/models"],
-        },
-    )
-    if status not in (200, 201):
-        raise RuntimeError("could not create Hermes API key")
 
 
 def ensure_proxy_admin_user() -> None:

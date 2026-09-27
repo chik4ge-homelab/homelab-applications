@@ -7,4 +7,5 @@ resources:
   - rbac.yaml
   - deployments.yaml
   - service.yaml
+  - networkpolicy.yaml
   - server-cronjob.yaml

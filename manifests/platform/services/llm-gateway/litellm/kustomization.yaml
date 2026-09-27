@@ -7,6 +7,7 @@ resources:
   - externalsecret.yaml
   - object-store.yaml
   - networkpolicy.yaml
+  - image-generation-networkpolicy.yaml
   - bootstrap-job.yaml
   - lifecycle-cronjob.yaml
 
@@ -14,5 +15,7 @@ configMapGenerator:
   - name: litellm-scripts
     files:
       - scripts/discover_models.py
+      - scripts/image_generation_model.py
+      - scripts/prepare_config.py
       - scripts/bootstrap.py
       - scripts/apply_bucket_lifecycle.py

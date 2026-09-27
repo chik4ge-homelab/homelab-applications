@@ -70,8 +70,8 @@ spec:
       request: 0s
       backendRequest: 0s
     backendRefs:
-    - name: image-generation-api
-      port: 8080
+    - name: litellm-proxy
+      port: 4000
   - matches:
     - path:
         type: PathPrefix
@@ -80,8 +80,8 @@ spec:
       request: 0s
       backendRequest: 0s
     backendRefs:
-    - name: image-generation-api
-      port: 8080
+    - name: litellm-proxy
+      port: 4000
   - matches:
     - path:
         type: PathPrefix

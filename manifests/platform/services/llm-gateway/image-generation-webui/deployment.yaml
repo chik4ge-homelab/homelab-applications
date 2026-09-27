@@ -30,12 +30,12 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: IMAGE_API_BASE_URL
-              value: http://image-generation-api.llm-gateway.svc.cluster.local:8080/v1
+              value: http://litellm-proxy.llm-gateway.svc.cluster.local:4000/v1
             - name: IMAGE_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: llm-gateway-api-key
-                  key: api-key
+                  name: litellm-secrets
+                  key: LITELLM_AGENT_API_KEY
           ports:
             - name: http
               containerPort: 3000
