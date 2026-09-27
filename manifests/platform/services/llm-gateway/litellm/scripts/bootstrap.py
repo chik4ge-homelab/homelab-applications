@@ -1,5 +1,4 @@
 import hashlib
-import hashlib
 import json
 import os
 import sys
@@ -10,6 +9,8 @@ import urllib.request
 
 
 BASE_URL = "http://litellm-proxy.llm-gateway.svc.cluster.local:4000"
+ADMIN_USER_ID = "proxy-admin"
+ADMIN_USER_EMAIL = "proxy_admin@chik4ge.me"
 VIEWER_USER_ID = "proxy-admin-viewer"
 UI_SETTINGS = {
     "enabled_ui_pages_internal_users": ["logs", "usage", "models"],
@@ -72,6 +73,42 @@ def ensure_agent_key() -> None:
     )
     if status not in (200, 201):
         raise RuntimeError("could not create Hermes API key")
+
+
+def ensure_proxy_admin_user() -> None:
+    query = urllib.parse.urlencode({"user_id": ADMIN_USER_ID})
+    status, existing = request("GET", f"/user/info?{query}")
+    if status == 404:
+        status, _ = request(
+            "POST",
+            "/user/new",
+            {
+                "user_id": ADMIN_USER_ID,
+                "user_email": ADMIN_USER_EMAIL,
+                "user_alias": "proxy_admin",
+                "user_role": "proxy_admin",
+                "auto_create_key": False,
+            },
+        )
+        if status not in (200, 201):
+            raise RuntimeError("could not create configuration-only proxy admin user")
+    elif status == 200:
+        user = existing.get("user_info", existing)
+        if user.get("user_role") != "proxy_admin":
+            raise RuntimeError("existing configuration user does not have proxy_admin role")
+    else:
+        raise RuntimeError("could not check configuration-only proxy admin user")
+
+    password = os.environ["PROXY_ADMIN_PASSWORD"]
+    if not password:
+        raise RuntimeError("configuration-only proxy admin password is missing")
+    status, _ = request(
+        "POST",
+        "/user/update",
+        {"user_id": ADMIN_USER_ID, "password": password},
+    )
+    if status not in (200, 201):
+        raise RuntimeError("could not set configuration-only proxy admin password")
 
 
 def ensure_viewer_user() -> None:
@@ -143,6 +180,7 @@ def ensure_ui_settings() -> None:
 def main() -> None:
     wait_for_ready()
     ensure_agent_key()
+    ensure_proxy_admin_user()
     ensure_viewer_user()
     ensure_ui_settings()
     print("LiteLLM bootstrap complete")

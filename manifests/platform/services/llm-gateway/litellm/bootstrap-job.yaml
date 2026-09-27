@@ -41,6 +41,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secrets
                   key: LITELLM_AGENT_API_KEY
+            - name: PROXY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: PROXY_ADMIN_PASSWORD
             - name: PROXY_VIEWER_EMAIL
               valueFrom:
                 secretKeyRef:
