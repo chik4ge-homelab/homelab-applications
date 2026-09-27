@@ -104,6 +104,11 @@ def build_config(model_ids: list[str]) -> dict:
             "cold_storage_custom_logger": "s3_v2",
             "set_verbose": False,
             "drop_params": False,
+            "default_key_generate_params": {
+                "metadata": {
+                    "allowed_passthrough_routes": ["/v1/systemone"],
+                },
+            },
             "s3_callback_params": {
                 "s3_bucket_name": "llm-api-logs",
                 "s3_region_name": "us-east-1",
