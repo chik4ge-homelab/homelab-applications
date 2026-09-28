@@ -499,9 +499,109 @@ prometheus.remote_write "default" {
   }
 }
 
-loki.source.kubernetes "pods" {
+// Keep indexed labels focused on stable source context. Pod identity remains
+// searchable as structured metadata instead of creating a stream per pod.
+discovery.relabel "pod_logs" {
   targets = discovery.kubernetes.pods.targets
+
+  rule {
+    replacement  = "homelab"
+    target_label = "environment"
+  }
+
+  rule {
+    replacement  = "talos-k8s"
+    target_label = "cluster"
+  }
+
+  rule {
+    replacement  = "kubernetes"
+    target_label = "log_source"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label  = "namespace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_name"]
+    target_label  = "container"
+  }
+
+  // Use the namespace as a fallback for pods without an application label.
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label  = "service_name"
+  }
+
+  // Prefer the standard Kubernetes application label, then common legacy labels.
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_app"]
+    regex         = "(.+)"
+    replacement   = "$1"
+    target_label  = "service_name"
+    action        = "replace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_k8s_app"]
+    regex         = "(.+)"
+    replacement   = "$1"
+    target_label  = "service_name"
+    action        = "replace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+    regex         = "(.+)"
+    replacement   = "$1"
+    target_label  = "service_name"
+    action        = "replace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_component"]
+    regex         = "(.+)"
+    replacement   = "$1"
+    target_label  = "component"
+    action        = "replace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_component"]
+    regex         = "(.+)"
+    replacement   = "$1"
+    target_label  = "component"
+    action        = "replace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_gateway_envoyproxy_io_owning_gateway_name"]
+    regex         = "(.+)"
+    replacement   = "$1"
+    target_label  = "gateway"
+    action        = "replace"
+  }
+}
+
+loki.source.kubernetes "pods" {
+  targets   = discovery.relabel.pod_logs.output
+  forward_to = [loki.process.pod_logs.receiver]
+}
+
+loki.process "pod_logs" {
   forward_to = [loki.write.default.receiver]
+
+  stage.structured_metadata {
+    values = {
+      pod_instance = "instance",
+    }
+  }
+
+  stage.label_drop {
+    values = ["instance"]
+  }
 }
 
 loki.relabel "oci_edge_haproxy" {
@@ -533,9 +633,13 @@ loki.source.syslog "oci_edge_haproxy" {
     syslog_format = "rfc5424"
 
     labels = {
-      job         = "oci-edge-haproxy",
-      service     = "haproxy",
-      environment = "homelab",
+      job          = "oci-edge-haproxy",
+      service      = "haproxy",
+      service_name = "haproxy",
+      environment  = "homelab",
+      cluster      = "oci-edge",
+      component    = "proxy",
+      log_source   = "syslog",
     }
 
     use_incoming_timestamp = true
