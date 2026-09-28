@@ -87,6 +87,18 @@ spec:
 
           headlessService: true
 
+          sidecar:
+            dashboards:
+              enabled: true
+              label: grafana_dashboard
+              labelValue: "1"
+              searchNamespace: grafana
+              provider:
+                name: gitops-dashboards
+                folder: Networks
+                folderUid: fekoytel20em8f
+                allowUiUpdates: false
+
           route:
             main:
               enabled: true
@@ -98,6 +110,17 @@ spec:
                   sectionName: https
 
           extraObjects:
+            - apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: grafana-dashboard-kubernetes-edge-access-logs
+                labels:
+                  grafana_dashboard: "1"
+                  app.kubernetes.io/part-of: grafana
+              data:
+                kubernetes-edge-access-logs.json: |-
+{{ .Files.Get "files/platform/services/observability/grafana-dashboards/kubernetes-edge-access-logs.json" | nindent 18 }}
+
             - apiVersion: external-secrets.io/v1
               kind: ExternalSecret
               metadata:

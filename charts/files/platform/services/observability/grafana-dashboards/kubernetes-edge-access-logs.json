@@ -1,0 +1,101 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "grafana" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Search Kubernetes and edge access logs using the normalized Loki labels.",
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": { "decimals": 0, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }, { "color": "red", "value": 80 }] }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "editorMode": "code", "expr": "sum(count_over_time({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\",namespace=~\"$namespace\",component=~\"$component\",gateway=~\"$gateway\"}[$__range]))", "instant": true, "queryType": "instant", "range": false, "refId": "A" }],
+      "title": "Matching log lines",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": { "decimals": 0, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }, { "color": "red", "value": 80 }] }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 5, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "editorMode": "code", "expr": "sum(count_over_time({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\",namespace=~\"$namespace\",component=~\"$component\",gateway=~\"$gateway\"} |= \"\\\"method\\\":null\" | json | downstream_local_address=~\".*:$tcp_port$\" | __error__=\"\" [$__range]))", "instant": true, "queryType": "instant", "range": false, "refId": "A" }],
+      "title": "TCP connections to port",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": { "decimals": 0, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }, { "color": "red", "value": 80 }] }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "editorMode": "code", "expr": "sum(count_over_time({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\",namespace=~\"$namespace\",component=~\"$component\",gateway=~\"$gateway\"} | json | response_code >= 500 | __error__=\"\" [$__range]))", "instant": true, "queryType": "instant", "range": false, "refId": "A" }],
+      "title": "HTTP 5xx",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "description": "Matching log lines per second across Kubernetes and syslog sources.",
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "drawStyle": "line", "fillOpacity": 0, "lineWidth": 1, "showPoints": "auto", "stacking": { "group": "A", "mode": "none" } }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 5 },
+      "id": 4,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [{ "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "editorMode": "code", "expr": "sum by (service_name, log_source) (rate({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\",namespace=~\"$namespace\",component=~\"$component\",gateway=~\"$gateway\"}[$__auto]))", "legendFormat": "{{ print `{{` }}service_name{{ print `}}` }} / {{ print `{{` }}log_source{{ print `}}` }}", "queryType": "range", "refId": "A" }],
+      "title": "Log volume by service and source",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "description": "Parsed from downstream_remote_address for the selected TCP listener. Internal proxy or pod addresses may appear when that is the address reported in the log.",
+      "fieldConfig": { "defaults": { "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "footer": { "reducers": [] }, "inspect": false }, "decimals": 0, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }, { "color": "red", "value": 80 }] }, "unit": "short" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 5 },
+      "id": 5,
+      "options": { "cellHeight": "sm", "showHeader": true },
+      "targets": [{ "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "editorMode": "code", "expr": "topk(10, sum by (source_ip) (count_over_time({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\",namespace=~\"$namespace\",component=~\"$component\",gateway=~\"$gateway\"} |= \"\\\"method\\\":null\" | json | downstream_local_address=~\".*:$tcp_port$\" | __error__=\"\" | regexp \"downstream_remote_address.*?(?P<source_ip>[0-9.]+):[0-9]+\" | source_ip=~\"^[0-9.]+$\" [$__range])))", "instant": true, "queryType": "instant", "range": false, "refId": "A" }],
+      "title": "Top TCP source IPv4 addresses",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 13, "w": 24, "x": 0, "y": 13 },
+      "id": 6,
+      "options": { "dedupStrategy": "none", "enableInfiniteScrolling": false, "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": true, "showControls": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
+      "targets": [{ "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "editorMode": "code", "expr": "{environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\",namespace=~\"$namespace\",component=~\"$component\",gateway=~\"$gateway\"}", "maxLines": 250, "queryType": "range", "refId": "A" }],
+      "title": "Recent logs",
+      "type": "logs"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": ["logs", "access", "kubernetes", "edge"],
+  "templating": {
+    "list": [
+      { "allValue": ".+", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values(environment)", "includeAll": true, "label": "environment", "multi": true, "name": "environment", "query": { "label": "environment", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "allValue": ".*", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values({environment=~\"$environment\"}, cluster)", "includeAll": true, "label": "cluster", "multi": true, "name": "cluster", "query": { "label": "cluster", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "{environment=~\"$environment\"}", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "allValue": ".*", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values({environment=~\"$environment\",cluster=~\"$cluster\"}, log_source)", "includeAll": true, "label": "log source", "multi": true, "name": "log_source", "query": { "label": "log_source", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "{environment=~\"$environment\",cluster=~\"$cluster\"}", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "allValue": ".*", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\"}, service_name)", "includeAll": true, "label": "service name", "multi": true, "name": "service_name", "query": { "label": "service_name", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "{environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\"}", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "allValue": ".*", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\"}, namespace)", "includeAll": true, "label": "namespace", "multi": true, "name": "namespace", "query": { "label": "namespace", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "{environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\"}", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "allValue": ".*", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\"}, component)", "includeAll": true, "label": "component", "multi": true, "name": "component", "query": { "label": "component", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "{environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\"}", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "allValue": ".*", "current": { "text": "All", "value": ["$__all"] }, "datasource": { "type": "loki", "uid": "P8E80F9AEF21F6940" }, "definition": "label_values({environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\"}, gateway)", "includeAll": true, "label": "gateway", "multi": true, "name": "gateway", "query": { "label": "gateway", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "{environment=~\"$environment\",cluster=~\"$cluster\",log_source=~\"$log_source\",service_name=~\"$service_name\"}", "type": 1 }, "refresh": 1, "regex": "", "sort": 1, "type": "query" },
+      { "current": { "text": "25565", "value": "25565" }, "label": "TCP listener port", "name": "tcp_port", "options": [{ "selected": true, "text": "25565", "value": "25565" }], "query": "25565", "type": "textbox" }
+    ]
+  },
+  "time": { "from": "now-24h", "to": "now" },
+  "timezone": "browser",
+  "title": "Kubernetes & Edge Access Logs",
+  "uid": "kubernetes-edge-access-logs"
+}
