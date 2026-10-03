@@ -44,7 +44,7 @@ spec:
           driver:
             existingConfigSecret: democratic-csi-driver-config
             config:
-              driver: freenas-api-iscsi
+              driver: freenas-iscsi
           csiDriver:
             name: truenas-iscsi
           controller:
@@ -52,7 +52,7 @@ spec:
               enabled: true
               image:
                 registry: docker.io/democraticcsi/democratic-csi
-                tag: next
+                tag: v1.9.5
               resources:
                 requests:
                   cpu: 10m
