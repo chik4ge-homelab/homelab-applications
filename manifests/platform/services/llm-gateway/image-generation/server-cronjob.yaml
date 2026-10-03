@@ -87,6 +87,8 @@ spec:
                 - $(SD_CPP_STEPS)
                 - --sampling-method
                 - $(SD_CPP_SAMPLING_METHOD)
+                - --sigmas
+                - $(SD_CPP_SIGMAS)
                 - --backend
                 - $(SD_CPP_BACKEND)
                 - --params-backend
@@ -100,7 +102,7 @@ spec:
                 - name: SD_CPP_LISTEN_PORT
                   value: "8080"
                 - name: SD_CPP_DIFFUSION_MODEL
-                  value: /models/qwen_image_2.1_turbo_Q4_K_M.gguf
+                  value: /models/Qwen-Image-2.1-viggle-turbo-v0.3-6step-Q4_K_M.gguf
                 - name: SD_CPP_VAE
                   value: /models/vae/qwen_image_2.1_vae_bf16.safetensors
                 - name: SD_CPP_LLM
@@ -110,9 +112,11 @@ spec:
                 - name: SD_CPP_CFG_SCALE
                   value: "1"
                 - name: SD_CPP_STEPS
-                  value: "8"
+                  value: "6"
                 - name: SD_CPP_SAMPLING_METHOD
                   value: euler
+                - name: SD_CPP_SIGMAS
+                  value: 1.0,0.982380170,0.962988521,0.917701215,0.787998565,0.553368664,0
                 - name: SD_CPP_BACKEND
                   value: diffusion=cuda0,te=cuda0,vae=cuda0
                 - name: SD_CPP_PARAMS_BACKEND
