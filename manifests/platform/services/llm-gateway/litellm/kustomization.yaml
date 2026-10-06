@@ -5,6 +5,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - externalsecret.yaml
+  - immich-ml-adapter-externalsecret.yaml
   - object-store.yaml
   - networkpolicy.yaml
   - image-generation-networkpolicy.yaml

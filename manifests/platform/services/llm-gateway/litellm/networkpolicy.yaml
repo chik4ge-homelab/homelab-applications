@@ -34,6 +34,14 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: immich
+            k8s:app.kubernetes.io/name: immich-ml-adapter
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: llm-gateway
             k8s:app.kubernetes.io/name: litellm-proxy
       toPorts:
@@ -85,6 +93,14 @@ spec:
       toPorts:
         - ports:
             - port: "4000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: embeddinggemma-api
+      toPorts:
+        - ports:
+            - port: "8080"
               protocol: TCP
     - toEndpoints:
         - matchLabels:

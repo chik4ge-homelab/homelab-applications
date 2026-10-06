@@ -10,6 +10,9 @@ UPSTREAM_MODELS_URL = "http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v
 UPSTREAM_API_BASE = "http://llama-cpp-api.llm-gateway.svc.cluster.local:8000/v1"
 JULIA_API_BASE = "http://julia-systemone-api.llm-gateway.svc.cluster.local:8080/v1"
 JULIA_API_KEY_PLACEHOLDER = "systemone-only-no-chat-endpoint"
+EMBEDDING_API_BASE = "http://embeddinggemma-api.llm-gateway.svc.cluster.local:8080/v1"
+EMBEDDING_API_KEY_PLACEHOLDER = "embeddinggemma-no-auth"
+EMBEDDING_PASS_THROUGH_PATH = "/v1/embeddinggemma/embeddings"
 CONFIG_PATH = os.environ.get("LITELLM_CONFIG_PATH", "/runtime/config.yaml")
 CONTEXT_WINDOW = 131072
 MAX_OUTPUT_TOKENS = 8192
@@ -75,6 +78,21 @@ def build_config(model_ids: list[str]) -> dict:
             },
         }
     )
+    model_list.append(
+        {
+            "model_name": "embeddinggemma-2",
+            "litellm_params": {
+                "model": "openai/embeddinggemma-2",
+                "api_base": EMBEDDING_API_BASE,
+                "api_key": EMBEDDING_API_KEY_PLACEHOLDER,
+                "timeout": 300,
+            },
+            "model_info": {
+                "mode": "embedding",
+                "dimensions": 768,
+            },
+        }
+    )
 
     return {
         "model_list": model_list,
@@ -95,7 +113,15 @@ def build_config(model_ids: list[str]) -> dict:
                     "auth": True,
                     "forward_headers": False,
                     "timeout": 300,
-                }
+                },
+                {
+                    "path": EMBEDDING_PASS_THROUGH_PATH,
+                    "target": f"{EMBEDDING_API_BASE}/embeddings",
+                    "methods": ["POST"],
+                    "auth": True,
+                    "forward_headers": False,
+                    "timeout": 300,
+                },
             ],
         },
         "litellm_settings": {

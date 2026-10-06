@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: embeddinggemma-api-model-cache
+  labels:
+    app.kubernetes.io/name: embeddinggemma-api
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-rbd
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi

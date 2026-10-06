@@ -6,6 +6,7 @@ resources:
   - image-generation
   - image-generation-webui
   - julia-systemone-api
+  - embeddinggemma-api
 configMapGenerator:
   - name: llm-gateway-model-cache
     files:
@@ -13,6 +14,7 @@ configMapGenerator:
       - model-cache/ornith.json
       - model-cache/optimizer.json
       - model-cache/diffuser.json
+      - model-cache/embeddinggemma-2.json
   - name: julia-systemone-model-cache
     files:
       - model-cache/julia-1.json

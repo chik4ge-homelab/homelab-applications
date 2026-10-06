@@ -41,6 +41,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secrets
                   key: LITELLM_AGENT_API_KEY
+            - name: IMMICH_ML_ADAPTER_LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: immich-ml-adapter-litellm-key
+                  key: api-key
             - name: PROXY_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:

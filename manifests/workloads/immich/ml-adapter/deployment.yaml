@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-ml-adapter
+  labels:
+    app.kubernetes.io/name: immich-ml-adapter
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: immich-ml-adapter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: immich-ml-adapter
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: adapter
+          image: ghcr.io/chik4ge-homelab/immich-ml-adapter@sha256:57560b6d479bd6dceaae9b12bd9a92960e111fdb859551d56eea0151ae86a8f5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3003
+              protocol: TCP
+          env:
+            - name: STOCK_ML_BASE_URL
+              value: http://immich-machine-learning:3003
+            - name: LITELLM_BASE_URL
+              value: http://litellm-proxy.llm-gateway.svc.cluster.local:4000
+            - name: LITELLM_EMBEDDING_PATH
+              value: /v1/embeddinggemma/embeddings
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: immich-ml-adapter-secrets
+                  key: LITELLM_API_KEY
+            - name: IMMICH_EMBEDDING_MODEL_ALIAS
+              value: ViT-B-16-SigLIP2__webli
+            - name: EMBEDDING_MODEL
+              value: embeddinggemma-2
+            - name: UPSTREAM_TIMEOUT_SECONDS
+              value: "300"
+            - name: MAX_IMAGE_BYTES
+              value: "67108864"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 128Mi

@@ -88,6 +88,38 @@ def ensure_agent_key() -> None:
         raise RuntimeError("could not check Hermes API key")
 
 
+def ensure_immich_adapter_key() -> None:
+    api_key = os.environ["IMMICH_ML_ADAPTER_LITELLM_API_KEY"]
+    if not api_key:
+        raise RuntimeError("Immich ML adapter API key is missing")
+    allowed_routes = ["/v1/embeddinggemma/embeddings"]
+    metadata = {"allowed_passthrough_routes": allowed_routes}
+    status, _ = key_info(api_key)
+    if status == 404:
+        status, _ = request(
+            "POST",
+            "/key/generate",
+            {
+                "key": api_key,
+                "key_alias": "immich-ml-adapter",
+                "allowed_routes": allowed_routes,
+                "metadata": metadata,
+            },
+        )
+        if status not in (200, 201):
+            raise RuntimeError("could not create Immich ML adapter API key")
+    elif status == 200:
+        status, _ = request(
+            "POST",
+            "/key/update",
+            {"key": api_key, "allowed_routes": allowed_routes, "metadata": metadata},
+        )
+        if status not in (200, 201):
+            raise RuntimeError("could not update Immich ML adapter API key routes")
+    else:
+        raise RuntimeError("could not check Immich ML adapter API key")
+
+
 def ensure_proxy_admin_user() -> None:
     query = urllib.parse.urlencode({"user_id": ADMIN_USER_ID})
     status, existing = request("GET", f"/user/info?{query}")
@@ -193,6 +225,7 @@ def ensure_ui_settings() -> None:
 def main() -> None:
     wait_for_ready()
     ensure_agent_key()
+    ensure_immich_adapter_key()
     ensure_proxy_admin_user()
     ensure_viewer_user()
     ensure_ui_settings()

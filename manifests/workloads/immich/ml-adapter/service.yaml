@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-ml-adapter
+  labels:
+    app.kubernetes.io/name: immich-ml-adapter
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: immich-ml-adapter
+  ports:
+    - name: http
+      port: 3003
+      targetPort: http
+      protocol: TCP
