@@ -43,6 +43,7 @@ spec:
         - matchPattern: "*.hf.co"
         - matchPattern: "*.cdn.hf.co"
         - matchPattern: "*.xethub.hf.co"
+        - matchName: us.aws.cdn.hf.co
       toPorts:
         - ports:
             - port: "443"
