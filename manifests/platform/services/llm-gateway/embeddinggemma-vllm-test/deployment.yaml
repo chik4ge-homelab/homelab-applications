@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: api
-          image: docker.io/vllm/vllm-openai-cpu@sha256:f2cd45e3883d55676f90ca673f28a5a6c2ac538627876cfef478ba568b58e4f2
+          image: docker.io/vllm/vllm-openai-cpu@sha256:8024248339dc6878daa5349344ed29d49c8a6732f6bdf7400fda32ce33e4b30b
           imagePullPolicy: IfNotPresent
           args:
             - /cache
