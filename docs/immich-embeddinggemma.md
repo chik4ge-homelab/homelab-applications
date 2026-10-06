@@ -26,10 +26,14 @@ from LiteLLM by Cilium policy and has no external HTTPRoute.
 - Embedding dimension: 768
 - Backend runtime: Python 3.12, Sentence Transformers 6.1.0, PyTorch 2.14.0 CPU,
   torchvision 0.29.1 CPU, Transformers 5.19.0
+- Stock vLLM check: current vLLM nightly contains `EmbeddingGemma2Model`, but
+  the official x86_64 CPU image requires AVX2/AVX512; all cluster worker nodes
+  expose only x86-64-v2-era flags, so it exits with SIGILL before serving.
+  The custom backend remains selected for this cluster.
 - Adapter image:
   `ghcr.io/chik4ge-homelab/immich-ml-adapter@sha256:57560b6d479bd6dceaae9b12bd9a92960e111fdb859551d56eea0151ae86a8f5`
 - Backend image:
-  `ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:bdd837147ad698a8d341c312f2b1154d22fde5f0ba8344cc8364b1acbaa34a0e`
+  `ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:d9e0e6e46f7c24d122e7b913fe6ba020af50cfc3198fc9ee50b72d260e88b1c2`
 
 The model cache is an 8 GiB `ceph-rbd` PVC. The cache init container downloads
 the exact model files from the pinned Hugging Face commit. The serving
