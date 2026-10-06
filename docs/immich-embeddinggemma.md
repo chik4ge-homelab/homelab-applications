@@ -27,7 +27,7 @@ from LiteLLM by Cilium policy and has no external HTTPRoute.
 - Backend runtime: Python 3.12, Sentence Transformers 6.1.0, PyTorch 2.14.0 CPU,
   torchvision 0.29.1 CPU, Transformers 5.19.0
 - Adapter image:
-  `ghcr.io/chik4ge-homelab/immich-ml-adapter@sha256:9b4af7fcf62722221e8c6f04922d6e59abfbee8bb8e9d4491330eb775024b4c6`
+  `ghcr.io/chik4ge-homelab/immich-ml-adapter@sha256:57560b6d479bd6dceaae9b12bd9a92960e111fdb859551d56eea0151ae86a8f5`
 - Backend image:
   `ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:bdd837147ad698a8d341c312f2b1154d22fde5f0ba8344cc8364b1acbaa34a0e`
 
