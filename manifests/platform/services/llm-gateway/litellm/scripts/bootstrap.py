@@ -93,12 +93,6 @@ def ensure_immich_adapter_key() -> None:
     if not api_key:
         raise RuntimeError("Immich ML adapter API key is missing")
     allowed_routes = ["/v1/embeddinggemma/embeddings"]
-    allowed_routes.extend(
-        [
-            "/v1/embeddinggemma-vllm/embeddings",
-            "/v1/embeddinggemma-vllm/cohere",
-        ]
-    )
     metadata = {"allowed_passthrough_routes": allowed_routes}
     status, _ = key_info(api_key)
     if status == 404:

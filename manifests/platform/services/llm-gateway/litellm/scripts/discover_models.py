@@ -13,11 +13,6 @@ JULIA_API_KEY_PLACEHOLDER = "systemone-only-no-chat-endpoint"
 EMBEDDING_API_BASE = "http://embeddinggemma-api.llm-gateway.svc.cluster.local:8080/v1"
 EMBEDDING_API_KEY_PLACEHOLDER = "embeddinggemma-no-auth"
 EMBEDDING_PASS_THROUGH_PATH = "/v1/embeddinggemma/embeddings"
-VLLM_EMBEDDING_API_ROOT = "http://embeddinggemma-vllm-test.llm-gateway.svc.cluster.local:8000"
-VLLM_EMBEDDING_API_BASE = f"{VLLM_EMBEDDING_API_ROOT}/v1"
-VLLM_EMBEDDING_KEY_PLACEHOLDER = "embeddinggemma-vllm-no-auth"
-VLLM_OPENAI_PASS_THROUGH_PATH = "/v1/embeddinggemma-vllm/embeddings"
-VLLM_COHERE_PASS_THROUGH_PATH = "/v1/embeddinggemma-vllm/cohere"
 CONFIG_PATH = os.environ.get("LITELLM_CONFIG_PATH", "/runtime/config.yaml")
 CONTEXT_WINDOW = 131072
 MAX_OUTPUT_TOKENS = 8192
@@ -98,21 +93,6 @@ def build_config(model_ids: list[str]) -> dict:
             },
         }
     )
-    model_list.append(
-        {
-            "model_name": "embeddinggemma-2-vllm",
-            "litellm_params": {
-                "model": "openai/embeddinggemma-2-vllm",
-                "api_base": VLLM_EMBEDDING_API_BASE,
-                "api_key": VLLM_EMBEDDING_KEY_PLACEHOLDER,
-                "timeout": 300,
-            },
-            "model_info": {
-                "mode": "embedding",
-                "dimensions": 768,
-            },
-        }
-    )
 
     return {
         "model_list": model_list,
@@ -137,22 +117,6 @@ def build_config(model_ids: list[str]) -> dict:
                 {
                     "path": EMBEDDING_PASS_THROUGH_PATH,
                     "target": f"{EMBEDDING_API_BASE}/embeddings",
-                    "methods": ["POST"],
-                    "auth": True,
-                    "forward_headers": False,
-                    "timeout": 300,
-                },
-                {
-                    "path": VLLM_OPENAI_PASS_THROUGH_PATH,
-                    "target": f"{VLLM_EMBEDDING_API_BASE}/embeddings",
-                    "methods": ["POST"],
-                    "auth": True,
-                    "forward_headers": False,
-                    "timeout": 300,
-                },
-                {
-                    "path": VLLM_COHERE_PASS_THROUGH_PATH,
-                    "target": f"{VLLM_EMBEDDING_API_ROOT}/v2/embed",
                     "methods": ["POST"],
                     "auth": True,
                     "forward_headers": False,
