@@ -41,6 +41,8 @@ spec:
         - matchName: huggingface.co
         - matchPattern: "*.huggingface.co"
         - matchPattern: "*.hf.co"
+        - matchPattern: "*.cdn.hf.co"
+        - matchPattern: "*.xethub.hf.co"
       toPorts:
         - ports:
             - port: "443"

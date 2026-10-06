@@ -38,6 +38,8 @@ spec:
           env:
             - name: HF_HUB_DISABLE_XET
               value: "1"
+            - name: HF_HUB_DOWNLOAD_TIMEOUT
+              value: "600"
             - name: MODEL_CACHE_ROOT
               value: /cache
           resources:
