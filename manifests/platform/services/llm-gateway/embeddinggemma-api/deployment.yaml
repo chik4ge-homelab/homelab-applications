@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: prepare-model-cache
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:bdd837147ad698a8d341c312f2b1154d22fde5f0ba8344cc8364b1acbaa34a0e
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:d9e0e6e46f7c24d122e7b913fe6ba020af50cfc3198fc9ee50b72d260e88b1c2
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -68,7 +68,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:bdd837147ad698a8d341c312f2b1154d22fde5f0ba8344cc8364b1acbaa34a0e
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:d9e0e6e46f7c24d122e7b913fe6ba020af50cfc3198fc9ee50b72d260e88b1c2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -84,11 +84,11 @@ spec:
             - name: MODEL_REVISION
               value: 914f7f89142e33e77833254d9c9b90c3cef7303b
             - name: TORCH_NUM_THREADS
-              value: "2"
+              value: "4"
             - name: OMP_NUM_THREADS
-              value: "2"
+              value: "4"
             - name: MKL_NUM_THREADS
-              value: "2"
+              value: "4"
             - name: MAX_CONCURRENCY
               value: "1"
             - name: HF_HUB_OFFLINE
