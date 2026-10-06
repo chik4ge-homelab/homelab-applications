@@ -34,11 +34,6 @@ spec:
             - python
             - /scripts/prepare_config.py
           env:
-            - name: LLAMA_CPP_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: llm-gateway-api-key
-                  key: api-key
             - name: LITELLM_CONFIG_PATH
               value: /runtime/config.yaml
           resources:
@@ -108,11 +103,6 @@ spec:
                 secretKeyRef:
                   name: llm-api-logs
                   key: AWS_SECRET_ACCESS_KEY
-            - name: LLAMA_CPP_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: llm-gateway-api-key
-                  key: api-key
             - name: DO_NOT_TRACK
               value: "true"
             - name: MAX_BASE64_LENGTH_FOR_LOGGING

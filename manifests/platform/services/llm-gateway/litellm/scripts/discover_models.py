@@ -16,9 +16,8 @@ MAX_OUTPUT_TOKENS = 8192
 MAX_INPUT_TOKENS = CONTEXT_WINDOW - MAX_OUTPUT_TOKENS
 
 
-def discover_models(api_key: str) -> list[str]:
-    headers = {"Authorization": f"Bearer {api_key}"}
-    request = urllib.request.Request(UPSTREAM_MODELS_URL, headers=headers)
+def discover_models() -> list[str]:
+    request = urllib.request.Request(UPSTREAM_MODELS_URL)
     deadline = time.monotonic() + 600
 
     while time.monotonic() < deadline:
@@ -46,7 +45,7 @@ def build_config(model_ids: list[str]) -> dict:
             "litellm_params": {
                 "model": f"openai/{model_id}",
                 "api_base": UPSTREAM_API_BASE,
-                "api_key": "os.environ/LLAMA_CPP_API_KEY",
+                "api_key": "llama-cpp-no-auth",
             },
             "model_info": {
                 "mode": "chat",
@@ -126,10 +125,7 @@ def build_config(model_ids: list[str]) -> dict:
 
 
 def main() -> None:
-    api_key = os.environ.get("LLAMA_CPP_API_KEY")
-    if not api_key:
-        raise RuntimeError("upstream API key is unavailable")
-    config = build_config(discover_models(api_key))
+    config = build_config(discover_models())
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
     with open(CONFIG_PATH, "w", encoding="utf-8") as config_file:
         json.dump(config, config_file, separators=(",", ":"))

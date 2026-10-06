@@ -118,9 +118,6 @@ spec:
         - --ctx-checkpoints
         - "2"
 
-        - --api-key-file
-        - /run/secrets/llm-gateway/api-key
-
         ports:
         - name: llama-http
           containerPort: 8000
@@ -141,9 +138,6 @@ spec:
         volumeMounts:
         - name: llama-cpp-cache
           mountPath: /root/.cache/huggingface
-        - name: llm-gateway-api-key
-          mountPath: /run/secrets/llm-gateway
-          readOnly: true
         - name: llama-cpp-chat-template
           mountPath: /etc/llama
           readOnly: true
@@ -170,9 +164,6 @@ spec:
       - name: model-cache-config
         configMap:
           name: llm-gateway-model-cache
-      - name: llm-gateway-api-key
-        secret:
-          secretName: llm-gateway-api-key
       - name: llama-cpp-chat-template
         configMap:
           name: llama-cpp-chat-template

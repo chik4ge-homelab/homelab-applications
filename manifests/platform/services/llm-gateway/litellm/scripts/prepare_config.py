@@ -7,11 +7,8 @@ from image_generation_model import add_image_generation_model
 
 
 def main() -> None:
-    api_key = os.environ.get("LLAMA_CPP_API_KEY")
-    if not api_key:
-        raise RuntimeError("upstream API key is unavailable")
 
-    config = build_config(discover_models(api_key))
+    config = build_config(discover_models())
     add_image_generation_model(config)
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
     with open(CONFIG_PATH, "w", encoding="utf-8") as config_file:
