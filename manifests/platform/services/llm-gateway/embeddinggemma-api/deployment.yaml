@@ -84,13 +84,13 @@ spec:
             - name: MODEL_REVISION
               value: 914f7f89142e33e77833254d9c9b90c3cef7303b
             - name: TORCH_NUM_THREADS
-              value: "4"
+              value: "2"
             - name: OMP_NUM_THREADS
-              value: "4"
+              value: "2"
             - name: MKL_NUM_THREADS
-              value: "4"
+              value: "2"
             - name: MAX_CONCURRENCY
-              value: "1"
+              value: "2"
             - name: HF_HUB_OFFLINE
               value: "1"
             - name: HF_HUB_DISABLE_TELEMETRY
