@@ -72,7 +72,7 @@ spec:
         - --chat-template-file
         - /etc/llama/chat_template.jinja
         - --reasoning
-        - off
+        - "on"
 
         - --host
         - 0.0.0.0
