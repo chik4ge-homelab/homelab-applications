@@ -41,18 +41,12 @@ spec:
               exec env PYTHONPATH=/tmp/python python - <<'PY'
               from huggingface_hub import hf_hub_download
 
-              repo_id = "unsloth/embeddinggemma-2-GGUF"
-              revision = "ba3888272494be64ed88c9eb536ddc61a1be73d5"
-              for filename in (
-                  "embeddinggemma-2-UD-Q4_K_XL.gguf",
-                  "mmproj-Q8_0.gguf",
-              ):
-                  hf_hub_download(
-                      repo_id=repo_id,
-                      filename=filename,
-                      revision=revision,
-                      local_dir="/models",
-                  )
+              hf_hub_download(
+                  repo_id="unsloth/embeddinggemma-300m-GGUF",
+                  filename="embeddinggemma-300m-Q4_0.gguf",
+                  revision="6661a6504c30d8304af13455cb4a5d4f5bc6011f",
+                  local_dir="/models",
+              )
               PY
           env:
             - name: HF_HOME
@@ -91,16 +85,14 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - -m
-            - /models/embeddinggemma-2-UD-Q4_K_XL.gguf
-            - --mmproj
-            - /models/mmproj-Q8_0.gguf
+            - /models/embeddinggemma-300m-Q4_0.gguf
             - --embedding
             - --pooling
             - mean
             - --embd-normalize
             - "2"
             - --ctx-size
-            - "8192"
+            - "2048"
             - --parallel
             - "1"
             - --threads
@@ -131,10 +123,10 @@ spec:
           resources:
             requests:
               cpu: "4"
-              memory: 2Gi
+              memory: 1Gi
             limits:
               cpu: "4"
-              memory: 2Gi
+              memory: 1Gi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
