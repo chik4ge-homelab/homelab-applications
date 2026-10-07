@@ -1,0 +1,53 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: embeddinggemma-vllm-canary
+  labels:
+    app.kubernetes.io/name: embeddinggemma-vllm-canary
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: embeddinggemma-vllm-canary
+  ingress:
+    - fromEntities:
+        - host
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: llm-gateway
+            k8s:app.kubernetes.io/name: litellm-proxy
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: huggingface.co
+        - matchPattern: "*.huggingface.co"
+        - matchPattern: "*.hf.co"
+        - matchPattern: "*.cdn.hf.co"
+        - matchPattern: "*.xethub.hf.co"
+        - matchName: us.aws.cdn.hf.co
+        - matchName: pypi.org
+        - matchPattern: "*.pypi.org"
+        - matchName: files.pythonhosted.org
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
