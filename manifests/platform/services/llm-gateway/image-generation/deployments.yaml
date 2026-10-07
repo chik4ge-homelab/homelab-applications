@@ -16,6 +16,16 @@ spec:
       labels:
         app.kubernetes.io/name: image-generation-api
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - k8s-cp-argon
+                      - k8s-w-anemone
       serviceAccountName: image-generation-api
       securityContext:
         runAsNonRoot: true

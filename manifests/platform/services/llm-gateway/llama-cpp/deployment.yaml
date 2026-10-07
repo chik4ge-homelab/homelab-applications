@@ -19,6 +19,16 @@ spec:
       labels:
         app.kubernetes.io/name: llm-gateway
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values:
+                      - k8s-cp-argon
+                      - k8s-w-anemone
       runtimeClassName: nvidia
       initContainers:
       - name: prepare-model-cache

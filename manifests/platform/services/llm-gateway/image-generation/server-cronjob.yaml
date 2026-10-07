@@ -25,6 +25,16 @@ spec:
             app.kubernetes.io/name: image-generation-server
             app.kubernetes.io/part-of: image-generation
         spec:
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: NotIn
+                        values:
+                          - k8s-cp-argon
+                          - k8s-w-anemone
           restartPolicy: Never
           serviceAccountName: image-generation-job
           runtimeClassName: nvidia
