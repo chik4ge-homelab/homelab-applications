@@ -5,9 +5,12 @@ metadata:
   labels:
     app.kubernetes.io/name: embeddinggemma-api
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: embeddinggemma-api
@@ -26,6 +29,12 @@ spec:
                     values:
                       - k8s-cp-argon
                       - k8s-w-anemone
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: embeddinggemma-api
+              topologyKey: kubernetes.io/hostname
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
@@ -147,8 +156,8 @@ spec:
               mountPath: /tmp
       volumes:
         - name: model-cache
-          persistentVolumeClaim:
-            claimName: embeddinggemma-api-model-cache
+          emptyDir:
+            sizeLimit: 8Gi
         - name: model-cache-config
           configMap:
             name: llm-gateway-model-cache

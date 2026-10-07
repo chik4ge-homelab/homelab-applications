@@ -35,11 +35,15 @@ from LiteLLM by Cilium policy and has no external HTTPRoute.
 - Backend image:
   `ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:d9e0e6e46f7c24d122e7b913fe6ba020af50cfc3198fc9ee50b72d260e88b1c2`
 
-The model cache is an 8 GiB `ceph-rbd` PVC. The cache init container downloads
-the exact model files from the pinned Hugging Face commit. The serving
-container uses CPU FP32, `HF_HUB_OFFLINE=1`, two Torch/BLAS threads, and one
-request in flight initially. Audio is disabled in the Sentence Transformers
-configuration; only text and image inputs are accepted.
+The serving Deployment runs two replicas with required pod anti-affinity so
+they land on different worker nodes. Because the available `ceph-rbd` class is
+`ReadWriteOnce`, each replica uses an 8 GiB per-pod `emptyDir` cache. The cache
+init container downloads the exact model files from the pinned Hugging Face
+commit on each pod start; the current model occupies about 1.5 GiB. The former
+8 GiB PVC remains declared for rollback and is not deleted by this change. The
+serving containers use CPU FP32, `HF_HUB_OFFLINE=1`, two Torch/BLAS threads,
+and up to two requests in flight per replica. Audio is disabled in the
+Sentence Transformers configuration; only text and image inputs are accepted.
 
 ## LiteLLM contract and secret
 
