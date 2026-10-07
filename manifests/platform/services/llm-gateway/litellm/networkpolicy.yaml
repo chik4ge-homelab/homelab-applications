@@ -105,14 +105,6 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: llm-gateway
-            k8s:app.kubernetes.io/name: embeddinggemma-vllm-canary
-      toPorts:
-        - ports:
-            - port: "8000"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: llm-gateway
             k8s:app.kubernetes.io/name: julia-systemone-api
       toPorts:
         - ports:
