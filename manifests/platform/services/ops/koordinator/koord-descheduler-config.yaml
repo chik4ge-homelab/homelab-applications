@@ -46,7 +46,11 @@ data:
               apiVersion: descheduler/v1alpha2
               kind: MigrationControllerArgs
               evictionPolicy: Eviction
+              evictLocalStoragePods: true
               defaultJobMode: ReservationFirst
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: image-generation-webui
               schedulerNames:
                 - koord-scheduler
               namespaces:
