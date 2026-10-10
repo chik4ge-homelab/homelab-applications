@@ -18,10 +18,6 @@ spec:
           serviceMonitor:
             enabled: true
           deschedulerPolicy:
-            metricsProviders:
-              - source: Prometheus
-                prometheus:
-                  url: http://mimir-gateway.mimir.svc.cluster.local/prometheus
             profiles:
               - name: homelab-policy
                 pluginConfig:
@@ -32,58 +28,17 @@ spec:
                       podProtections:
                         defaultDisabled:
                           - PodsWithLocalStorage
-                  - name: RemovePodsViolatingNodeTaints
-                  # TODO: 必要なpodに対し、descheduler.alpha.kubernetes.io/prefer-no-eviction アノテーションを付与したあとに有効化する
-                  # - name: RemovePodsViolatingNodeAffinity
-                  #   args:
-                  #     nodeAffinityType: preferredDuringSchedulingIgnoredDuringExecution
-                  - name: RemovePodsViolatingInterPodAntiAffinity
-                  - name: RemovePodsViolatingTopologySpreadConstraint
-                    args:
-                      constraints:
-                        - DoNotSchedule
-                        - ScheduleAnyway
                   - name: RemoveDuplicates
                     args:
                       excludeOwnerKinds:
                         - ReplicaSet
-                  # schedulerのスコアリングとの乖離があるのでnode戻りが発生する、一旦無効化
-                  # - name: LowNodeUtilization
-                  #   args:
-                  #     evictableNamespaces:
-                  #       exclude:
-                  #         - minecraft-cube
-                  #         - strimzi-kafka
-                  #     useDeviationThresholds: true
-                  #     thresholds:
-                  #       MetricResource: 5
-                  #     targetThresholds:
-                  #       MetricResource: 7
-                  #     metricsUtilization:
-                  #       source: Prometheus
-                  #       prometheus:
-                  #         query: |
-                  #           label_replace(
-                  #             1 - (
-                  #               max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})
-                  #               /
-                  #               scalar(sum(max by(instance, job) (node_memory_MemAvailable_bytes{job="node-exporter", homelab_cluster="talos-k8s"})))
-                  #             )
-                  #             * on(instance, job) group_left(nodename)
-                  #               max by(instance, job, nodename) (node_uname_info{job="node-exporter", nodename=~"k8s-.*"}),
-                  #             "instance", "$1", "nodename", "(.+)"
-                  #           )
                 plugins:
                   deschedule:
-                    enabled:
-                      - RemovePodsViolatingNodeTaints
-                      # - RemovePodsViolatingNodeAffinity
-                      - RemovePodsViolatingInterPodAntiAffinity
+                    disabled:
+                      - "*"
                   balance:
                     enabled:
-                      - RemovePodsViolatingTopologySpreadConstraint
                       - RemoveDuplicates
-                      # - LowNodeUtilization
 
   destination:
     namespace: kube-system

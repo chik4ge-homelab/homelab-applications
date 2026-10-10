@@ -35,6 +35,11 @@ spec:
                 matchLabels:
                   app.kubernetes.io/name: embeddinggemma-api
               topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: chik4ge.me/gpu
+          operator: Equal
+          value: "true"
+          effect: PreferNoSchedule
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
