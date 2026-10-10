@@ -45,7 +45,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: prepare-model-cache
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:046c79798e71bdbf6c62a6042422e0fdd2bbd04ea39194adf20583fa271af680
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:2537b45118a20568a465318702ebd900f1ceab9d80e40192b933da973c1acba3
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -87,7 +87,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:046c79798e71bdbf6c62a6042422e0fdd2bbd04ea39194adf20583fa271af680
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:2537b45118a20568a465318702ebd900f1ceab9d80e40192b933da973c1acba3
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
