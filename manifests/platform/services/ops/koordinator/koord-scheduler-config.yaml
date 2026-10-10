@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: koord-scheduler-config
+  namespace: koordinator-system
+data:
+  koord-scheduler-config: |
+    apiVersion: kubescheduler.config.k8s.io/v1
+    kind: KubeSchedulerConfiguration
+    leaderElection:
+      leaderElect: true
+      resourceLock: leases
+      resourceName: koord-scheduler
+      resourceNamespace: koordinator-system
+    profiles:
+      - schedulerName: koord-scheduler
+        pluginConfig:
+          - name: NodeResourcesFit
+            args:
+              apiVersion: kubescheduler.config.k8s.io/v1
+              kind: NodeResourcesFitArgs
+              scoringStrategy:
+                type: LeastAllocated
+                resources:
+                  - name: cpu
+                    weight: 1
+                  - name: memory
+                    weight: 1
+                  - name: kubernetes.io/batch-cpu
+                    weight: 1
+                  - name: kubernetes.io/batch-memory
+                    weight: 1
+        plugins:
+          preFilter:
+            enabled:
+              - name: Reservation
+          filter:
+            disabled:
+              - name: LoadAwareScheduling
+            enabled:
+              - name: Reservation
+          postFilter:
+            enabled:
+              - name: Reservation
+          preScore:
+            enabled:
+              - name: Reservation
+          score:
+            disabled:
+              - name: LoadAwareScheduling
+            enabled:
+              - name: Reservation
+                weight: 5000
+          reserve:
+            disabled:
+              - name: LoadAwareScheduling
+            enabled:
+              - name: Reservation
+          preBind:
+            enabled:
+              - name: Reservation
+              - name: DefaultPreBind
+          bind:
+            disabled:
+              - name: "*"
+            enabled:
+              - name: Reservation
+              - name: DefaultBinder
