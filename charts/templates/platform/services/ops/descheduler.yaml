@@ -35,6 +35,8 @@ spec:
                   - name: RemovePodsViolatingNodeTaints
                     args:
                       includePreferNoSchedule: true
+                      includedTaints:
+                        - chik4ge.me/gpu=true
                 plugins:
                   deschedule:
                     enabled:
