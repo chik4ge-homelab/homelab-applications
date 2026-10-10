@@ -103,8 +103,6 @@ spec:
                 - $(SD_CPP_BACKEND)
                 - --params-backend
                 - $(SD_CPP_PARAMS_BACKEND)
-                - --max-vram
-                - $(SD_CPP_MAX_VRAM)
                 - --diffusion-fa
               env:
                 - name: SD_CPP_LISTEN_IP
@@ -131,8 +129,6 @@ spec:
                   value: diffusion=cuda0,te=cuda0,vae=cuda0
                 - name: SD_CPP_PARAMS_BACKEND
                   value: diffusion=cpu,te=cpu,vae=cuda0
-                - name: SD_CPP_MAX_VRAM
-                  value: cuda0=6
               ports:
                 - name: http
                   containerPort: 8080
