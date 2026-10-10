@@ -1,9 +1,9 @@
 {
   "assets": [
     {
-      "repo_id": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "filename": "Qwen-Image-2.1-viggle-turbo-v0.3-6step-Q4_K_M.gguf",
-      "revision": "65162eb602516aafc478034bb104be87a78bf6a7",
+      "repo_id": "AtomicChat/Qwen-Image-2.1-Turbo-GGUF",
+      "filename": "Qwen-Image-2.1-Turbo-AD-Q4_K.gguf",
+      "revision": "bb25d06bc74119c12207243d68917951e6d9c232",
       "kind": "local",
       "role": "model",
       "download": true
