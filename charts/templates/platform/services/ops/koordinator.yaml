@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://koordinator-sh.github.io/charts/
-      chart: koordinator
-      targetRevision: 1.8.0
+    - repoURL: https://github.com/chik4ge-homelab/homelab-applications
+      targetRevision: main
+      path: vendor/helm/koordinator-1.8.0
       helm:
         valuesObject:
           installation:
@@ -17,6 +17,7 @@ spec:
             features: BECPUEvict=false,BEMemoryEvict=false,CgroupReconcile=false,Accelerators=false
             hostDirs:
               koordProxyRegisterDir: /var/run/koordlet/
+              vgpuContainersDir: /var/run/koordlet/vgpu-containers
           manager:
             replicas: 1
             resources:
