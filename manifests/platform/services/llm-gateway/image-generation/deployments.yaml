@@ -16,6 +16,7 @@ spec:
       labels:
         app.kubernetes.io/name: image-generation-api
     spec:
+      schedulerName: koord-scheduler
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

@@ -49,8 +49,12 @@ data:
               evictLocalStoragePods: true
               defaultJobMode: ReservationFirst
               labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: image-generation-webui
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - image-generation-webui
+                      - image-generation-api
               schedulerNames:
                 - koord-scheduler
               namespaces:
@@ -78,6 +82,10 @@ data:
                   selector:
                     matchLabels:
                       app.kubernetes.io/name: image-generation-webui
+                - name: image-generation-api
+                  selector:
+                    matchLabels:
+                      app.kubernetes.io/name: image-generation-api
               nodeFit: true
               mode: BestEffort
               evictionOrder:
