@@ -99,6 +99,8 @@ spec:
                 - $(SD_CPP_SAMPLING_METHOD)
                 - --sigmas
                 - $(SD_CPP_SIGMAS)
+                - --max-vram
+                - $(SD_CPP_MAX_VRAM)
                 - --backend
                 - $(SD_CPP_BACKEND)
                 - --params-backend
@@ -125,6 +127,8 @@ spec:
                   value: euler
                 - name: SD_CPP_SIGMAS
                   value: 1.0,0.978453,0.95418,0.926626,0.89508,0.845148,0.704534,0.414568,0
+                - name: SD_CPP_MAX_VRAM
+                  value: "8"
                 - name: SD_CPP_BACKEND
                   value: diffusion=cuda0,te=cuda0,vae=cuda0
                 - name: SD_CPP_PARAMS_BACKEND
