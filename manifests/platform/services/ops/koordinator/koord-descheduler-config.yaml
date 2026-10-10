@@ -69,7 +69,7 @@ data:
             args:
               apiVersion: descheduler/v1alpha2
               kind: CustomPriorityArgs
-              dryRun: true
+              dryRun: false
               evictableNamespaces:
                 include:
                   - llm-gateway
