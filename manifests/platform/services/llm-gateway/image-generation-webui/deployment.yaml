@@ -18,6 +18,7 @@ spec:
         app.kubernetes.io/name: image-generation-webui
         app.kubernetes.io/part-of: llm-gateway
     spec:
+      schedulerName: koord-scheduler
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
