@@ -21,11 +21,9 @@ data:
     maxNoOfPodsToEvictPerNamespace: 1
     maxNoOfPodsToEvictTotal: 1
     profiles:
-      - name: intel-gpu-to-generic
+      - name: gpu-to-generic
         nodeSelector:
           matchExpressions:
-            - key: nvidia.com/gpu.count
-              operator: DoesNotExist
             - key: node-role.kubernetes.io/control-plane
               operator: DoesNotExist
         plugins:
@@ -79,81 +77,15 @@ data:
               nodeFit: true
               mode: BestEffort
               evictionOrder:
-                - name: intel-gpu
-                  nodeSelector:
-                    matchLabels:
-                      intel.feature.node.kubernetes.io/gpu: "true"
-                - name: generic
+                - name: gpu
                   nodeSelector:
                     matchExpressions:
-                      - key: intel.feature.node.kubernetes.io/gpu
-                        operator: DoesNotExist
-                      - key: nvidia.com/gpu.count
-                        operator: DoesNotExist
-                      - key: node-role.kubernetes.io/control-plane
-                        operator: DoesNotExist
-      - name: nvidia-gpu-to-generic
-        nodeSelector:
-          matchExpressions:
-            - key: intel.feature.node.kubernetes.io/gpu
-              operator: DoesNotExist
-            - key: node-role.kubernetes.io/control-plane
-              operator: DoesNotExist
-        plugins:
-          deschedule:
-            disabled:
-              - name: "*"
-          balance:
-            disabled:
-              - name: "*"
-            enabled:
-              - name: CustomPriority
-          evict:
-            disabled:
-              - name: "*"
-            enabled:
-              - name: MigrationController
-        pluginConfig:
-          - name: MigrationController
-            args:
-              apiVersion: descheduler/v1alpha2
-              kind: MigrationControllerArgs
-              evictionPolicy: Eviction
-              defaultJobMode: ReservationFirst
-              schedulerNames:
-                - koord-scheduler
-              namespaces:
-                include:
-                  - llm-gateway
-              maxConcurrentReconciles: 1
-              maxMigratingGlobally: 1
-              maxMigratingPerNode: 1
-              maxMigratingPerNamespace: 1
-              maxMigratingPerWorkload: 1
-              maxUnavailablePerWorkload: 1
-              skipCheckExpectedReplicas: true
-              evictQPS: "0.1"
-              evictBurst: 1
-          - name: CustomPriority
-            args:
-              apiVersion: descheduler/v1alpha2
-              kind: CustomPriorityArgs
-              dryRun: true
-              evictableNamespaces:
-                include:
-                  - llm-gateway
-              podSelectors:
-                - name: image-generation-webui
-                  selector:
-                    matchLabels:
-                      app.kubernetes.io/name: image-generation-webui
-              nodeFit: true
-              mode: BestEffort
-              evictionOrder:
-                - name: nvidia-gpu
-                  nodeSelector:
-                    matchLabels:
-                      nvidia.com/gpu.count: "1"
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values:
+                          - k8s-w-blossom
+                          - k8s-w-edelweiss
+                          - k8s-w-freesia
                 - name: generic
                   nodeSelector:
                     matchExpressions:
