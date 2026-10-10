@@ -144,7 +144,7 @@ spec:
             - name: tmp
               mountPath: /tmp
         - name: llama-server
-          image: ghcr.io/ggml-org/llama.cpp:server-intel-b11429@sha256:3353d968ed8987612b7859828d14d205413567baafed00a90d71d0c23e63d7ba
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api:llama-sycl-gemma-embedding2-4fbc76d@sha256:1028f9d132f36c7ff31acde34edab1eeb2162796106c26ca67dd090b64098349
           imagePullPolicy: IfNotPresent
           args:
             - -m
