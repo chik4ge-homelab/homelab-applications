@@ -1,9 +1,9 @@
 {
   "assets": [
     {
-      "repo_id": "AtomicChat/Qwen-Image-2.1-Turbo-GGUF",
-      "filename": "Qwen-Image-2.1-Turbo-AD-Q4_K.gguf",
-      "revision": "bb25d06bc74119c12207243d68917951e6d9c232",
+      "repo_id": "Abiray/Qwen-Image-2.1-Turbo-GGUF",
+      "filename": "qwen_image_2.1_turbo_Q4_K_M.gguf",
+      "revision": "912070141874687f049212a50b710570882c61c7",
       "kind": "local",
       "role": "model",
       "download": true

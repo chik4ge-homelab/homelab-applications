@@ -112,7 +112,7 @@ spec:
                 - name: SD_CPP_LISTEN_PORT
                   value: "8080"
                 - name: SD_CPP_DIFFUSION_MODEL
-                  value: /models/Qwen-Image-2.1-Turbo-AD-Q4_K.gguf
+                  value: /models/qwen_image_2.1_turbo_Q4_K_M.gguf
                 - name: SD_CPP_VAE
                   value: /models/vae/qwen_image_2.1_vae_bf16.safetensors
                 - name: SD_CPP_LLM
