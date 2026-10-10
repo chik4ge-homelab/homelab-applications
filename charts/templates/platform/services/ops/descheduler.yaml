@@ -32,15 +32,10 @@ spec:
                     args:
                       excludeOwnerKinds:
                         - ReplicaSet
-                  - name: RemovePodsViolatingNodeTaints
-                    args:
-                      includePreferNoSchedule: true
-                      includedTaints:
-                        - chik4ge.me/gpu=true
                 plugins:
                   deschedule:
-                    enabled:
-                      - RemovePodsViolatingNodeTaints
+                    disabled:
+                      - "*"
                   balance:
                     enabled:
                       - RemoveDuplicates
