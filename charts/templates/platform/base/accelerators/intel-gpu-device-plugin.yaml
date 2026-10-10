@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: intel-gpu-device-plugin
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/intel/intel-device-plugins-for-kubernetes
+      targetRevision: v0.35.0
+      path: deployments/nfd/overlays/node-feature-rules
+    - repoURL: https://github.com/intel/intel-device-plugins-for-kubernetes
+      targetRevision: v0.35.0
+      path: deployments/gpu_plugin/overlays/nfd_labeled_nodes
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: intel-device-plugin
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: "privileged"
