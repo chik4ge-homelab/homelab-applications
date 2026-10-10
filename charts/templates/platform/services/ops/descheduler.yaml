@@ -32,10 +32,13 @@ spec:
                     args:
                       excludeOwnerKinds:
                         - ReplicaSet
+                  - name: RemovePodsViolatingNodeTaints
+                    args:
+                      includePreferNoSchedule: true
                 plugins:
                   deschedule:
-                    disabled:
-                      - "*"
+                    enabled:
+                      - RemovePodsViolatingNodeTaints
                   balance:
                     enabled:
                       - RemoveDuplicates
