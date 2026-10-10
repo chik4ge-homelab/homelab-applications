@@ -45,7 +45,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: prepare-model-cache
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:2537b45118a20568a465318702ebd900f1ceab9d80e40192b933da973c1acba3
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -87,44 +87,32 @@ spec:
               mountPath: /tmp
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:2537b45118a20568a465318702ebd900f1ceab9d80e40192b933da973c1acba3
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
           env:
-            - name: MODEL_DEVICE
-              value: xpu
-            - name: MODEL_PATH
-              value: /cache
+            - name: EMBEDDING_BACKEND
+              value: llama.cpp
             - name: MODEL_NAME
               value: embeddinggemma-2
-            - name: MODEL_HUB_REPO
-              value: google/embeddinggemma-2
             - name: MODEL_REVISION
               value: 914f7f89142e33e77833254d9c9b90c3cef7303b
-            - name: TORCH_NUM_THREADS
-              value: "2"
-            - name: OMP_NUM_THREADS
-              value: "2"
-            - name: MKL_NUM_THREADS
-              value: "2"
+            - name: LLAMA_SERVER_URL
+              value: http://127.0.0.1:8081
+            - name: LLAMA_DEVICE
+              value: SYCL0
             - name: MAX_CONCURRENCY
               value: "2"
-            - name: HF_HUB_OFFLINE
-              value: "1"
-            - name: HF_HUB_DISABLE_TELEMETRY
-              value: "1"
           resources:
             requests:
-              cpu: "2"
-              memory: 2Gi
-              gpu.intel.com/i915: 1
+              cpu: 100m
+              memory: 256Mi
             limits:
-              cpu: "4"
-              memory: 6Gi
-              gpu.intel.com/i915: 1
+              cpu: "1"
+              memory: 512Mi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -153,8 +141,60 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        - name: llama-server
+          image: ghcr.io/ggml-org/llama.cpp:server-intel-b11429@sha256:3353d968ed8987612b7859828d14d205413567baafed00a90d71d0c23e63d7ba
+          imagePullPolicy: IfNotPresent
+          args:
+            - -m
+            - /models/embeddinggemma-2-BF16.gguf
+            - --mmproj
+            - /models/mmproj-embeddinggemma-2-BF16.gguf
+            - --alias
+            - embeddinggemma-2
+            - --embedding
+            - --pooling
+            - mean
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8081"
+            - --device
+            - SYCL0
+            - --n-gpu-layers
+            - all
+            - --ctx-size
+            - "8192"
+            - --parallel
+            - "2"
+            - --threads
+            - "2"
+          ports:
+            - name: llama-http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: HOME
+              value: /tmp
+          resources:
+            requests:
+              cpu: "2"
+              memory: 2Gi
+              gpu.intel.com/i915: 1
+            limits:
+              cpu: "4"
+              memory: 6Gi
+              gpu.intel.com/i915: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
             - name: model-cache
-              mountPath: /cache
+              mountPath: /models
               readOnly: true
             - name: tmp
               mountPath: /tmp

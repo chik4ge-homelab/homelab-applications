@@ -1,113 +1,17 @@
 {
   "assets": [
     {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "model.safetensors",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
+      "repo_id": "ggml-org/embeddinggemma-2-GGUF",
+      "filename": "embeddinggemma-2-BF16.gguf",
+      "revision": "bfcd298762cc34d0357ece5ebdd31791a3a374d8",
       "kind": "local",
       "role": "model",
       "download": true
     },
     {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "config_sentence_transformers.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "modules.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "preprocessor_config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "processor_config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "sentence_bert_config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "1_Pooling/config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "2_Normalize/config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "config",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "tokenizer.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "tokenizer",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "tokenizer.model",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "tokenizer",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "tokenizer.model",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "tokenizer",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "tokenizer_config.json",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
-      "kind": "local",
-      "role": "tokenizer",
-      "download": true
-    },
-    {
-      "repo_id": "google/embeddinggemma-2",
-      "filename": "chat_template.jinja",
-      "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
+      "repo_id": "ggml-org/embeddinggemma-2-GGUF",
+      "filename": "mmproj-embeddinggemma-2-BF16.gguf",
+      "revision": "bfcd298762cc34d0357ece5ebdd31791a3a374d8",
       "kind": "local",
       "role": "config",
       "download": true
