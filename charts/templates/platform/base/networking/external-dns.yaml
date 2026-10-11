@@ -16,6 +16,8 @@ spec:
         valuesObject:
           provider: cloudflare
           policy: sync
+          extraArgs:
+            - --enable-legacy-annotation-prefix
           sources:
             - service
             - ingress
