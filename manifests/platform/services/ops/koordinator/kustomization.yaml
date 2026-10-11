@@ -4,3 +4,4 @@ resources:
   - namespace.yaml
   - koord-scheduler-config.yaml
   - koord-descheduler-config.yaml
+  - cluster-colocation-profile.yaml

@@ -1,0 +1,10 @@
+apiVersion: config.koordinator.sh/v1alpha1
+kind: ClusterColocationProfile
+metadata:
+  name: cluster-wide-koord-scheduler
+spec:
+  namespaceSelector:
+    matchExpressions:
+      - key: control-plane
+        operator: DoesNotExist
+  schedulerName: koord-scheduler

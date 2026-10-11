@@ -13,6 +13,7 @@ spec:
         valuesObject:
           installation:
             namespace: koordinator-system
+          featureGates: ReservationMutatingWebhook=true
           koordlet:
             features: BECPUEvict=false,BEMemoryEvict=false,CgroupReconcile=false,Accelerators=false
             hostDirs:

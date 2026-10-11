@@ -3,6 +3,6 @@ kind: Namespace
 metadata:
   name: koordinator-system
   labels:
-    controle-plane: koordinator
+    control-plane: koordinator
     pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/enforce-version: latest

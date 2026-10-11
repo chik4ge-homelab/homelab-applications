@@ -50,7 +50,13 @@ data:
               evictLocalStoragePods: true
               dryRun: true
               nodeFit: true
-              defaultJobMode: EvictDirectly
+              defaultJobMode: ReservationFirst
+              schedulerNames:
+                - default-scheduler
+                - koord-scheduler
+              namespaces:
+                exclude:
+                  - koordinator-system
               maxConcurrentReconciles: 1
               maxMigratingGlobally: 1
               maxMigratingPerNode: 1
@@ -65,6 +71,9 @@ data:
               apiVersion: descheduler/v1alpha2
               kind: CustomPriorityArgs
               dryRun: true
+              evictableNamespaces:
+                exclude:
+                  - koordinator-system
               nodeFit: true
               mode: BestEffort
               evictionOrder:
