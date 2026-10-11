@@ -12,6 +12,7 @@ spec:
     helm:
       valuesObject:
         fullnameOverride: node-exporter
+        prometheusScrape: false
         service:
           annotations:
             prometheus.io/scrape: "false"
