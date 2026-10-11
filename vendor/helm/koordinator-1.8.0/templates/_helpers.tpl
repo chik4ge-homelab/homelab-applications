@@ -95,3 +95,60 @@ secrets:
 {{- end }}
 {{- end }}
 {{- end -}}
+
+{{- define "koordinator.mutatingWebhooks" -}}
+{{- $webhooks := list -}}
+{{- if not (contains "PodMutatingWebhook=false" .Values.featureGates) -}}
+{{- $webhooks = append $webhooks (dict
+  "clientConfig" (dict "caBundle" "Cg==" "service" (dict "name" "koordinator-webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-pod"))
+  "failurePolicy" .Values.webhookConfiguration.failurePolicy.pods
+  "admissionReviewVersions" (list "v1" "v1beta1")
+  "sideEffects" "None"
+  "timeoutSeconds" .Values.webhookConfiguration.timeoutSeconds
+  "name" "mpod-create.koordinator.sh"
+  "namespaceSelector" (dict "matchExpressions" (list (dict "key" "control-plane" "operator" "DoesNotExist")))
+  "rules" (list (dict "apiGroups" (list "") "apiVersions" (list "v1") "operations" (list "CREATE") "resources" (list "pods") "scope" "*"))) -}}
+{{- $webhooks = append $webhooks (dict
+  "admissionReviewVersions" (list "v1" "v1beta1")
+  "clientConfig" (dict "caBundle" "Cg==" "service" (dict "name" "koordinator-webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-pod"))
+  "failurePolicy" .Values.webhookConfiguration.failurePolicy.pods
+  "name" "mpod-update.koordinator.sh"
+  "namespaceSelector" (dict "matchExpressions" (list (dict "key" "control-plane" "operator" "DoesNotExist")))
+  "objectSelector" (dict "matchExpressions" (list (dict "key" "pod.koordinator.sh/mutating-update" "operator" "In" "values" (list "true"))))
+  "rules" (list (dict "apiGroups" (list "") "apiVersions" (list "v1") "operations" (list "UPDATE") "resources" (list "pods") "scope" "*"))
+  "sideEffects" "None"
+  "timeoutSeconds" .Values.webhookConfiguration.timeoutSeconds) -}}
+{{- end -}}
+{{- if not (contains "ElasticMutatingWebhook=false" .Values.featureGates) -}}
+{{- $webhooks = append $webhooks (dict
+  "clientConfig" (dict "caBundle" "Cg==" "service" (dict "name" "koordinator-webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-scheduling-sigs-k8s-io-v1alpha1-elasticquota"))
+  "failurePolicy" .Values.webhookConfiguration.failurePolicy.elasticquotas
+  "admissionReviewVersions" (list "v1" "v1beta1")
+  "sideEffects" "None"
+  "timeoutSeconds" .Values.webhookConfiguration.timeoutSeconds
+  "name" "melasticquota.koordinator.sh"
+  "namespaceSelector" (dict "matchExpressions" (list (dict "key" "control-plane" "operator" "DoesNotExist")))
+  "rules" (list (dict "apiGroups" (list "scheduling.sigs.k8s.io") "apiVersions" (list "v1alpha1") "operations" (list "CREATE") "resources" (list "elasticquotas") "scope" "*"))) -}}
+{{- end -}}
+{{- if contains "NodeMutatingWebhook=true" .Values.featureGates -}}
+{{- $webhooks = append $webhooks (dict
+  "admissionReviewVersions" (list "v1" "v1beta1")
+  "clientConfig" (dict "caBundle" "Cg==" "service" (dict "name" "koordinator-webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-node-status"))
+  "failurePolicy" .Values.webhookConfiguration.failurePolicy.nodeStatus
+  "name" "mnode-status.koordinator.sh"
+  "rules" (list (dict "apiGroups" (list "") "apiVersions" (list "v1") "operations" (list "CREATE" "UPDATE") "resources" (list "nodes/status")))
+  "timeoutSeconds" .Values.webhookConfiguration.timeoutSeconds
+  "sideEffects" "None") -}}
+{{- end -}}
+{{- if contains "ReservationMutatingWebhook=true" .Values.featureGates -}}
+{{- $webhooks = append $webhooks (dict
+  "admissionReviewVersions" (list "v1" "v1beta1")
+  "clientConfig" (dict "service" (dict "name" "webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-reservation"))
+  "failurePolicy" .Values.webhookConfiguration.failurePolicy.reservations
+  "name" "mreservation-create.koordinator.sh"
+  "rules" (list (dict "apiGroups" (list "scheduling.koordinator.sh") "apiVersions" (list "v1alpha1") "operations" (list "CREATE") "resources" (list "reservations")))
+  "timeoutSeconds" .Values.webhookConfiguration.timeoutSeconds
+  "sideEffects" "None") -}}
+{{- end -}}
+{{- toYaml $webhooks -}}
+{{- end -}}

@@ -1,9 +1,10 @@
+{{- $mutatingWebhooks := include "koordinator.mutatingWebhooks" . | fromYamlArray -}}
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: koordinator-mutating-webhook-configuration
   annotations:
-    template: ""
+    template: {{ toJson $mutatingWebhooks | quote }}
 webhooks:
 {{ if contains "PodMutatingWebhook=false" .Values.featureGates }}{{ else }}
 - clientConfig:
