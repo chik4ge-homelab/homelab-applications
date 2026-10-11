@@ -9,7 +9,7 @@
   value: All Kafka broker containers down or in CrashLookBackOff status
 - op: replace
   path: /spec/groups/0/rules/7/expr
-  value: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-broker-nodepool-[0-9]+"})
+  value: absent(container_last_seen{namespace="strimzi-kafka",container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
 - op: add
   path: /spec/groups/0/rules/-
   value:
@@ -17,7 +17,7 @@
     annotations:
       description: All Kafka controller containers have been down or in CrashLookBackOff status for 3 minutes
       summary: All Kafka controller containers down or in CrashLookBackOff status
-    expr: absent(container_last_seen{container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
+    expr: absent(container_last_seen{namespace="strimzi-kafka",container="kafka",pod=~"kafka-cluster-kafka-controller-nodepool-[0-9]+"})
     for: 3m
     labels:
       severity: major
