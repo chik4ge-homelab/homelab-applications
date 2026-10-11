@@ -26,12 +26,11 @@ data:
           deschedule:
             disabled:
               - name: "*"
-            enabled:
-              - name: RemoveDuplicates
           balance:
             disabled:
               - name: "*"
             enabled:
+              - name: RemoveDuplicates
               - name: CustomPriority
           evict:
             disabled:
