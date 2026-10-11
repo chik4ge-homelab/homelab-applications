@@ -11,6 +11,8 @@ data:
   resource-threshold-config: |
     {
       "clusterStrategy": {
-        "enable": true
+        "enable": true,
+        "memoryEvictThresholdPercent": 90,
+        "memoryEvictLowerPercent": 85
       }
     }

@@ -25,7 +25,7 @@ spec:
                 cpu: 100m
             log:
               level: "2"
-            features: BECPUEvict=false,BEMemoryEvict=false,CgroupReconcile=false,Accelerators=false
+            features: BECPUEvict=false,BEMemoryEvict=true,CgroupReconcile=false,Accelerators=false
             hostDirs:
               koordProxyRegisterDir: /var/run/koordlet/
               vgpuContainersDir: /var/run/koordlet/vgpu-containers
