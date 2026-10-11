@@ -25,6 +25,7 @@ spec:
           configs:
             params:
               "server.insecure": "true"
+              "redis.db": "1"
             cm:
               url: https://argocd.chik4ge.me
               dex.config: |
@@ -52,38 +53,15 @@ spec:
               policy.csv: |
                 g, chik4ge-homelab:admin, role:admin
           redis-ha:
-            enabled: true
-            podManagementPolicy: Parallel
-            haproxy:
-              metrics:
-                enabled: true
-              resources:
-                requests:
-                  cpu: 5m
-                  memory: 64Mi
-                limits:
-                  memory: 128Mi
-            redis:
-              resources:
-                requests:
-                  cpu: 20m
-                  memory: 32Mi
-                limits:
-                  memory: 128Mi
-            sentinel:
-              resources:
-                requests:
-                  cpu: 50m
-                  memory: 64Mi
-                limits:
-                  memory: 128Mi
-            splitBrainDetection:
-              resources:
-                requests:
-                  cpu: 10m
-                  memory: 32Mi
-                limits:
-                  memory: 64Mi
+            enabled: false
+          redis:
+            enabled: false
+          redisSecretInit:
+            enabled: false
+          externalRedis:
+            host: redis-ha-haproxy.redis.svc.cluster.local
+            port: 6379
+            existingSecret: external-redis-credentials
 
           controller:
             replicas: 1
@@ -160,10 +138,6 @@ spec:
               limits:
                 memory: 256Mi
 
-          redis:
-            metrics:
-              enabled: true
-              
           notifications:
             enabled: true
             metrics:
