@@ -125,7 +125,7 @@ webhooks:
   - v1beta1
   clientConfig:
     service:
-      name: webhook-service
+      name: koordinator-webhook-service
       namespace: {{ .Values.installation.namespace }}
       path: /mutate-reservation
   failurePolicy: {{ .Values.webhookConfiguration.failurePolicy.reservations }}

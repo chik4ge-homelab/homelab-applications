@@ -143,7 +143,7 @@ secrets:
 {{- if contains "ReservationMutatingWebhook=true" .Values.featureGates -}}
 {{- $webhooks = append $webhooks (dict
   "admissionReviewVersions" (list "v1" "v1beta1")
-  "clientConfig" (dict "service" (dict "name" "webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-reservation"))
+  "clientConfig" (dict "service" (dict "name" "koordinator-webhook-service" "namespace" .Values.installation.namespace "path" "/mutate-reservation"))
   "failurePolicy" .Values.webhookConfiguration.failurePolicy.reservations
   "name" "mreservation-create.koordinator.sh"
   "rules" (list (dict "apiGroups" (list "scheduling.koordinator.sh") "apiVersions" (list "v1alpha1") "operations" (list "CREATE") "resources" (list "reservations")))
