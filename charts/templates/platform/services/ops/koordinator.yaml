@@ -15,6 +15,13 @@ spec:
             namespace: koordinator-system
           featureGates: ReservationMutatingWebhook=true
           koordlet:
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                cpu: null
+            log:
+              level: "2"
             features: BECPUEvict=false,BEMemoryEvict=false,CgroupReconcile=false,Accelerators=false
             hostDirs:
               koordProxyRegisterDir: /var/run/koordlet/
@@ -49,6 +56,13 @@ spec:
                 cpu: 500m
                 memory: 512Mi
           deviceDaemon:
+            resources:
+              requests:
+                cpu: 50m
+              limits:
+                cpu: null
+            log:
+              level: "2"
             nodeAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
                 nodeSelectorTerms:
