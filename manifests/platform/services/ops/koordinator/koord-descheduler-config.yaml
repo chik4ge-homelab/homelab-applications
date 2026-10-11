@@ -16,7 +16,7 @@ data:
       resourceName: koord-descheduler
       resourceNamespace: koordinator-system
     deschedulingInterval: 2m
-    dryRun: true
+    dryRun: false
     maxNoOfPodsToEvictPerNode: 1
     maxNoOfPodsToEvictPerNamespace: 1
     maxNoOfPodsToEvictTotal: 1
@@ -30,7 +30,6 @@ data:
             disabled:
               - name: "*"
             enabled:
-              - name: RemoveDuplicates
               - name: CustomPriority
           evict:
             disabled:
@@ -38,17 +37,13 @@ data:
             enabled:
               - name: MigrationController
         pluginConfig:
-          - name: RemoveDuplicates
-            args:
-              excludeOwnerKinds:
-                - ReplicaSet
           - name: MigrationController
             args:
               apiVersion: descheduler/v1alpha2
               kind: MigrationControllerArgs
               evictionPolicy: Eviction
               evictLocalStoragePods: true
-              dryRun: true
+              dryRun: false
               nodeFit: true
               defaultJobMode: ReservationFirst
               schedulerNames:
@@ -70,7 +65,7 @@ data:
             args:
               apiVersion: descheduler/v1alpha2
               kind: CustomPriorityArgs
-              dryRun: true
+              dryRun: false
               evictableNamespaces:
                 exclude:
                   - koordinator-system
