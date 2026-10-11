@@ -158,52 +158,6 @@ spec:
                       key: "Grafana MySQL"
                       property: password
 
-    - chart: pxc-db
-      repoURL: https://percona.github.io/percona-helm-charts/
-      targetRevision: 1.19.2
-      helm:
-        parameters:
-          - name: pxc.certManager
-            value: "true"
-        valuesObject:
-          users:
-            - name: grafana
-              dbs:
-                - grafana
-              passwordSecretRef:
-                name: mysql-secret
-                key: password
-              grants:
-                - ALL
-                - PRIVILEGES
-          haproxy:
-            resources:
-              requests:
-                memory: 128Mi
-                cpu: 100m
-          pxc:
-            affinity:
-              antiAffinityTopologyKey: kubernetes.io/hostname
-              advanced:
-                nodeAffinity:
-                  requiredDuringSchedulingIgnoredDuringExecution:
-                    nodeSelectorTerms:
-                      - matchExpressions:
-                          - key: chik4ge.me/node-tier
-                            operator: NotIn
-                            values:
-                              - small
-            resources:
-              requests:
-                cpu: 100m
-            persistence:
-              storageClass: ceph-rbd
-          logcollector:
-            resources:
-              requests:
-                cpu: 0
-                memory: 0
-
   destination:
     namespace: grafana
     server: {{ .Values.spec.destination.server }}

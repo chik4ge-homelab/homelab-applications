@@ -5,3 +5,4 @@ resources:
   - ./configmaps/argocd-notifications.yaml
   - ./secrets/argocd-notifications.yaml
   - ./secrets/github.yaml
+  - ./secrets/external-redis.yaml
