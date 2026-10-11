@@ -13,6 +13,8 @@ spec:
         skipCrds: true
         releaseName: eg
         valuesObject:
+          crds:
+            enabled: false
           deployment:
             envoyGateway:
               resources:
