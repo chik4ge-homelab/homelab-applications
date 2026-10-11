@@ -31,6 +31,7 @@ data:
               - name: "*"
             enabled:
               - name: CustomPriority
+              - name: RemoveDuplicates
           evict:
             disabled:
               - name: "*"
@@ -90,3 +91,9 @@ data:
                         operator: DoesNotExist
                       - key: node-role.kubernetes.io/control-plane
                         operator: DoesNotExist
+          - name: RemoveDuplicates
+            args:
+              apiVersion: descheduler/v1alpha2
+              kind: RemoveDuplicatesArgs
+              excludeOwnerKinds:
+                - ReplicaSet
