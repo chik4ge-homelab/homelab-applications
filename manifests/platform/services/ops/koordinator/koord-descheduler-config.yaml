@@ -16,20 +16,18 @@ data:
       resourceName: koord-descheduler
       resourceNamespace: koordinator-system
     deschedulingInterval: 2m
-    dryRun: false
+    dryRun: true
     maxNoOfPodsToEvictPerNode: 1
     maxNoOfPodsToEvictPerNamespace: 1
     maxNoOfPodsToEvictTotal: 1
     profiles:
       - name: gpu-to-generic
-        nodeSelector:
-          matchExpressions:
-            - key: node-role.kubernetes.io/control-plane
-              operator: DoesNotExist
         plugins:
           deschedule:
             disabled:
               - name: "*"
+            enabled:
+              - name: RemoveDuplicates
           balance:
             disabled:
               - name: "*"
@@ -41,25 +39,19 @@ data:
             enabled:
               - name: MigrationController
         pluginConfig:
+          - name: RemoveDuplicates
+            args:
+              excludeOwnerKinds:
+                - ReplicaSet
           - name: MigrationController
             args:
               apiVersion: descheduler/v1alpha2
               kind: MigrationControllerArgs
               evictionPolicy: Eviction
               evictLocalStoragePods: true
-              defaultJobMode: ReservationFirst
-              labelSelector:
-                matchExpressions:
-                  - key: app.kubernetes.io/name
-                    operator: In
-                    values:
-                      - image-generation-webui
-                      - image-generation-api
-              schedulerNames:
-                - koord-scheduler
-              namespaces:
-                include:
-                  - llm-gateway
+              dryRun: true
+              nodeFit: true
+              defaultJobMode: EvictDirectly
               maxConcurrentReconciles: 1
               maxMigratingGlobally: 1
               maxMigratingPerNode: 1
@@ -73,19 +65,7 @@ data:
             args:
               apiVersion: descheduler/v1alpha2
               kind: CustomPriorityArgs
-              dryRun: false
-              evictableNamespaces:
-                include:
-                  - llm-gateway
-              podSelectors:
-                - name: image-generation-webui
-                  selector:
-                    matchLabels:
-                      app.kubernetes.io/name: image-generation-webui
-                - name: image-generation-api
-                  selector:
-                    matchLabels:
-                      app.kubernetes.io/name: image-generation-api
+              dryRun: true
               nodeFit: true
               mode: BestEffort
               evictionOrder:
