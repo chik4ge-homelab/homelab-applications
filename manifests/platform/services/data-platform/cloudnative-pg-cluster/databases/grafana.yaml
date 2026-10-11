@@ -1,0 +1,9 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: grafana
+spec:
+  name: grafana
+  owner: grafana_app
+  cluster:
+    name: cloudnative-pg-cluster
