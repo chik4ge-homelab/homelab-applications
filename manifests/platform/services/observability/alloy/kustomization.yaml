@@ -5,6 +5,7 @@ namespace: alloy
 
 resources:
   - rules/mixin-generated
+  - rules/kube-client-certificate-alerts.yaml
   - secrets/alertmanager-discord-webhook.yaml
   - gateway/httproute.yaml
   - oci-edge-services.yaml
@@ -16,3 +17,9 @@ configMapGenerator:
 
 generatorOptions:
   disableNameSuffixHash: true
+
+patches:
+  - target:
+      kind: PrometheusRule
+      name: k8s-mixin-alerts
+    path: rules/kube-client-certificate-alerts-patch.yaml

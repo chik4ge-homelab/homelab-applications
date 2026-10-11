@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kube-client-certificate-alerts
+spec:
+  groups:
+    - name: kubernetes-client-certificate-expired
+      rules:
+        - alert: KubeClientCertificateExpired
+          expr: |
+            sum by (job, homelab_cluster, instance) (
+              rate(apiserver_client_certificate_expiration_seconds_bucket{job="kube-apiserver",le="0.0"}[5m])
+            ) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Kubernetes API client certificate has expired.
+            description: An expired client certificate is being presented to the API server at {{ $labels.instance }}.

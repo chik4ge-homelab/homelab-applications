@@ -1,0 +1,22 @@
+# Talos uses 10-minute client certificates for its internal Kubernetes requests.
+# Exclude certificates with under 30 minutes remaining from advance warnings.
+- op: replace
+  path: /spec/groups/5/rules/0/expr
+  value: |
+    sum by (job, homelab_cluster, instance) (
+      rate(apiserver_client_certificate_expiration_seconds_bucket{job="kube-apiserver",le="604800.0"}[5m])
+    )
+    -
+    sum by (job, homelab_cluster, instance) (
+      rate(apiserver_client_certificate_expiration_seconds_bucket{job="kube-apiserver",le="1800.0"}[5m])
+    ) > 0
+- op: replace
+  path: /spec/groups/5/rules/1/expr
+  value: |
+    sum by (job, homelab_cluster, instance) (
+      rate(apiserver_client_certificate_expiration_seconds_bucket{job="kube-apiserver",le="86400.0"}[5m])
+    )
+    -
+    sum by (job, homelab_cluster, instance) (
+      rate(apiserver_client_certificate_expiration_seconds_bucket{job="kube-apiserver",le="1800.0"}[5m])
+    ) > 0
