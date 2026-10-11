@@ -19,7 +19,7 @@ spec:
               requests:
                 cpu: 100m
               limits:
-                cpu: null
+                cpu: "1"
             log:
               level: "2"
             features: BECPUEvict=false,BEMemoryEvict=false,CgroupReconcile=false,Accelerators=false
@@ -60,7 +60,7 @@ spec:
               requests:
                 cpu: 50m
               limits:
-                cpu: null
+                cpu: "1"
             log:
               level: "2"
             nodeAffinity:
