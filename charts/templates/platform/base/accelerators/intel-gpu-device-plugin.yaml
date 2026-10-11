@@ -7,10 +7,10 @@ spec:
   project: default
   sources:
     - repoURL: https://github.com/intel/intel-device-plugins-for-kubernetes
-      targetRevision: v0.35.0
+      targetRevision: v0.37.1
       path: deployments/nfd/overlays/node-feature-rules
     - repoURL: https://github.com/intel/intel-device-plugins-for-kubernetes
-      targetRevision: v0.35.0
+      targetRevision: v0.37.1
       path: deployments/gpu_plugin/overlays/nfd_labeled_nodes
   destination:
     server: {{ .Values.spec.destination.server }}
