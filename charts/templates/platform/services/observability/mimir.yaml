@@ -117,9 +117,11 @@ spec:
             serviceMonitor:
               enabled: true
 
+          # Shared by index, metadata, ruler storage and query results.
           index-cache:
             enabled: true
             replicas: 3
+            allocatedMemory: 128
             resources:
               requests:
                 cpu: 10m
@@ -128,7 +130,7 @@ spec:
                 memory: 256Mi
 
           metadata-cache:
-            enabled: true
+            enabled: false
             replicas: 3
             resources:
               requests:
@@ -138,7 +140,7 @@ spec:
                 memory: 256Mi
 
           results-cache:
-            enabled: true
+            enabled: false
             replicas: 3
             resources:
               requests:
@@ -198,9 +200,24 @@ spec:
                 s3:
                   bucket_name: mimir-blocks
                 bucket_store:
+                  metadata_cache:
+                    backend: memcached
+                    memcached:
+                      addresses: dnssrvnoa+mimir-index-cache.mimir.svc.cluster.local:11211
+                      max_item_size: 1048576
+                      max_idle_connections: 150
                   chunks_cache:
                     memcached:
                       timeout: 15s
+              frontend:
+                cache_results: true
+                query_sharding_target_series_per_shard: 2500
+                results_cache:
+                  backend: memcached
+                  memcached:
+                    addresses: dnssrvnoa+mimir-index-cache.mimir.svc.cluster.local:11211
+                    max_item_size: 5242880
+                    timeout: 500ms
               ingest_storage:
                 kafka:
                   address: kafka-cluster-kafka-bootstrap.strimzi-kafka.svc.cluster.local:9092
@@ -213,6 +230,12 @@ spec:
                 s3:
                   bucket_name: mimir-alertmanager
               ruler_storage:
+                cache:
+                  backend: memcached
+                  memcached:
+                    addresses: dnssrvnoa+mimir-index-cache.mimir.svc.cluster.local:11211
+                    max_item_size: 1048576
+                    timeout: 500ms
                 s3:
                   bucket_name: mimir-ruler
 
@@ -221,6 +244,6 @@ spec:
     server: {{ .Values.spec.destination.server }}
   syncPolicy:
     automated:
-      prune: true
+      prune: false
     syncOptions:
       - CreateNamespace=true
