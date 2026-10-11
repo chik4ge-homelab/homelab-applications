@@ -10,6 +10,11 @@ spec:
       targetRevision: main
       path: vendor/helm/koordinator-1.8.0
       helm:
+        parameters:
+          - name: koordlet.resources.limits.cpu
+            value: "null"
+          - name: deviceDaemon.resources.limits.cpu
+            value: "null"
         valuesObject:
           installation:
             namespace: koordinator-system
@@ -18,8 +23,6 @@ spec:
             resources:
               requests:
                 cpu: 100m
-              limits:
-                cpu: "1"
             log:
               level: "2"
             features: BECPUEvict=false,BEMemoryEvict=false,CgroupReconcile=false,Accelerators=false
@@ -59,8 +62,6 @@ spec:
             resources:
               requests:
                 cpu: 50m
-              limits:
-                cpu: "1"
             log:
               level: "2"
             nodeAffinity:
