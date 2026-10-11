@@ -47,6 +47,11 @@ data:
               dryRun: false
               nodeFit: true
               defaultJobMode: ReservationFirst
+              labelSelector:
+                matchExpressions:
+                  - key: koordinator.chik4ge.me/migration-blocked
+                    operator: NotIn
+                    values: ["true"]
               schedulerNames:
                 - default-scheduler
                 - koord-scheduler
@@ -72,6 +77,13 @@ data:
                   - koordinator-system
               nodeFit: true
               mode: BestEffort
+              podSelectors:
+                - name: without-migration-failure
+                  selector:
+                    matchExpressions:
+                      - key: koordinator.chik4ge.me/migration-blocked
+                        operator: NotIn
+                        values: ["true"]
               evictionOrder:
                 - name: gpu
                   nodeSelector:

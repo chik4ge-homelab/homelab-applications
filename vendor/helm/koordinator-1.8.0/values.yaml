@@ -157,6 +157,8 @@ scheduler:
   monitorEnabled: false
 
 descheduler:
+  # Pod annotations, including a revision to roll out external ConfigMap changes.
+  podAnnotations: {}
   # settings for log print
   log:
     # log level for koord-descheduler

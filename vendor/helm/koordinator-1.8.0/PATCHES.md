@@ -13,6 +13,8 @@ Upstream chart: `koordinator-sh/koordinator` version `1.8.0`, from
   application manages them from its Kustomize source, including the Pod Security
   labels and cluster-specific policies.
 - Give the PodMonitor template a `.yaml` extension so Helm lint accepts the chart.
+- Support `descheduler.podAnnotations` to roll out changes to the external
+  descheduler ConfigMap through GitOps.
 
 The chart's upstream defaults remain unchanged except for the added path value;
 the deployment-specific override is in `charts/templates/platform/services/ops/koordinator.yaml`.

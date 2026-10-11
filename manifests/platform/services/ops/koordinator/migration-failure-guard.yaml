@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: migration-failure-guard
+  namespace: koordinator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: migration-failure-guard
+rules:
+  - apiGroups: [scheduling.koordinator.sh]
+    resources: [podmigrationjobs]
+    verbs: [list]
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets, daemonsets, replicasets]
+    verbs: [get, list, patch]
+  - apiGroups: [batch]
+    resources: [jobs, cronjobs]
+    verbs: [get, list, patch]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: migration-failure-guard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: migration-failure-guard
+subjects:
+  - kind: ServiceAccount
+    name: migration-failure-guard
+    namespace: koordinator-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migration-failure-guard
+  namespace: koordinator-system
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: migration-failure-guard
+  template:
+    metadata:
+      labels:
+        app: migration-failure-guard
+    spec:
+      serviceAccountName: migration-failure-guard
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: guard
+          image: public.ecr.aws/docker/library/python:3.13-alpine
+          command: [python, -B, /app/migration-failure-guard.py]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: script
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: script
+          configMap:
+            name: migration-failure-guard

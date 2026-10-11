@@ -5,3 +5,9 @@ resources:
   - koord-scheduler-config.yaml
   - koord-descheduler-config.yaml
   - cluster-colocation-profile.yaml
+  - migration-failure-guard.yaml
+configMapGenerator:
+  - name: migration-failure-guard
+    namespace: koordinator-system
+    files:
+      - migration-failure-guard.py

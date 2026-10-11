@@ -39,6 +39,8 @@ spec:
                 memory: 512Mi
           descheduler:
             replicas: 1
+            podAnnotations:
+              koordinator.chik4ge.me/config-revision: migration-failure-guard-v1
             resources:
               requests:
                 cpu: 100m

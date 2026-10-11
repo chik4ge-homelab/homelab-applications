@@ -18,6 +18,10 @@ spec:
       maxSurge: 100%
   template:
     metadata:
+{{- with .Values.descheduler.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
       labels:
         koord-app: koord-descheduler
     spec:
