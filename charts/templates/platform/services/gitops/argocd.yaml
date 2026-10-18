@@ -10,7 +10,7 @@ spec:
       targetRevision: main
       path: manifests/platform/services/gitops/argocd
     - repoURL: https://argoproj.github.io/argo-helm
-      targetRevision: 10.10.3
+      targetRevision: 10.10.5
       chart: argo-cd
       helm:
         valuesObject:
