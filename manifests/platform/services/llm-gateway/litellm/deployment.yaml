@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: discover-upstream-models
-          image: ghcr.io/berriai/litellm-non_root@sha256:ce9eec5907c9828706183dc9b80962f932ad2e34171fc8c7f131e3deda439f36
+          image: ghcr.io/berriai/litellm-non_root@sha256:07fabea33dfc2b127e865c03112dfc76936334b29028ec05cdd355af2385dc04
           imagePullPolicy: IfNotPresent
           command:
             - python
@@ -59,7 +59,7 @@ spec:
               readOnly: true
       containers:
         - name: proxy
-          image: ghcr.io/berriai/litellm-non_root@sha256:ce9eec5907c9828706183dc9b80962f932ad2e34171fc8c7f131e3deda439f36
+          image: ghcr.io/berriai/litellm-non_root@sha256:07fabea33dfc2b127e865c03112dfc76936334b29028ec05cdd355af2385dc04
           imagePullPolicy: IfNotPresent
           args:
             - --config
