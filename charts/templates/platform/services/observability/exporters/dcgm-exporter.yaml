@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dcgm-exporter
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://nvidia.github.io/dcgm-exporter/helm-charts
+    chart: dcgm-exporter
+    targetRevision: 4.8.4
+    helm:
+      releaseName: dcgm-exporter
+      valuesObject:
+        fullnameOverride: dcgm-exporter
+        runtimeClassName: nvidia
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: nvidia.com/gpu.count
+                      operator: Exists
+        tolerations:
+          - key: nvidia.com/gpu
+            operator: Exists
+            effect: NoSchedule
+        podAnnotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9400"
+        serviceMonitor:
+          enabled: false
+  destination:
+    server: {{ .Values.spec.destination.server }}
+    namespace: nvidia-device-plugin
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
