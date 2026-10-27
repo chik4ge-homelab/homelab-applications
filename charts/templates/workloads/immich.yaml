@@ -16,7 +16,7 @@ spec:
               containers:
                 main:
                   image:
-                    tag: v3.2.4
+                    tag: v3.3.5
                   env:
                     DB_HOSTNAME: cloudnative-pg-cluster-rw.cnpg-database.svc.cluster.local
                     DB_PORT: "5432"
