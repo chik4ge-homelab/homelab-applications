@@ -19,7 +19,7 @@ spec:
             enabled: false
           replicaCount: 1
           image:
-            version: v0.0.63 # renovate: datasource=docker depName=quay.io/containers/kubernetes_mcp_server
+            version: v0.1.1 # renovate: datasource=docker depName=quay.io/containers/kubernetes_mcp_server
           service:
             port: 8080
           config:
