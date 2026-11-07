@@ -28,20 +28,14 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: prepare-model-cache
-          image: python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
           imagePullPolicy: IfNotPresent
           command:
-            - sh
-            - -c
+            - /opt/venv/bin/python
           args:
-            - |
-              set -eu
-              python -m pip install --no-cache-dir --target /tmp/python-packages 'huggingface_hub==0.36.2'
-              export PYTHONPATH=/tmp/python-packages
-              exec python /config/cache.py /config/lfm3-vl-2b.json
+            - /config/cache.py
+            - /config/lfm3-vl-2b.json
           env:
-            - name: HOME
-              value: /tmp
             - name: HF_HUB_DISABLE_XET
               value: "1"
             - name: HF_HUB_DOWNLOAD_TIMEOUT
