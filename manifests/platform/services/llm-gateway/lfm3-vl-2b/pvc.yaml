@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lfm3-vl-2b-model-cache
+  labels:
+    app.kubernetes.io/name: lfm3-vl-2b
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-rbd
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi

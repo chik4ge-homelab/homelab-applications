@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - llama-cpp
+  - lfm3-vl-2b
   - litellm
   - image-generation
   - image-generation-webui
@@ -15,6 +16,10 @@ configMapGenerator:
       - model-cache/optimizer.json
       - model-cache/diffuser.json
       - model-cache/embeddinggemma-2.json
+  - name: lfm3-vl-2b-model-cache
+    files:
+      - model-cache/cache.py
+      - model-cache/lfm3-vl-2b.json
   - name: julia-systemone-model-cache
     files:
       - model-cache/julia-1.json
