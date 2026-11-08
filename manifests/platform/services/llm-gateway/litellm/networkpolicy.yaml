@@ -105,7 +105,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: llm-gateway
-            k8s:app.kubernetes.io/name: embeddinggemma-api
+            k8s:app.kubernetes.io/name: embeddinggemma-api-cuda
       toPorts:
         - ports:
             - port: "8080"
