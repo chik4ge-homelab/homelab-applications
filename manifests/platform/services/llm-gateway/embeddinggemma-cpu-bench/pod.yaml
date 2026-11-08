@@ -11,7 +11,7 @@ spec:
   restartPolicy: Always
   terminationGracePeriodSeconds: 5
   nodeSelector:
-    kubernetes.io/hostname: k8s-w-freesia
+    kubernetes.io/hostname: k8s-w-clover
   automountServiceAccountToken: false
   securityContext:
     runAsNonRoot: true
