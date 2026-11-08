@@ -176,7 +176,7 @@ spec:
             - --threads
             - "2"
             - --image-max-tokens
-            - "70"
+            - "280"
           ports:
             - name: llama-http
               containerPort: 8081
