@@ -107,12 +107,12 @@ spec:
           value: none
       resources:
         requests:
-          cpu: "4"
-          memory: 3Gi
+          cpu: "2"
+          memory: 1Gi
           ephemeral-storage: 3Gi
         limits:
           cpu: "6"
-          memory: 6Gi
+          memory: 3Gi
           ephemeral-storage: 10Gi
       securityContext:
         allowPrivilegeEscalation: false
