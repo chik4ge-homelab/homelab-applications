@@ -41,6 +41,9 @@ spec:
               local_dir="/models/openvino",
           )
           PY
+          site=/opt/venv/lib/python3.12/site-packages
+          mkdir -p /tmp/python-deps
+          cp -a "$site/numpy" "$site/numpy.libs" "$site/PIL" "$site/pillow.libs" "$site/tokenizers" /tmp/python-deps/
       env:
         - name: HF_HUB_DISABLE_XET
           value: "1"
@@ -102,6 +105,8 @@ spec:
           value: "4"
         - name: PYTHONUNBUFFERED
           value: "1"
+        - name: PYTHONPATH
+          value: /tmp/python-deps
         - name: CUDA_VISIBLE_DEVICES
           value: ""
         - name: NVIDIA_VISIBLE_DEVICES
