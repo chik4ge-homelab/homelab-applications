@@ -92,7 +92,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api:api-3e0d01467cda5b643abfdd41c5166f5ce501e144@sha256:fd5631248f95e707b38f44f59f9cbacfd6fe8cfb5bce82f9d738fd483a72b5cb
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
