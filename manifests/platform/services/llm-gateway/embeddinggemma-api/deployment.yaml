@@ -175,8 +175,8 @@ spec:
             - "2"
             - --threads
             - "2"
-            - --verbosity
-            - "4"
+            - --image-max-tokens
+            - "140"
           ports:
             - name: llama-http
               containerPort: 8081
@@ -184,8 +184,6 @@ spec:
           env:
             - name: HOME
               value: /tmp
-            - name: GGML_SYCL_ENABLE_GRAPH
-              value: "1"
           resources:
             requests:
               cpu: "2"
