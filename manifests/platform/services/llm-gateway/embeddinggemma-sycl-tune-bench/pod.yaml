@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: embeddinggemma-sycl-tune-bench
+  labels:
+    app.kubernetes.io/name: embeddinggemma-sycl-tune-bench
+    app.kubernetes.io/part-of: llm-gateway
+spec:
+  restartPolicy: Always
+  terminationGracePeriodSeconds: 5
+  nodeSelector:
+    kubernetes.io/hostname: k8s-w-freesia
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  initContainers:
+    - name: prepare-model-cache
+      image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
+      imagePullPolicy: IfNotPresent
+      command:
+        - sh
+        - -c
+      args:
+        - /opt/venv/bin/python /config/cache.py /model-config/embeddinggemma-2.json
+      env:
+        - name: HF_HUB_DISABLE_XET
+          value: "1"
+        - name: HF_HUB_DOWNLOAD_TIMEOUT
+          value: "600"
+        - name: MODEL_CACHE_ROOT
+          value: /cache
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+          ephemeral-storage: 3Gi
+        limits:
+          cpu: "1"
+          memory: 1Gi
+          ephemeral-storage: 10Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+      volumeMounts:
+        - name: model-cache
+          mountPath: /cache
+        - name: model-cache-config
+          mountPath: /config
+          readOnly: true
+        - name: model-cache-config
+          mountPath: /model-config
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+  containers:
+    - name: llama-server-sycl
+      image: ghcr.io/chik4ge-homelab/embeddinggemma-api:llama-sycl-gemma-embedding2-4fbc76d@sha256:1028f9d132f36c7ff31acde34edab1eeb2162796106c26ca67dd090b64098349
+      imagePullPolicy: IfNotPresent
+      command:
+        - sh
+        - -c
+      args:
+        - exec sleep infinity
+      ports:
+        - name: http
+          containerPort: 8081
+          protocol: TCP
+      env:
+        - name: HOME
+          value: /tmp
+        - name: CUDA_VISIBLE_DEVICES
+          value: ""
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: none
+      resources:
+        requests:
+          cpu: "2"
+          memory: 2Gi
+          ephemeral-storage: 3Gi
+          gpu.intel.com/i915: 1
+        limits:
+          cpu: "4"
+          memory: 6Gi
+          ephemeral-storage: 10Gi
+          gpu.intel.com/i915: 1
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+      volumeMounts:
+        - name: model-cache
+          mountPath: /models
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+  volumes:
+    - name: model-cache
+      emptyDir:
+        sizeLimit: 8Gi
+    - name: model-cache-config
+      configMap:
+        name: llm-gateway-model-cache
+    - name: tmp
+      emptyDir:
+        sizeLimit: 256Mi
