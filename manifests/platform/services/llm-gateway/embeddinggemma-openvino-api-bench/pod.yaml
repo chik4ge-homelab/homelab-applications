@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: embeddinggemma-openvino-api-bench-v2
+  name: embeddinggemma-openvino-api-bench-v3
   labels:
-    app.kubernetes.io/name: embeddinggemma-openvino-api-bench-v2
+    app.kubernetes.io/name: embeddinggemma-openvino-api-bench-v3
     app.kubernetes.io/part-of: llm-gateway
 spec:
   restartPolicy: Always
@@ -25,7 +25,7 @@ spec:
       type: RuntimeDefault
   initContainers:
     - name: download-model
-      image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
+      image: ghcr.io/chik4ge-homelab/embeddinggemma-api:openvino-api-e1c26eb881476ace04d475caefca21e410a0bafb@sha256:192608a87eccd4f18513784cd6aea5815ec7c54b49cf99e354e5e1a94568a201
       imagePullPolicy: IfNotPresent
       command:
         - sh
@@ -41,9 +41,6 @@ spec:
               local_dir="/models/openvino",
           )
           PY
-          site=/opt/venv/lib/python3.12/site-packages
-          mkdir -p /tmp/python-deps
-          cp -a "$site/numpy" "$site/numpy.libs" "$site/PIL" "$site/pillow.libs" "$site/tokenizers" /tmp/python-deps/
       env:
         - name: HF_HUB_DISABLE_XET
           value: "1"
@@ -73,11 +70,8 @@ spec:
           mountPath: /tmp
   containers:
     - name: api
-      image: openvino/ubuntu24_dev@sha256:7512312434bd33892ce04b9bda86ffa94805fb35b7673b44b4f0cfe29917a91a
+      image: ghcr.io/chik4ge-homelab/embeddinggemma-api:openvino-api-e1c26eb881476ace04d475caefca21e410a0bafb@sha256:192608a87eccd4f18513784cd6aea5815ec7c54b49cf99e354e5e1a94568a201
       imagePullPolicy: IfNotPresent
-      command:
-        - python3
-        - /workspace/openvino_server.py
       ports:
         - name: http
           containerPort: 8080
@@ -105,8 +99,6 @@ spec:
           value: "4"
         - name: PYTHONUNBUFFERED
           value: "1"
-        - name: PYTHONPATH
-          value: /tmp/python-deps
         - name: CUDA_VISIBLE_DEVICES
           value: ""
         - name: NVIDIA_VISIBLE_DEVICES
@@ -146,19 +138,12 @@ spec:
         - name: model-cache
           mountPath: /models
           readOnly: true
-        - name: openvino-server
-          mountPath: /workspace/openvino_server.py
-          subPath: openvino_server.py
-          readOnly: true
         - name: tmp
           mountPath: /tmp
   volumes:
     - name: model-cache
       emptyDir:
         sizeLimit: 8Gi
-    - name: openvino-server
-      configMap:
-        name: embeddinggemma-openvino-server
     - name: tmp
       emptyDir:
         sizeLimit: 1Gi

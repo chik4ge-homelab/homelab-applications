@@ -24,6 +24,3 @@ configMapGenerator:
   - name: julia-systemone-model-cache
     files:
       - model-cache/julia-1.json
-  - name: embeddinggemma-openvino-server
-    files:
-      - embeddinggemma-api/openvino_server.py
