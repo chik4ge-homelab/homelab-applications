@@ -70,7 +70,7 @@ spec:
           mountPath: /tmp
   containers:
     - name: api
-      image: ghcr.io/chik4ge-homelab/embeddinggemma-api:openvino-api-e1c26eb881476ace04d475caefca21e410a0bafb@sha256:192608a87eccd4f18513784cd6aea5815ec7c54b49cf99e354e5e1a94568a201
+      image: ghcr.io/chik4ge-homelab/embeddinggemma-api:openvino-api-e101d96fe2614bdc49e34125df958fad0a89de6b@sha256:4c70758089999be5e2f0f0a673c7865eb3feadd2a1705f7bc85cc65a3b543095
       imagePullPolicy: IfNotPresent
       ports:
         - name: http
