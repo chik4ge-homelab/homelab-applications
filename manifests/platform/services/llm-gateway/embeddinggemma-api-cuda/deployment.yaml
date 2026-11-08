@@ -1,0 +1,215 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: embeddinggemma-api-cuda
+  labels:
+    app.kubernetes.io/name: embeddinggemma-api-cuda
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: embeddinggemma-api-cuda
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: embeddinggemma-api-cuda
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchFields:
+                  - key: metadata.name
+                    operator: In
+                    values:
+                      - k8s-w-edelweiss
+      tolerations:
+        - key: chik4ge.me/gpu
+          operator: Equal
+          value: "true"
+          effect: PreferNoSchedule
+      runtimeClassName: nvidia
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: prepare-model-cache
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+          args:
+            - |
+              set -eu
+              /opt/venv/bin/python /config/cache.py /model-config/embeddinggemma-2.json
+          env:
+            - name: HF_HUB_DISABLE_XET
+              value: "1"
+            - name: HF_HUB_DOWNLOAD_TIMEOUT
+              value: "600"
+            - name: MODEL_CACHE_ROOT
+              value: /cache
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
+            - name: model-cache-config
+              mountPath: /config
+              readOnly: true
+            - name: model-cache-config
+              mountPath: /model-config
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: api
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: EMBEDDING_BACKEND
+              value: llama.cpp
+            - name: MODEL_NAME
+              value: embeddinggemma-2
+            - name: MODEL_REVISION
+              value: 914f7f89142e33e77833254d9c9b90c3cef7303b
+            - name: LLAMA_SERVER_URL
+              value: http://127.0.0.1:8081
+            - name: LLAMA_DEVICE
+              value: CUDA0
+            - name: MAX_CONCURRENCY
+              value: "2"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 180
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        - name: llama-server
+          image: ghcr.io/ggml-org/llama.cpp@sha256:4b554057c7cf0cb87e0724b6de9d7ca9bb24a3b72716af11e4c0fecad62c506b
+          imagePullPolicy: IfNotPresent
+          args:
+            - -m
+            - /models/embeddinggemma-2-BF16.gguf
+            - --mmproj
+            - /models/mmproj-embeddinggemma-2-BF16.gguf
+            - --alias
+            - embeddinggemma-2
+            - --embedding
+            - --pooling
+            - mean
+            - --host
+            - 0.0.0.0
+            - --port
+            - "8081"
+            - --device
+            - CUDA0
+            - --n-gpu-layers
+            - all
+            - --ctx-size
+            - "8192"
+            - --parallel
+            - "2"
+            - --threads
+            - "2"
+            - --batch-size
+            - "512"
+            - --ubatch-size
+            - "512"
+            - --flash-attn
+            - "on"
+          ports:
+            - name: llama-http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: HOME
+              value: /tmp
+          resources:
+            requests:
+              cpu: "2"
+              memory: 1536Mi
+              nvidia.com/gpu: 1
+            limits:
+              cpu: "4"
+              memory: 6Gi
+              nvidia.com/gpu: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: model-cache
+              mountPath: /models
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: model-cache
+          emptyDir:
+            sizeLimit: 8Gi
+        - name: model-cache-config
+          configMap:
+            name: llm-gateway-model-cache
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
