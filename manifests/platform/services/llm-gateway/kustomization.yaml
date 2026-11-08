@@ -8,7 +8,7 @@ resources:
   - image-generation-webui
   - julia-systemone-api
   - embeddinggemma-api
-  - embeddinggemma-xpu-bench
+  - embeddinggemma-openvino-api-bench
 configMapGenerator:
   - name: llm-gateway-model-cache
     files:
@@ -24,3 +24,6 @@ configMapGenerator:
   - name: julia-systemone-model-cache
     files:
       - model-cache/julia-1.json
+  - name: embeddinggemma-openvino-server
+    files:
+      - embeddinggemma-api/openvino_server.py

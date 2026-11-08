@@ -1,15 +1,20 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: embeddinggemma-xpu-bench
+  name: embeddinggemma-openvino-api-bench
   labels:
-    app.kubernetes.io/name: embeddinggemma-xpu-bench
+    app.kubernetes.io/name: embeddinggemma-openvino-api-bench
     app.kubernetes.io/part-of: llm-gateway
 spec:
   restartPolicy: Always
   terminationGracePeriodSeconds: 10
   nodeSelector:
     kubernetes.io/hostname: k8s-w-freesia
+  tolerations:
+    - key: chik4ge.me/gpu
+      operator: Equal
+      value: "true"
+      effect: PreferNoSchedule
   automountServiceAccountToken: false
   securityContext:
     runAsNonRoot: true
@@ -31,9 +36,9 @@ spec:
           /opt/venv/bin/python - <<'PY'
           from huggingface_hub import snapshot_download
           snapshot_download(
-              repo_id="google/embeddinggemma-2",
-              revision="914f7f89142e33e77833254d9c9b90c3cef7303b",
-              local_dir="/models/embeddinggemma-2",
+              repo_id="wesjos/embeddinggemma-2-openvino",
+              revision="071ca3e23a4765feaa695b662037e09705c29ae2",
+              local_dir="/models/openvino",
           )
           PY
       env:
@@ -65,33 +70,38 @@ spec:
           mountPath: /tmp
   containers:
     - name: api
-      image: ghcr.io/chik4ge-homelab/embeddinggemma-api:api-3e0d01467cda5b643abfdd41c5166f5ce501e144@sha256:fd5631248f95e707b38f44f59f9cbacfd6fe8cfb5bce82f9d738fd483a72b5cb
+      image: openvino/ubuntu24_dev@sha256:7512312434bd33892ce04b9bda86ffa94805fb35b7673b44b4f0cfe29917a91a
       imagePullPolicy: IfNotPresent
+      command:
+        - python3
+        - /workspace/openvino_server.py
       ports:
         - name: http
           containerPort: 8080
           protocol: TCP
       env:
-        - name: MODEL_PATH
-          value: /models/embeddinggemma-2
+        - name: MODEL_ROOT
+          value: /models/openvino
         - name: MODEL_NAME
           value: embeddinggemma-2
         - name: MODEL_HUB_REPO
-          value: google/embeddinggemma-2
+          value: wesjos/embeddinggemma-2-openvino
         - name: MODEL_REVISION
-          value: 914f7f89142e33e77833254d9c9b90c3cef7303b
-        - name: MODEL_DEVICE
-          value: xpu
-        - name: TORCH_NUM_THREADS
-          value: "2"
+          value: 071ca3e23a4765feaa695b662037e09705c29ae2
+        - name: IMAGE_TOKEN_BUDGET
+          value: "256"
         - name: MAX_CONCURRENCY
           value: "1"
-        - name: HF_HUB_OFFLINE
+        - name: PORT
+          value: "8080"
+        - name: HOME
+          value: /tmp/home
+        - name: XDG_CACHE_HOME
+          value: /tmp/cache
+        - name: OMP_NUM_THREADS
+          value: "4"
+        - name: PYTHONUNBUFFERED
           value: "1"
-        - name: HF_HUB_DISABLE_TELEMETRY
-          value: "1"
-        - name: HF_HOME
-          value: /tmp/hf
         - name: CUDA_VISIBLE_DEVICES
           value: ""
         - name: NVIDIA_VISIBLE_DEVICES
@@ -131,12 +141,19 @@ spec:
         - name: model-cache
           mountPath: /models
           readOnly: true
+        - name: openvino-server
+          mountPath: /workspace/openvino_server.py
+          subPath: openvino_server.py
+          readOnly: true
         - name: tmp
           mountPath: /tmp
   volumes:
     - name: model-cache
       emptyDir:
         sizeLimit: 8Gi
+    - name: openvino-server
+      configMap:
+        name: embeddinggemma-openvino-server
     - name: tmp
       emptyDir:
         sizeLimit: 1Gi
