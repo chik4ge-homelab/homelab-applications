@@ -8,7 +8,7 @@ from image_generation_model import add_image_generation_model
 
 def main() -> None:
 
-    config = build_config(discover_models())
+    config = build_config(discover_models(timeout_seconds=15, allow_empty=True))
     add_image_generation_model(config)
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
     with open(CONFIG_PATH, "w", encoding="utf-8") as config_file:
