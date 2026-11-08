@@ -8,6 +8,7 @@ resources:
   - image-generation-webui
   - julia-systemone-api
   - embeddinggemma-api
+  - embeddinggemma-openvino-test
 configMapGenerator:
   - name: llm-gateway-model-cache
     files:
