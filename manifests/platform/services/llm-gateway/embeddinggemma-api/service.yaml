@@ -7,7 +7,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app.kubernetes.io/name: embeddinggemma-api-cuda
+    app.kubernetes.io/name: embeddinggemma-api
   ports:
     - name: http
       port: 8080

@@ -24,20 +24,26 @@ from LiteLLM by Cilium policy and has no external HTTPRoute.
 - EmbeddingGemma model: `google/embeddinggemma-2`
 - Model commit: `914f7f89142e33e77833254d9c9b90c3cef7303b`
 - Embedding dimension: 768
-- API wrapper image:
-  `ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e`
-- Inference image: `ghcr.io/ggml-org/llama.cpp@sha256:4b554057c7cf0cb87e0724b6de9d7ca9bb24a3b72716af11e4c0fecad62c506b`
-  (CUDA server, revision `372dc5ca157276beb6c67b2e92477e8d662e964a`)
-- EmbeddingGemma runs BF16 GGUF with all model layers and the multimodal
-  projector on CUDA. The active pod is pinned to the RTX 3060 Ti on
-  `k8s-w-edelweiss`; the former two-replica SYCL deployment is scaled to zero.
+- Backend runtime: Python 3.12, Sentence Transformers 6.1.0, PyTorch 2.14.0 CPU,
+  torchvision 0.29.1 CPU, Transformers 5.19.0
+- Stock vLLM check: current vLLM nightly contains `EmbeddingGemma2Model`, but
+  the official x86_64 CPU image requires AVX2/AVX512; all cluster worker nodes
+  expose only x86-64-v2-era flags, so it exits with SIGILL before serving.
+  The custom backend remains selected for this cluster.
+- Adapter image:
+  `ghcr.io/chik4ge-homelab/immich-ml-adapter@sha256:57560b6d479bd6dceaae9b12bd9a92960e111fdb859551d56eea0151ae86a8f5`
+- Backend image:
+  `ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:d9e0e6e46f7c24d122e7b913fe6ba020af50cfc3198fc9ee50b72d260e88b1c2`
 
-The CUDA deployment uses `--flash-attn on`, batch and micro-batch sizes of 512,
-two server slots, and two CPU threads. The 512-token micro-batch caps the
-effective image budget at 256 tokens. Its 8 GiB `emptyDir` cache downloads the
-exact model files from the pinned Hugging Face commit at pod startup; the model
-and projector occupy about 1.5 GiB. The inactive SYCL deployment and its PVC
-remain available for GitOps rollback. The API accepts text and image inputs.
+The serving Deployment runs two replicas with required pod anti-affinity so
+they land on different worker nodes. Because the available `ceph-rbd` class is
+`ReadWriteOnce`, each replica uses an 8 GiB per-pod `emptyDir` cache. The cache
+init container downloads the exact model files from the pinned Hugging Face
+commit on each pod start; the current model occupies about 1.5 GiB. The former
+8 GiB PVC remains declared for rollback and is not deleted by this change. The
+serving containers use CPU FP32, `HF_HUB_OFFLINE=1`, two Torch/BLAS threads,
+and up to two requests in flight per replica. Audio is disabled in the
+Sentence Transformers configuration; only text and image inputs are accepted.
 
 ## LiteLLM contract and secret
 
@@ -85,12 +91,11 @@ The local implementation checks completed before deployment were:
 - real local backend inference passed for Japanese text and image input:
   768 finite values with L2 norm approximately 1.0
 
-An in-cluster runtime comparison used a 980×980 JPEG: the CUDA backend returned
-an image embedding in 0.156 s versus 2.471 s on the Blossom iGPU. The two
-768-dimensional image vectors had cosine similarity 0.9969; text-image cosine
-was 0.664 on CUDA and 0.673 on the iGPU. Six distinct synthetic images also
-showed about 0.11 s warm latency on CUDA. This was a smoke benchmark, not a
-full workload latency distribution.
+The Kubernetes latency and resource benchmark is intentionally run after the
+model is warmed in the cluster. Record cold model-load time, warm text/image
+p50 and p95, sequential throughput, pod RSS, CPU, and the results with Torch
+thread counts 1, 2, and 4. Keep the lowest stable setting that does not
+starve the other `llm-gateway` services.
 
 ## Network and security checks
 
@@ -112,14 +117,7 @@ network policy.
 
 ## Rollback and reindex policy
 
-To roll back only the inference runtime, update Git and let ArgoCD apply it:
-
-1. Set the `embeddinggemma-api` Service selector back to
-   `app.kubernetes.io/name: embeddinggemma-api`.
-2. Restore the SYCL Deployment to two replicas and scale
-   `embeddinggemma-api-cuda` to zero.
-
-To roll back the EmbeddingGemma model selection as well:
+Rollback is a Git change delivered by ArgoCD:
 
 1. Set `IMMICH_MACHINE_LEARNING_URL` back to
    `http://immich-machine-learning:3003`.
@@ -134,5 +132,7 @@ small-sample quality check are recorded; perform it from Immich's own Smart
 Search controls, not by modifying the database schema or writing vectors
 directly.
 
-The CUDA runtime switch does not change the Immich adapter, model, vector
-dimension, or database schema, and it does not start a Smart Search reindex.
+At the time this runbook was written, the remaining external prerequisite was
+1Password CLI authentication for creating the dedicated item. No cluster
+apply or Smart Search reindex is performed by this change until that secret
+is available and the positive/negative connectivity tests pass.
