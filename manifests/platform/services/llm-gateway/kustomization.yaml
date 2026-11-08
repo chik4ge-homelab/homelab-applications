@@ -8,7 +8,7 @@ resources:
   - image-generation-webui
   - julia-systemone-api
   - embeddinggemma-api
-  - embeddinggemma-sycl-tune-bench
+  - embeddinggemma-xpu-bench
 configMapGenerator:
   - name: llm-gateway-model-cache
     files:
