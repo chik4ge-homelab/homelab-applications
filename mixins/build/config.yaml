@@ -9,6 +9,7 @@ entries:
       - name: k8s-mixin-alerts
         type: prometheus-rule
         mixin_import: github.com/kubernetes-monitoring/kubernetes-mixin/mixin.libsonnet
+        config_import: mixins/build/k8s-mixin/alerts-config.libsonnet
         groups_key: prometheusAlerts
       - name: node-mixin-rules
         type: prometheus-rule
