@@ -1,4 +1,4 @@
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: Kafka
 metadata:
   name: kafka-cluster
@@ -16,7 +16,7 @@ spec:
         #   type: scram-sha-512
     # authorization:
     #   type: simple
-    version: 4.1.1
+    version: 4.2.0
     metadataVersion: "4.1"
     config:
       auto.create.topics.enable: "false"
