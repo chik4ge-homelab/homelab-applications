@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: embeddinggemma-api
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -49,7 +49,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        - name: prepare-model-cache
+        - name: prepare-openvino-model
           image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
           imagePullPolicy: IfNotPresent
           command:
@@ -58,21 +58,31 @@ spec:
           args:
             - |
               set -eu
-              /opt/venv/bin/python /config/cache.py /model-config/embeddinggemma-2.json
+              /opt/venv/bin/python - <<'PY'
+              from huggingface_hub import snapshot_download
+
+              snapshot_download(
+                  repo_id="wesjos/embeddinggemma-2-openvino",
+                  revision="071ca3e23a4765feaa695b662037e09705c29ae2",
+                  local_dir="/cache/openvino",
+              )
+              PY
           env:
             - name: HF_HUB_DISABLE_XET
               value: "1"
             - name: HF_HUB_DOWNLOAD_TIMEOUT
               value: "600"
-            - name: MODEL_CACHE_ROOT
-              value: /cache
+            - name: HF_HOME
+              value: /tmp/hf
           resources:
             requests:
               cpu: 250m
               memory: 256Mi
+              ephemeral-storage: 3Gi
             limits:
               cpu: "1"
               memory: 1Gi
+              ephemeral-storage: 10Gi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -82,42 +92,54 @@ spec:
           volumeMounts:
             - name: model-cache
               mountPath: /cache
-            - name: model-cache-config
-              mountPath: /config
-              readOnly: true
-            - name: model-cache-config
-              mountPath: /model-config
-              readOnly: true
             - name: tmp
               mountPath: /tmp
       containers:
         - name: api
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api@sha256:351c88bc401242ce6064d360034bd9c242c21bf4984ce16b3681a1f2571f305e
+          image: ghcr.io/chik4ge-homelab/embeddinggemma-api:openvino-api-e101d96fe2614bdc49e34125df958fad0a89de6b@sha256:4c70758089999be5e2f0f0a673c7865eb3feadd2a1705f7bc85cc65a3b543095
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
           env:
-            - name: EMBEDDING_BACKEND
-              value: llama.cpp
+            - name: MODEL_ROOT
+              value: /models/openvino
             - name: MODEL_NAME
               value: embeddinggemma-2
+            - name: MODEL_HUB_REPO
+              value: wesjos/embeddinggemma-2-openvino
             - name: MODEL_REVISION
-              value: 914f7f89142e33e77833254d9c9b90c3cef7303b
-            - name: LLAMA_SERVER_URL
-              value: http://127.0.0.1:8081
-            - name: LLAMA_DEVICE
-              value: SYCL0
+              value: 071ca3e23a4765feaa695b662037e09705c29ae2
+            - name: IMAGE_TOKEN_BUDGET
+              value: "256"
             - name: MAX_CONCURRENCY
-              value: "2"
+              value: "1"
+            - name: PORT
+              value: "8080"
+            - name: HOME
+              value: /tmp/home
+            - name: XDG_CACHE_HOME
+              value: /tmp/cache
+            - name: OMP_NUM_THREADS
+              value: "4"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: CUDA_VISIBLE_DEVICES
+              value: ""
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: none
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: "2"
+              memory: 3.5Gi
+              ephemeral-storage: 3Gi
+              gpu.intel.com/i915: 1
             limits:
-              cpu: "1"
-              memory: 512Mi
+              cpu: "4"
+              memory: 8Gi
+              ephemeral-storage: 10Gi
+              gpu.intel.com/i915: 1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -146,58 +168,6 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
           volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-        - name: llama-server
-          image: ghcr.io/chik4ge-homelab/embeddinggemma-api:llama-sycl-gemma-embedding2-4fbc76d@sha256:1028f9d132f36c7ff31acde34edab1eeb2162796106c26ca67dd090b64098349
-          imagePullPolicy: IfNotPresent
-          args:
-            - -m
-            - /models/embeddinggemma-2-BF16.gguf
-            - --mmproj
-            - /models/mmproj-embeddinggemma-2-BF16.gguf
-            - --alias
-            - embeddinggemma-2
-            - --embedding
-            - --pooling
-            - mean
-            - --host
-            - 0.0.0.0
-            - --port
-            - "8081"
-            - --device
-            - SYCL0
-            - --n-gpu-layers
-            - all
-            - --ctx-size
-            - "8192"
-            - --parallel
-            - "2"
-            - --threads
-            - "2"
-          ports:
-            - name: llama-http
-              containerPort: 8081
-              protocol: TCP
-          env:
-            - name: HOME
-              value: /tmp
-          resources:
-            requests:
-              cpu: "2"
-              memory: 2Gi
-              gpu.intel.com/i915: 1
-            limits:
-              cpu: "4"
-              memory: 6Gi
-              gpu.intel.com/i915: 1
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-          volumeMounts:
             - name: model-cache
               mountPath: /models
               readOnly: true
@@ -207,9 +177,6 @@ spec:
         - name: model-cache
           emptyDir:
             sizeLimit: 8Gi
-        - name: model-cache-config
-          configMap:
-            name: llm-gateway-model-cache
         - name: tmp
           emptyDir:
-            sizeLimit: 256Mi
+            sizeLimit: 1Gi

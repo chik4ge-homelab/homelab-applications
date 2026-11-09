@@ -19,9 +19,9 @@ MAX_OUTPUT_TOKENS = 8192
 MAX_INPUT_TOKENS = CONTEXT_WINDOW - MAX_OUTPUT_TOKENS
 
 
-def discover_models() -> list[str]:
+def discover_models(*, timeout_seconds: int = 600, allow_empty: bool = False) -> list[str]:
     request = urllib.request.Request(UPSTREAM_MODELS_URL)
-    deadline = time.monotonic() + 600
+    deadline = time.monotonic() + timeout_seconds
 
     while time.monotonic() < deadline:
         try:
@@ -38,6 +38,12 @@ def discover_models() -> list[str]:
             pass
         time.sleep(3)
 
+    if allow_empty:
+        print(
+            "llama-cpp model discovery timed out; continuing with statically configured models",
+            file=sys.stderr,
+        )
+        return []
     raise RuntimeError("upstream model discovery failed")
 
 

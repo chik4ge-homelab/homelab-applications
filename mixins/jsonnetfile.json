@@ -26,7 +26,7 @@
           "subdir": "operations/mimir-mixin"
         }
       },
-      "version": "mimir-3.0.2"
+      "version": "mimir-3.2.3"
     },
     {
       "source": {
@@ -35,7 +35,7 @@
           "subdir": "docs/node-mixin"
         }
       },
-      "version": "v1.11.1"
+      "version": "v1.12.0"
     },
     {
       "source": {
@@ -44,7 +44,7 @@
           "subdir": "monitoring/ceph-mixin"
         }
       },
-      "version": "v19.2.3"
+      "version": "v22.0.0"
     },
     {
       "source": {
@@ -53,7 +53,7 @@
           "subdir": "examples/metrics"
         }
       },
-      "version": "0.50.0"
+      "version": "1.0.1"
     }
   ],
   "legacyImports": true

@@ -8,8 +8,8 @@
           "subdir": "monitoring/ceph-mixin"
         }
       },
-      "version": "00193959d36d4be792acb0e759a802d473b502da",
-      "sum": "ZnyCIu25NBI6Q3Ru7QK1DHf7DBMEURSMQdEJXzCyIgA="
+      "version": "cbe58dcc3ee7efd85536bc3af47c7dd5a96e8c37",
+      "sum": "ufVgGNSYLzuaS9DmMYVbQ9ZkYypir7YzWCiYUrGDSwc="
     },
     {
       "source": {
@@ -68,8 +68,8 @@
           "subdir": "operations/mimir-mixin"
         }
       },
-      "version": "22c2109f214518b41c9d7a5276b43f5b9e051c98",
-      "sum": "7jTWnR7Id0vAT70i15fRUqIU6iDViMHHKdOBrDA29mM="
+      "version": "4ab84a685c3666a1a004337c39355ca6a50a458f",
+      "sum": "+tPCidewLjmwqAv5D+NkvfXC0kUEocuirOjwSP9aRJI="
     },
     {
       "source": {
@@ -128,7 +128,7 @@
           "subdir": "docs/node-mixin"
         }
       },
-      "version": "e9ef753cb1dafeb0dac304ff242425efe5f7a429",
+      "version": "1b9788b409971c6270d368c639054f27e0c96c3e",
       "sum": "PGx1okd1Ny4U+Ma3AV0haZWvXnX8eJBN4+BsQInWUo4="
     },
     {
@@ -138,8 +138,8 @@
           "subdir": "examples/metrics"
         }
       },
-      "version": "825447910afa6e2db8f2897c4ada35dba9dcfa2a",
-      "sum": "P2n+MzXzfaczxV2+5K6zkwkn+E8Bp0Ial6eUUS8dDSY="
+      "version": "833dbbd4fc745678f11ad96ed66571704cd73cd0",
+      "sum": "rj7DAa4A4oeqzJ6EzsQ1Eu6VqFCbeU88eY69KP3EcSE="
     }
   ],
   "legacyImports": false

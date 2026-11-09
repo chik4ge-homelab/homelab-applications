@@ -47,6 +47,12 @@ data:
               dryRun: false
               nodeFit: true
               defaultJobMode: ReservationFirst
+              # Disable the default 5m workload rate limiter. It can requeue a
+              # pending job until the default 5m job TTL expires.
+              # Concurrency remains bounded by maxMigrating* and maxUnavailable*.
+              objectLimiters:
+                workload:
+                  duration: 0s
               labelSelector:
                 matchExpressions:
                   - key: koordinator.chik4ge.me/migration-blocked
