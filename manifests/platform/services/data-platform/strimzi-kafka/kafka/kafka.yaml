@@ -17,7 +17,7 @@ spec:
     # authorization:
     #   type: simple
     version: 4.2.0
-    metadataVersion: "4.1"
+    metadataVersion: "4.2-IV1"
     config:
       auto.create.topics.enable: "false"
 
