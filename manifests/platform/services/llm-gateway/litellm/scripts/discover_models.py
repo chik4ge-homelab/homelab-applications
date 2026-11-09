@@ -66,22 +66,6 @@ def build_config(model_ids: list[str]) -> dict:
     ]
     model_list.append(
         {
-            "model_name": "lfm3-vl-2b",
-            "litellm_params": {
-                "model": "openai/lfm3-vl-2b",
-                "api_base": "http://lfm3-vl-2b-api.llm-gateway.svc.cluster.local:8000/v1",
-                "api_key": "lfm3-vl-2b-no-auth",
-                "timeout": 300,
-            },
-            "model_info": {
-                "mode": "chat",
-                "max_input_tokens": 119808,
-                "max_output_tokens": 8192,
-            },
-        }
-    )
-    model_list.append(
-        {
             "model_name": "julia-1",
             "litellm_params": {
                 "model": "openai/julia-1",
