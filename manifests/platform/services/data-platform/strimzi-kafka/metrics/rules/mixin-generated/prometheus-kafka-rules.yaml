@@ -14,7 +14,27 @@ spec:
           annotations:
             description: There are only {{ $value }} percent available at {{ $labels.persistentvolumeclaim }} PVC
             summary: Kafka is running out of free disk space
-          expr: kubelet_volume_stats_available_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-kafka-[0-9]+"} * 100 / kubelet_volume_stats_capacity_bytes{persistentvolumeclaim=~"data(-[0-9]+)?-(.+)-kafka-[0-9]+"} < 15
+          expr: |-
+            (
+              label_replace(
+                kubelet_volume_stats_available_bytes
+                * 100
+                /
+                kubelet_volume_stats_capacity_bytes,
+                "pod",
+                "$2",
+                "persistentvolumeclaim",
+                "data(-[0-9]+)?-(.*)"
+              )
+              and on(namespace,pod)
+              label_replace(
+                up{strimzi_io_component_type="kafka"},
+                "pod",
+                "$1",
+                "kubernetes_pod_name",
+                "(.*)"
+              )
+            ) < 15
           for: 10s
           labels:
             severity: warning
@@ -62,15 +82,15 @@ spec:
           annotations:
             description: Prometheus was unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }} for more than 3 minutes
             summary: Prometheus unable to scrape metrics from {{ $labels.kubernetes_pod_name }}/{{ $labels.instance }}
-          expr: up{kubernetes_namespace!~"openshift-.+",kubernetes_pod_name=~".+-kafka-[0-9]+"} == 0
+          expr: up{namespace!~"openshift-.+",strimzi_io_component_type="kafka",strimzi_io_broker_role="true"} == 0
           for: 3m
           labels:
             severity: major
-        - alert: KafkaBrokerContainersDown
+        - alert: KafkaNodeContainersDown
           annotations:
             description: All `kafka` containers have been down or in CrashLookBackOff status for 3 minutes
             summary: All `kafka` containers down or in CrashLookBackOff status
-          expr: absent(container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
+          expr: absent(container_last_seen{container="kafka"} and on(namespace,pod) label_replace(up{strimzi_io_component_type="kafka"},"pod","$1","kubernetes_pod_name","(.*)"))
           for: 3m
           labels:
             severity: major
@@ -78,7 +98,7 @@ spec:
           annotations:
             description: One or more Kafka containers were restarted too often within the last 5 minutes
             summary: One or more Kafka containers restarted too often
-          expr: count(count_over_time(container_last_seen{container="kafka"}[5m])) > 2 * count(container_last_seen{container="kafka",pod=~".+-kafka-[0-9]+"})
+          expr: count(count_over_time((container_last_seen{container="kafka"} and on(namespace,pod) label_replace(up{strimzi_io_component_type="kafka"},"pod","$1","kubernetes_pod_name","(.*)"))[5m:])) > 2 * count(container_last_seen{container="kafka"} and on(namespace,pod) label_replace(up{strimzi_io_component_type="kafka"},"pod","$1","kubernetes_pod_name","(.*)"))
           for: 5m
           labels:
             severity: warning
