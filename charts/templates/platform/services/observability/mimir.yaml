@@ -11,7 +11,7 @@ spec:
       path: manifests/platform/services/observability/mimir
     - repoURL: https://grafana.github.io/helm-charts
       chart: mimir-distributed
-      targetRevision: 6.1.0
+      targetRevision: 6.2.2
       helm:
         valuesObject:
           compactor:
@@ -150,9 +150,8 @@ spec:
                 memory: 256Mi
           
           ruler:
-            # Chart 6.1 defaults this to 1GiB; this ruler has a 512Mi memory limit.
-            extraArgs:
-              mem-ballast-size-bytes: 0
+            # Keep the ballast below the ruler's 512Mi memory limit.
+            memBallastSizeBytes: 0
             resources:
               requests:
                 cpu: 100m
@@ -221,6 +220,8 @@ spec:
                     addresses: dnssrvnoa+mimir-index-cache.mimir.svc.cluster.local:11211
                     max_item_size: 5242880
                     timeout: 500ms
+              querier:
+                max_concurrent: 16
               ingest_storage:
                 kafka:
                   address: kafka-cluster-kafka-bootstrap.strimzi-kafka.svc.cluster.local:9092
