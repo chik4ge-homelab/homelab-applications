@@ -11,7 +11,9 @@ spec:
       - myproject
   podMetricsEndpoints:
     - path: /metrics
-      port: healthcheck
+      port: healthcheck-to
+    - path: /metrics
+      port: healthcheck-uo
   selector:
     matchLabels:
       app.kubernetes.io/name: entity-operator
