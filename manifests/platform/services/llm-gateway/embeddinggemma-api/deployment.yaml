@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: embeddinggemma-api
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -132,7 +132,7 @@ spec:
           resources:
             requests:
               cpu: "2"
-              memory: 4Gi
+              memory: 3.5Gi
               ephemeral-storage: 3Gi
               gpu.intel.com/i915: 1
             limits:
