@@ -79,7 +79,7 @@ spec:
                   readOnly: true
           containers:
             - name: sd-server
-              image: ghcr.io/leejet/stable-diffusion.cpp:master-cuda@sha256:86c6b356befc22add7d35b82f2075f70ee89d526e0b6aeab37bd58e36748e3c8
+              image: ghcr.io/leejet/stable-diffusion.cpp:master-cuda@sha256:082bc1d17f3a227064c6d449152c2d11384e396721e7d377fac04f9762812bc5
               imagePullPolicy: IfNotPresent
               command:
                 - /sd-server
