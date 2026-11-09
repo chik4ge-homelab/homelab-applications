@@ -63,12 +63,6 @@ spec:
               # Loads default set of integrations. Do not remove.
               default_config:
 
-              http:
-                use_x_forwarded_for: true
-                trusted_proxies:
-                  - 127.0.0.1
-                  - 10.244.0.0/16
-              
               prometheus:
                 requires_auth: false
 
