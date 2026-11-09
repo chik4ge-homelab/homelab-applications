@@ -25,6 +25,12 @@ discovery.relabel "pods" {
   }
 
   rule {
+    source_labels = ["__meta_kubernetes_pod_label_k8s_app"]
+    regex = "cilium"
+    action = "drop"
+  }
+
+  rule {
     source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
     separator = ";"
     regex = "(.+)"
@@ -109,6 +115,60 @@ discovery.relabel "services" {
   rule {
     replacement   = "talos-k8s"
     target_label  = "homelab_cluster"
+  }
+}
+
+// Cilium replaces kube-proxy in this cluster. Scrape its agent metrics on the
+// named Prometheus port so the `up` series represents the actual dataplane.
+discovery.relabel "cilium_agents" {
+  targets = discovery.kubernetes.pods.targets
+
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    regex = "kube-system"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_label_k8s_app"]
+    regex = "cilium"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_port_name"]
+    regex = "prometheus"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_namespace"]
+    target_label = "namespace"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_name"]
+    target_label = "pod"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_container_name"]
+    target_label = "container"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_node_name"]
+    target_label = "node"
+  }
+
+  rule {
+    replacement = "cilium-agent"
+    target_label = "job"
+  }
+
+  rule {
+    replacement = "talos-k8s"
+    target_label = "homelab_cluster"
   }
 }
 
@@ -208,6 +268,13 @@ mimir.alerts.kubernetes "default" {
 
 prometheus.scrape "pods" {
   targets = discovery.relabel.pods.output
+  scrape_interval = "60s"
+  clustering { enabled = true }
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.scrape "cilium_agents" {
+  targets = discovery.relabel.cilium_agents.output
   scrape_interval = "60s"
   clustering { enabled = true }
   forward_to = [prometheus.remote_write.default.receiver]
