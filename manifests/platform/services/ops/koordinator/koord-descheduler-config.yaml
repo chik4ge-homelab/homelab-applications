@@ -77,6 +77,10 @@ data:
             args:
               apiVersion: descheduler/v1alpha2
               kind: CustomPriorityArgs
+              # NodeFit does not check pod anti-affinity and the reservation is
+              # not restricted to target nodes, causing repeated GPU-to-GPU moves.
+              # Keep paused until target placement is validated and enforced.
+              paused: true
               dryRun: false
               evictableNamespaces:
                 exclude:

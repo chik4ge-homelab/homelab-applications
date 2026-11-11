@@ -50,7 +50,7 @@ spec:
           descheduler:
             replicas: 1
             podAnnotations:
-              koordinator.chik4ge.me/config-revision: migration-failure-retry-v2
+              koordinator.chik4ge.me/config-revision: pause-custom-priority-v1
             resources:
               requests:
                 cpu: 100m
