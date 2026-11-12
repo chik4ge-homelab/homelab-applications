@@ -172,6 +172,9 @@ spec:
                   name: kafka-password
 
           runtimeConfig:
+            overrides:
+              anonymous:
+                ruler_max_rule_groups_per_tenant: 200
             ingester_limits:
               max_ingestion_rate: 999999999
             distributor_limits:
