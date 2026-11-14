@@ -8,65 +8,12 @@ spec:
   sources:
     - repoURL: https://charts.rook.io/release
       chart: rook-ceph
-      targetRevision: 1.19.12
+      targetRevision: v1.20.10
       helm:
         valuesObject:
           csi:
-            enableCephfsDriver: false
             serviceMonitor:
               enabled: true
-            enableGrpcMetrics: true
-            enableLiveness: true
-            csiRBDPluginResource: |
-              - name: csi-rbdplugin
-                resource:
-                  requests:
-                    cpu: 250m
-                    memory: 160Mi
-                  limits:
-                    memory: 1Gi
-              - name: driver-registrar
-                resource:
-                  requests:
-                    cpu: 50m
-                    memory: 32Mi
-                  limits:
-                    memory: 256Mi
-            csiRBDProvisionerResource: |
-              - name: csi-rbdplugin
-                resource:
-                  requests:
-                    memory: 160Mi
-                  limits:
-                    memory: 1Gi
-              - name: csi-provisioner
-                resource:
-                  requests:
-                    cpu: 100m
-                    memory: 40Mi
-                  limits:
-                    memory: 256Mi
-              - name: csi-resizer
-                resource:
-                  requests:
-                    cpu: 100m
-                    memory: 40Mi
-                  limits:
-                    memory: 256Mi
-              - name: csi-attacher
-                resource:
-                  requests:
-                    cpu: 100m
-                    memory: 40Mi
-                  limits:
-                    memory: 256Mi
-              - name: csi-snapshotter
-                resource:
-                  requests:
-                    cpu: 100m
-                    memory: 40Mi
-                  limits:
-                    memory: 256Mi
           monitoring:
             enabled: true
             createPrometheusRules: true
