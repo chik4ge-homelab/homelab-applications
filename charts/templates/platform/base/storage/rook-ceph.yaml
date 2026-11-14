@@ -11,10 +11,13 @@ spec:
       path: manifests/platform/base/storage/rook-ceph
     - repoURL: https://charts.rook.io/release
       chart: rook-ceph-cluster
-      targetRevision: 1.18.8
+      targetRevision: 1.19.12
       helm:
         valuesObject:
           operatorNamespace: rook-ceph-operator
+          cephImage:
+            repository: quay.io/ceph/ceph
+            tag: v19.2.5
           cephBlockPools: []
           cephFileSystems: []
           cephObjectStores:
@@ -36,6 +39,9 @@ spec:
           cephClusterSpec:
             external:
               enable: true
+            network:
+              connections:
+                requireMsgr2: false
             crashCollector:
               disable: true
             healthCheck:
