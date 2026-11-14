@@ -1,0 +1,98 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ceph-csi-drivers
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://ceph.github.io/ceph-csi-operator
+      chart: ceph-csi-drivers
+      targetRevision: 1.0.4
+      helm:
+        valuesObject:
+          operatorConfig:
+            namespace: rook-ceph-operator
+            driverSpecDefaults:
+              imageSet:
+                name: rook-csi-operator-image-set-configmap
+              clusterName: rook-ceph
+              cephFsClientType: kernel
+              enableMetadata: false
+              generateOMapInfo: false
+              fsGroupPolicy: File
+              nodePlugin:
+                kubeletDirPath: /var/lib/kubelet
+                enableSeLinuxHostMount: false
+                priorityClassName: system-node-critical
+              controllerPlugin:
+                hostNetwork: false
+                deploymentStrategy:
+                  type: Recreate
+                priorityClassName: system-cluster-critical
+                replicas: 2
+          drivers:
+            rbd:
+              enabled: true
+              name: rook-ceph-operator.rbd.csi.ceph.com
+              clusterName: rook-ceph
+              snapshotPolicy: volumeSnapshot
+              imageSet:
+                name: rook-csi-operator-image-set-configmap
+              cephFsClientType: kernel
+              deployCsiAddons: false
+              enableMetadata: false
+              generateOMapInfo: false
+              fsGroupPolicy: File
+              nodePlugin:
+                priorityClassName: system-node-critical
+                updateStrategy:
+                  type: RollingUpdate
+                resources:
+                  plugin:
+                    requests:
+                      cpu: 250m
+                      memory: 160Mi
+                    limits:
+                      memory: 1Gi
+                  registrar:
+                    requests:
+                      cpu: 50m
+                      memory: 32Mi
+                    limits:
+                      memory: 256Mi
+              controllerPlugin:
+                hostNetwork: false
+                deploymentStrategy:
+                  type: Recreate
+                priorityClassName: system-cluster-critical
+                replicas: 2
+                resources:
+                  plugin:
+                    requests:
+                      memory: 160Mi
+                    limits:
+                      memory: 1Gi
+                  provisioner: &csi-sidecar-resource
+                    requests:
+                      cpu: 100m
+                      memory: 40Mi
+                    limits:
+                      memory: 256Mi
+                  resizer: *csi-sidecar-resource
+                  attacher: *csi-sidecar-resource
+                  snapshotter: *csi-sidecar-resource
+            cephfs:
+              enabled: false
+            nfs:
+              enabled: false
+            nvmeof:
+              enabled: false
+  destination:
+    namespace: rook-ceph-operator
+    server: {{ .Values.spec.destination.server }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - ServerSideApply=true
