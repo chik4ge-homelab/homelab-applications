@@ -141,6 +141,7 @@ minecraftServer:
       key: ""
 
 extraEnv:
+  ALLOW_FLIGHT: "true"
   CREATE_CONSOLE_IN_PIPE: "true"
   ENFORCE_WHITELIST: "true"
   WHITELIST:
