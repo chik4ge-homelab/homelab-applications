@@ -97,6 +97,9 @@ resources:
     cpu: 6
     memory: 8Gi
 
+image:
+  tag: java17
+
 workloadAsStatefulSet: true
 strategyType: RollingUpdate
 
@@ -113,13 +116,13 @@ affinity:
 
 minecraftServer:
   eula: TRUE
-  version: "26.3"
-  type: FABRIC
+  version: "1.20.1"
+  type: MODRINTH
   onlineMode: true
   whitelist:
   enforceSecureProfile: true
-  memory: 4G
-  motd: "Fabric 26.3"
+  memory: 6G
+  motd: "Prominence II Hasturian Era 3.9.12 JP"
   serviceType: ClusterIP
   rcon:
     enabled: false
@@ -136,11 +139,7 @@ extraEnv:
       secretKeyRef:
         name: minecraft-vanilla-local-common-secret
         key: whitelist
-  MODRINTH_PROJECTS: |-
-    distanthorizons:I4fvXVOw
-    c2me-fabric:XgxQ7H1c
-    lithium:WXHRsMRl
-    ferrite-core:d5ddUdiB
+  MODRINTH_MODPACK: /data/Prominence2-JP-v3.9.12.mrpack
 
 extraVolumes:
   - volumes:
@@ -156,4 +155,4 @@ extraVolumes:
 persistence:
   dataDir:
     enabled: true
-    existingClaim: minecraft-vanilla-local-data
+    existingClaim: minecraft-vanilla-local-prominence-data
