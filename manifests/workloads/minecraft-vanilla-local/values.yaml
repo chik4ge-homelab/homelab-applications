@@ -92,16 +92,21 @@ podSecurityContext:
 resources:
   requests:
     cpu: 500m
-    memory: 6Gi
+    memory: 8Gi
   limits:
     cpu: 6
-    memory: 8Gi
+    memory: 12Gi
 
 image:
   tag: java17
 
 workloadAsStatefulSet: true
 strategyType: RollingUpdate
+
+startupProbe:
+  enabled: true
+  failureThreshold: 90
+  periodSeconds: 10
 
 affinity:
   nodeAffinity:
