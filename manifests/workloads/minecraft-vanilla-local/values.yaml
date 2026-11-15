@@ -130,7 +130,7 @@ minecraftServer:
   whitelist:
   enforceSecureProfile: true
   memory: 6G
-  motd: "Prominence II Hasturian Era 3.9.12 JP"
+  motd: "Prominence II Hasturian Era 4.1.8 JP"
   serviceType: ClusterIP
   rcon:
     enabled: false
@@ -147,7 +147,8 @@ extraEnv:
       secretKeyRef:
         name: minecraft-vanilla-local-common-secret
         key: whitelist
-  MODRINTH_MODPACK: /data/Prominence2-JP-v3.9.12.mrpack
+  MODRINTH_MODPACK: /data/Prominence2-JP-v4.1.8.mrpack
+  OVERRIDE_ICON: "true"
 
 extraVolumes:
   - volumes:
