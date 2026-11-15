@@ -29,6 +29,9 @@ initContainers:
       requests:
         cpu: 10m
         memory: 32Mi
+      limits:
+        cpu: 10m
+        memory: 32Mi
     securityContext:
       runAsUser: 0
       runAsGroup: 0
@@ -56,10 +59,10 @@ sidecarContainers:
       periodSeconds: 10
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 100m
+        memory: 128Mi
       limits:
-        cpu: 500m
+        cpu: 100m
         memory: 128Mi
     securityContext:
       allowPrivilegeEscalation: false
@@ -91,11 +94,11 @@ podSecurityContext:
 
 resources:
   requests:
-    cpu: 500m
-    memory: 8Gi
+    cpu: 4
+    memory: 10Gi
   limits:
-    cpu: 6
-    memory: 12Gi
+    cpu: 4
+    memory: 10Gi
 
 image:
   tag: java17
