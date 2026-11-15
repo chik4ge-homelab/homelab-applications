@@ -112,12 +112,12 @@ core → platform/base → platform/services → workloads
 - `entrypoint` は jsonnet の入口、`destination` は出力先ディレクトリ
 - 生成は `scripts/generate-mixin-rules.sh` を実行する
 
-### Minecraft standalone vanilla
+### Minecraft Prominence II local server
 
-`minecraft-vanilla-local` は Minecraft Java 26.3 のDBなし完全バニラサーバーで、
-Envoy Gateway 経由の公開エンドポイント `mc.chik4ge.me:25565` と、Tailnet限定の
-SFTPエンドポイント `minecraft-vanilla-local-sftp.serval-great.ts.net` から
-`/data/world` に対応する `/world` へファイルを送信できる。稼働中のサーバーが
-使用するワールドを直接参照するため、ファイル操作はサーバー停止中に行う。
-SFTPの公開鍵は1Passwordの
+`minecraft-vanilla-local` は Minecraft Java 1.20.1 / Fabric 上の Prominence II Hasturian Era
+4.1.8 日本語化サーバー。Envoy Gateway 経由の公開エンドポイントは
+`mc.chik4ge.me:25565`、Tailnet限定のSFTPエンドポイントは
+`minecraft-vanilla-local-sftp.serval-great.ts.net`。SFTPの `/world` は
+`/data/world-v4.1.8` に対応する。稼働中のサーバーが使用するワールドを直接参照するため、
+ファイル操作はサーバー停止中に行う。SFTPの公開鍵は1Passwordの
 `Minecraft vanilla local SFTP` 項目にある `public_key` フィールドから注入する。
