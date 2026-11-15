@@ -95,10 +95,10 @@ podSecurityContext:
 resources:
   requests:
     cpu: 4
-    memory: 10Gi
+    memory: 9Gi
   limits:
     cpu: 4
-    memory: 10Gi
+    memory: 9Gi
 
 image:
   tag: java17
