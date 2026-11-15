@@ -149,6 +149,7 @@ extraEnv:
         key: whitelist
   MODRINTH_MODPACK: /data/Prominence2-JP-v4.1.8.mrpack
   MODRINTH_FORCE_INCLUDE_FILES: athena
+  MODRINTH_FORCE_SYNCHRONIZE: "true"
   OVERRIDE_ICON: "true"
 
 extraVolumes:
