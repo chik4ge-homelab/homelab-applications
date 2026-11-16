@@ -8,7 +8,7 @@ spec:
   sources:
     - chart: grafana-mcp
       repoURL: https://grafana-community.github.io/helm-charts
-      targetRevision: 0.34.0
+      targetRevision: 0.35.0
       helm:
         releaseName: grafana-mcp
         valuesObject:
