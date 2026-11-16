@@ -31,7 +31,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: set-lifecycle
-              image: ghcr.io/berriai/litellm-non_root@sha256:08d313a00c46509c875d84f60c1448a260c478f399ade3c2abb940d358d5b724
+              image: ghcr.io/berriai/litellm-non_root@sha256:e9e15fe17b66fc8cda6ff7e18914e1d452785ca404fa20336ec447152f86daba
               imagePullPolicy: IfNotPresent
               command:
                 - python
