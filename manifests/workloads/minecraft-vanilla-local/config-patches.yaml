@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minecraft-vanilla-local-config-patches
+  namespace: minecraft-vanilla-local
+data:
+  connectivity.json: |
+    {
+      "patches": [
+        {
+          "file": "/data/config/connectivity.json",
+          "ops": [
+            {
+              "$set": {
+                "path": "$.malformedtraffic.enabled",
+                "value": false
+              }
+            }
+          ]
+        }
+      ]
+    }

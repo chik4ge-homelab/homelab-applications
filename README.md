@@ -121,3 +121,9 @@ core → platform/base → platform/services → workloads
 `/data/world-v4.1.8` に対応する。稼働中のサーバーが使用するワールドを直接参照するため、
 ファイル操作はサーバー停止中に行う。SFTPの公開鍵は1Passwordの
 `Minecraft vanilla local SFTP` 項目にある `public_key` フィールドから注入する。
+
+Connectivity MOD の不正通信ブロックは、全接続が Envoy の Pod IP に見えるため、
+一度の誤検知で外部の全ユーザーを遮断する。Pod IP は可変で IP 完全一致の許可リストは
+安定しないため、`config-patches.yaml` と `PATCH_DEFINITIONS` で
+`malformedtraffic.enabled=false` を起動時に適用する。オンライン認証と参加者の
+ホワイトリストは維持する。既存のブロック状態の解除には Minecraft の再起動が必要。

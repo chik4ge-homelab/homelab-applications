@@ -153,8 +153,17 @@ extraEnv:
   MODRINTH_FORCE_INCLUDE_FILES: athena
   MODRINTH_FORCE_SYNCHRONIZE: "true"
   OVERRIDE_ICON: "true"
+  PATCH_DEFINITIONS: /config-patches
 
 extraVolumes:
+  - volumeMounts:
+      - name: config-patches
+        mountPath: /config-patches
+        readOnly: true
+    volumes:
+      - name: config-patches
+        configMap:
+          name: minecraft-vanilla-local-config-patches
   - volumes:
       - name: sftp-home
         emptyDir: {}
