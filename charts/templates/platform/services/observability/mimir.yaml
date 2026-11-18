@@ -44,16 +44,7 @@ spec:
             enabledNonEnterprise: true
             replicas: 2
             ingress:
-              enabled: true
-              ingressClassName: nginx
-              hosts:
-                - host: mimir.chik4ge.me
-                  paths:
-                    - path: /
-                      pathType: Prefix
-              tls:
-                - hosts:
-                    - mimir.chik4ge.me
+              enabled: false
 
           ingester:
             zoneAwareReplication:
@@ -254,3 +245,4 @@ spec:
       prune: true
     syncOptions:
       - CreateNamespace=true
+      - PruneLast=true

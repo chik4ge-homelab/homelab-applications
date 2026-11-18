@@ -5,3 +5,4 @@ resources:
   - ./object-store
   - ./secrets
   - rules/mixin-generated
+  - httproute.yaml
