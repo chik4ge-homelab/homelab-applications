@@ -16,6 +16,9 @@ spec:
       valuesObject:
         controller:
           replicaCount: 2
+          config:
+            # Mitigate CVE-2026-123007 and CVE-2026-123633.
+            use-http2: "false"
           service:
             # annotations:
             #   tailscale.com/proxy-group: "ts-proxies-ingress"
