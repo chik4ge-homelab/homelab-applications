@@ -25,7 +25,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: bootstrap
-          image: ghcr.io/berriai/litellm-non_root@sha256:e9e15fe17b66fc8cda6ff7e18914e1d452785ca404fa20336ec447152f86daba
+          image: ghcr.io/berriai/litellm-non_root@sha256:a59d746be84b1bbf6afd665ea5a86bbe382460d2670c4bc16fa80c64d5b264e3
           imagePullPolicy: IfNotPresent
           command:
             - python
