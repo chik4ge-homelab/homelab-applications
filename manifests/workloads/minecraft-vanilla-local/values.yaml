@@ -127,6 +127,7 @@ minecraftServer:
   version: "1.20.1"
   worldSaveName: world-v4.1.8
   type: MODRINTH
+  difficulty: hard
   onlineMode: true
   whitelist:
   enforceSecureProfile: true
